@@ -113,19 +113,23 @@ def test_level4_mandel6_tensor():
     assert np.allclose(con.to_tensor(mandel), tensor)
 
 
-# def test_pass_throught():
-#
-#     con = mechkit.notation.Converter(skew=True)
-#
-#     m2 = np.random.rand(9, )
-#     m4 = np.random.rand(9, 9,)
-#     t2 = np.random.rand(3, 3,)
-#     t4 = np.random.rand(3, 3, 3, 3,)
-#
-#     assert np.allclose(con.to_mandel(m2),   m2)
-#     assert np.allclose(con.to_mandel(m4),   m4)
-#     assert np.allclose(con.to_tensor(t2),   t2)
-#     assert np.allclose(con.to_tensor(t4),   t4)
+def test_pass_throught():
+
+    con = mechkit.notation.Converter()
+
+    m6_2 = np.random.rand(6, )
+    m6_4 = np.random.rand(6, 6,)
+    m9_2 = np.random.rand(9, )
+    m9_4 = np.random.rand(9, 9,)
+    t2 = np.random.rand(3, 3,)
+    t4 = np.random.rand(3, 3, 3, 3,)
+
+    assert np.allclose(con.to_mandel6(m6_2),   m6_2)
+    assert np.allclose(con.to_mandel6(m6_4),   m6_4)
+    assert np.allclose(con.to_mandel9(m9_2),   m9_2)
+    assert np.allclose(con.to_mandel9(m9_4),   m9_4)
+    assert np.allclose(con.to_tensor(t2),   t2)
+    assert np.allclose(con.to_tensor(t4),   t4)
 
 
 def test_mandel6_to_tensor_to_mandel6():
@@ -150,79 +154,79 @@ def test_tensor_to_mandel6_to_tensor():
     assert np.allclose(con.to_tensor(matrix), tensor_sym_minor)
 
 
-# def test_mandel9_to_tensor_to_mandel9():
-#
-#     con = mechkit.notation.Converter(skew=True)
-#     matrix = np.random.rand(9, 9)
-#     assert np.allclose(con.to_mandel(con.to_tensor(matrix)), matrix)
+def test_mandel9_to_tensor_to_mandel9():
+
+    con = mechkit.notation.Converter()
+    matrix = np.random.rand(9, 9)
+    assert np.allclose(con.to_mandel9(con.to_tensor(matrix)), matrix)
 
 
-# def test_tensor_to_mandel9_to_tensor():
-#
-#     con = mechkit.notation.Converter(skew=True)
-#     tensor = np.random.rand(3, 3, 3, 3)
-#     assert np.allclose(con.to_tensor(con.to_mandel(tensor)), tensor)
+def test_tensor_to_mandel9_to_tensor():
+
+    con = mechkit.notation.Converter()
+    tensor = np.random.rand(3, 3, 3, 3)
+    assert np.allclose(con.to_tensor(con.to_mandel9(tensor)), tensor)
 
 
-# def test_ones_tensors_to_mandel6_to_voigt_to_mandel6():
-#     '''Define ones tensors and transform to Mandel.
-#
-#     Ones tensors are useful to visualize the conversions.
-#     Ones tensors are not useful to check correct implementation!
-#     Convert this mandel representation to Voigt and back
-#     to mandel and compare with initial mandel representation'''
-#
-#     converter = mechkit.notation.VoigtConverter()
-#
-#     ones2_mandel = converter.to_mandel(tensor=np.ones((3, 3),))
-#     ones4_mandel = converter.to_mandel(tensor=np.ones((3, 3, 3, 3),))
-#
-#     voigt_types = {
-#         'stress': ones2_mandel,
-#         'strain': ones2_mandel,
-#         'stiffness': ones4_mandel,
-#         'compliance': ones4_mandel,
-#         }
-#
-#     print('#####################')
-#     print('Input in Mandel')
-#     for voigt_type, inp in voigt_types.items():
-#         print(voigt_type)
-#         print(inp)
-#
-#     print('#####################')
-#     print('In Voigt')
-#     voigts = {}
-#
-#     for voigt_type, input_mandel in voigt_types.items():
-#         out = converter.mandel_to_voigt(
-#                         mandel=input_mandel,
-#                         voigt_type=voigt_type,
-#                         )
-#         print(voigt_type)
-#         print(out)
-#
-#         voigts[voigt_type] = out
-#
-#     print('#####################')
-#     print('Back in Mandel')
-#     mandels = {}
-#
-#     for voigt_type, voigt in voigts.items():
-#         out = converter.voigt_to_mandel(
-#                         voigt=voigt,
-#                         voigt_type=voigt_type,
-#                         )
-#         print(voigt_type)
-#         print(out)
-#
-#         mandels[voigt_type] = out
-#
-#     for voigt_type, mandel in mandels.items():
-#         assert np.allclose(
-#                         mandel,
-#                         voigt_types[voigt_type],
-#                         )
+def test_ones_tensors_to_mandel6_to_voigt_to_mandel6():
+    '''Define ones tensors and transform to Mandel.
+
+    Ones tensors are useful to visualize the conversions.
+    Ones tensors are not useful to check correct implementation!
+    Convert this mandel representation to Voigt and back
+    to mandel and compare with initial mandel representation'''
+
+    converter = mechkit.notation.VoigtConverter()
+
+    ones2_mandel = converter.to_mandel6(np.ones((3, 3),))
+    ones4_mandel = converter.to_mandel6(np.ones((3, 3, 3, 3),))
+
+    voigt_types = {
+        'stress': ones2_mandel,
+        'strain': ones2_mandel,
+        'stiffness': ones4_mandel,
+        'compliance': ones4_mandel,
+        }
+
+    print('#####################')
+    print('Input in Mandel')
+    for voigt_type, inp in voigt_types.items():
+        print(voigt_type)
+        print(inp)
+
+    print('#####################')
+    print('In Voigt')
+    voigts = {}
+
+    for voigt_type, input_mandel in voigt_types.items():
+        out = converter.mandel6_to_voigt(
+                        inp=input_mandel,
+                        voigt_type=voigt_type,
+                        )
+        print(voigt_type)
+        print(out)
+
+        voigts[voigt_type] = out
+
+    print('#####################')
+    print('Back in Mandel')
+    mandels = {}
+
+    for voigt_type, voigt in voigts.items():
+        out = converter.voigt_to_mandel6(
+                        inp=voigt,
+                        voigt_type=voigt_type,
+                        )
+        print(voigt_type)
+        print(out)
+
+        mandels[voigt_type] = out
+
+    for voigt_type, mandel in mandels.items():
+        assert np.allclose(
+                        mandel,
+                        voigt_types[voigt_type],
+                        )
 
 
 ##################################
