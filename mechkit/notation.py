@@ -8,30 +8,17 @@ import numpy as np
 
 class Converter(object):
 
-    def __init__(self, dtype='float64', skew=False):
+    def __init__(self, dtype='float64'):
         '''...'''
 
         self.dtype = dtype
         self.factor = np.sqrt(2.) / 2.
 
         self.DIM = 3
-        self.DIM_MANDEL_SYM = 6
-        self.DIM_MANDEL_SKW = 9
-
-        skew_switches = {
-            False:  {
-                    'base_func': self.get_mandel_base_sym,
-                    'dim_mandel': self.DIM_MANDEL_SYM,
-                    },
-            True:   {
-                    'base_func': self.get_mandel_base_skw,
-                    'dim_mandel': self.DIM_MANDEL_SKW,
-                    },
-            }
-
-        self.DIM_MANDEL = skew_switches[skew]['dim_mandel']
-
-        self.base = skew_switches[skew]['base_func']()
+        self.DIM_MANDEL6 = 6
+        self.DIM_MANDEL9 = 9
+        self.BASE6 = self.get_mandel_base_sym()
+        self.BASE9 = self.get_mandel_base_skw()
 
     def get_mandel_base_sym(self,):
         '''Calc orthonormal base for symmetric second order tensors following
@@ -54,7 +41,7 @@ class Converter(object):
         '''
 
         B = np.zeros(
-                (self.DIM_MANDEL, self.DIM, self.DIM),
+                (self.DIM_MANDEL6, self.DIM, self.DIM),
                 dtype=self.dtype,
                 )
 
@@ -82,8 +69,11 @@ class Converter(object):
                 B(i, :, :) is the i-th dyade of the base.
         '''
 
-        B = self.get_mandel_base_sym()
-        # Note: self.DIM_MANDEL=9 during this function call
+        B = np.zeros(
+                (self.DIM_MANDEL9, self.DIM, self.DIM),
+                dtype=self.dtype,
+                )
+        B[0:6, :, :] = self.get_mandel_base_sym()
 
         B[6, 1, 2] = -self.factor
         B[6, 2, 1] = self.factor
@@ -109,17 +99,20 @@ class Converter(object):
         '''
 
         dim = (self.DIM,)
-        dim_mandel = (self.DIM_MANDEL,)
+        dim_mandel6 = (self.DIM_MANDEL6,)
+        dim_mandel9 = (self.DIM_MANDEL9,)
 
         types = {
-                2*dim:              't2',
-                4*dim:              't4',
-                1*dim_mandel:       'm2',
-                2*dim_mandel:       'm4',
+                2*dim:           't_2',
+                4*dim:           't_4',
+                1*dim_mandel6:   'm6_2',
+                2*dim_mandel6:   'm6_4',
+                1*dim_mandel9:   'm9_2',
+                2*dim_mandel9:   'm9_4',
                 }
         return types[representation.shape]
 
-    def to_mandel(self, tensor):
+    def to_mandel6(self, tensor):
         '''Identify suitable transformation function and apply it to tensor
 
         Parameters
@@ -136,7 +129,7 @@ class Converter(object):
                 Tensor in Mandel notation.
         '''
 
-        f = self.get_to_mandel_func(representation=tensor)
+        f = self.get_to_mandel6_func(representation=tensor)
         return f(tensor=tensor)
 
     def to_tensor(self, mandel, skew=False):
@@ -157,7 +150,7 @@ class Converter(object):
         f = self.get_to_tensor_func(representation=mandel)
         return f(mandel=mandel)
 
-    def get_to_mandel_func(self, representation):
+    def get_to_mandel6_func(self, representation):
         '''Identify suitable transformation function depending on type
 
         Parameters
@@ -174,10 +167,10 @@ class Converter(object):
         type_ = self.get_type_by_shape(representation)
 
         functions = {
-                't2':       self.tensor2_to_mandel,
-                't4':       self.tensor4_to_mandel,
-                'm2':       self.mandel_pass_through,
-                'm4':       self.mandel_pass_through,
+                't_2':      self.tensor2_to_mandel6,
+                't_4':      self.tensor4_to_mandel6,
+                'm6_2':     self.mandel_pass_through,
+                'm6_4':     self.mandel_pass_through,
                 }
         return functions[type_]
 
@@ -186,7 +179,7 @@ class Converter(object):
 
         Parameters
         ----------
-        representation : np.array with unknown shape
+        representation : np.array with uto_mandel6nknown shape
             Representation of tensor to be transformed.
 
         Returns
@@ -198,10 +191,10 @@ class Converter(object):
         type_ = self.get_type_by_shape(representation)
 
         functions = {
-                't2':       self.tensor_pass_through,
-                't4':       self.tensor_pass_through,
-                'm2':       self.mandel2_to_tensor,
-                'm4':       self.mandel4_to_tensor,
+                't_2':      self.tensor_pass_through,
+                't_4':      self.tensor_pass_through,
+                'm6_2':     self.mandel2_to_tensor,
+                'm6_4':     self.mandel4_to_tensor,
                 }
         return functions[type_]
 
@@ -213,7 +206,7 @@ class Converter(object):
         '''Do nothing, return argument'''
         return tensor
 
-    def tensor2_to_mandel(self, tensor):
+    def tensor2_to_mandel6(self, tensor):
         '''Transform tensor of second order.
 
         Parameters
@@ -228,12 +221,12 @@ class Converter(object):
 
         out = np.einsum(
                     'aij, ij ->a',
-                    self.base,
+                    self.BASE6,
                     tensor,
                     )
         return out
 
-    def tensor4_to_mandel(self, tensor):
+    def tensor4_to_mandel6(self, tensor):
         '''Transform tensor of fourth order.
 
         Parameters
@@ -248,9 +241,9 @@ class Converter(object):
 
         out = np.einsum(
                     'aij, ijkl, bkl ->ab',
-                    self.base,
+                    self.BASE6,
                     tensor,
-                    self.base,
+                    self.BASE6,
                     )
         return out
 
@@ -269,7 +262,7 @@ class Converter(object):
 
         out = np.einsum(
                     'ajk, a->jk',
-                    self.base,
+                    self.BASE6,
                     mandel,
                     )
         return out
@@ -289,9 +282,9 @@ class Converter(object):
 
         out = np.einsum(
                     'ajk, ab, bmn->jkmn',
-                    self.base,
+                    self.BASE6,
                     mandel,
-                    self.base,
+                    self.BASE6,
                     )
         return out
 
