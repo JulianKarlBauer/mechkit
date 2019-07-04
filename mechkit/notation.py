@@ -84,13 +84,13 @@ class Converter(object):
 
         return B
 
-    def get_type_by_shape(self, representation):
-        '''Identify kind depending on representation.shape
+    def get_type_by_shape(self, inp):
+        '''Identify type depending on inp.shape
 
         Parameters
         ----------
-        representation : np.array with unknown shape
-            Representation of tensor/mandel.
+        inp : np.array with unknown shape
+            Representation of tensor/mandel6/mandel9.
 
         Returns
         -------
@@ -110,18 +110,15 @@ class Converter(object):
                 1*dim_mandel9:   'm9_2',
                 2*dim_mandel9:   'm9_4',
                 }
-        return types[representation.shape]
+        return types[inp.shape]
 
-    def to_mandel6(self, tensor):
-        '''Identify suitable transformation function and apply it to tensor
+    def to_mandel6(self, inp):
+        '''Identify suitable transformation function and apply it to inp
 
         Parameters
         ----------
-        tensor : np.array with unknown shape
-            Tensor to be transformed into Mandel notation.
-
-        skew : Boolean
-            If True,
+        inp : np.array with unknown shape
+            Representation to be transformed into Mandel notation.
 
         Returns
         -------
@@ -129,17 +126,16 @@ class Converter(object):
                 Tensor in Mandel notation.
         '''
 
-        f = self.get_to_mandel6_func(representation=tensor)
-        return f(tensor=tensor)
+        f = self.get_to_mandel6_func(inp=inp)
+        return f(inp=inp)
 
-    def to_tensor(self, mandel, skew=False):
-        '''Identify suitable transformation function and apply it to
-        mandel representation
+    def to_tensor(self, inp):
+        '''Identify suitable transformation function and apply it to inp
 
         Parameters
         ----------
-        mandel : np.array with unknown shape
-            Mandel components to be transformed into tensor notation.
+        inp : np.array with unknown shape
+            Representation to be transformed into tensor notation.
 
         Returns
         -------
@@ -147,112 +143,108 @@ class Converter(object):
                 Tensor.
         '''
 
-        f = self.get_to_tensor_func(representation=mandel)
-        return f(mandel=mandel)
+        f = self.get_to_tensor_func(inp=inp)
+        return f(inp=inp)
 
-    def get_to_mandel6_func(self, representation):
+    def get_to_mandel6_func(self, inp):
         '''Identify suitable transformation function depending on type
 
         Parameters
         ----------
-        representation : np.array with unknown shape
-            Representation of tensor to be transformed.
+        inp : np.array with unknown shape
+            Representation to be transformed.
 
         Returns
         -------
         function handler
-                Function suitable to transform representation.
+                Function suitable to transform inp.
         '''
 
-        type_ = self.get_type_by_shape(representation)
+        type_ = self.get_type_by_shape(inp)
 
         functions = {
                 't_2':      self.tensor2_to_mandel6,
                 't_4':      self.tensor4_to_mandel6,
-                'm6_2':     self.mandel_pass_through,
-                'm6_4':     self.mandel_pass_through,
+                'm6_2':     self.pass_through,
+                'm6_4':     self.pass_through,
                 }
         return functions[type_]
 
-    def get_to_tensor_func(self, representation):
+    def get_to_tensor_func(self, inp):
         '''Identify suitable transformation function depending on type
 
         Parameters
         ----------
-        representation : np.array with uto_mandel6nknown shape
-            Representation of tensor to be transformed.
+        inp : np.array with unknown shape
+            Representation to be transformed.
 
         Returns
         -------
         function handler
-                Function suitable to transform representation.
+                Function suitable to transform inp.
         '''
 
-        type_ = self.get_type_by_shape(representation)
+        type_ = self.get_type_by_shape(inp)
 
         functions = {
-                't_2':      self.tensor_pass_through,
-                't_4':      self.tensor_pass_through,
+                't_2':      self.pass_through,
+                't_4':      self.pass_through,
                 'm6_2':     self.mandel2_to_tensor,
                 'm6_4':     self.mandel4_to_tensor,
                 }
         return functions[type_]
 
-    def tensor_pass_through(self, mandel):
+    def pass_through(self, inp):
         '''Do nothing, return argument'''
-        return mandel
+        return inp
 
-    def mandel_pass_through(self, tensor):
-        '''Do nothing, return argument'''
-        return tensor
-
-    def tensor2_to_mandel6(self, tensor):
+    def tensor2_to_mandel6(self, inp):
         '''Transform tensor of second order.
 
         Parameters
         ----------
-        tensor : np.array with shape (3, 3)
+        inp : np.array with shape (3, 3)
                 Tensor
         Returns
         -------
-        np.array with shape (DIM_MANDEL,)
+        np.array with shape (DIM_MANDEL6,)
                 Tensor in Mandel notation.
         '''
 
         out = np.einsum(
                     'aij, ij ->a',
                     self.BASE6,
-                    tensor,
+                    inp,
                     )
         return out
 
-    def tensor4_to_mandel6(self, tensor):
+    def tensor4_to_mandel6(self, inp):
         '''Transform tensor of fourth order.
 
         Parameters
         ----------
-        tensor : np.array with shape (3, 3, 3, 3)
+        inp : np.array with shape (3, 3, 3, 3)
                 Tensor
         Returns
         -------
-        np.array with shape (DIM_MANDEL, DIM_MANDEL)
+        np.array with shape (DIM_MANDEL6, DIM_MANDEL6)
                 Tensor in Mandel notation.
         '''
 
         out = np.einsum(
                     'aij, ijkl, bkl ->ab',
                     self.BASE6,
-                    tensor,
+                    inp,
                     self.BASE6,
                     )
         return out
 
-    def mandel2_to_tensor(self, mandel):
+    def mandel2_to_tensor(self, inp):
         '''Transform mandel of first order to tensor of second order.
 
         Parameters
         ----------
-        mandel : np.array with shape (DIM_MANDEL,)
+        inp : np.array with shape (DIM_MANDEL6,)
                 Mandel representation
         Returns
         -------
@@ -263,16 +255,16 @@ class Converter(object):
         out = np.einsum(
                     'ajk, a->jk',
                     self.BASE6,
-                    mandel,
+                    inp,
                     )
         return out
 
-    def mandel4_to_tensor(self, mandel):
+    def mandel4_to_tensor(self, inp):
         '''Transform mandel of second order to tensor of fourth order.
 
         Parameters
         ----------
-        mandel : np.array with shape (DIM_MANDEL, DIM_MANDEL,)
+        inp : np.array with shape (DIM_MANDEL6, DIM_MANDEL6,)
                 Mandel representation
         Returns
         -------
@@ -283,7 +275,7 @@ class Converter(object):
         out = np.einsum(
                     'ajk, ab, bmn->jkmn',
                     self.BASE6,
-                    mandel,
+                    inp,
                     self.BASE6,
                     )
         return out
@@ -326,7 +318,7 @@ class VoigtConverter(Converter):
                         ],
                 }
 
-        super().__init__(skew=False)
+        super().__init__()
 
     def mandel_to_voigt(self, mandel, voigt_type):
         '''Transform mandel representation to Voigt depending on voigt_type.
