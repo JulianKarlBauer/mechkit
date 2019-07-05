@@ -15,14 +15,19 @@ np.set_printoptions(
         )
 
 con = mk.notation.Converter()
-I_mandel6 = con.to_mandel6(mk.tensors.I4s)
-I_mandel9 = con.to_mandel9(mk.tensors.I4s)
+tensors = mk.tensors.basic()
 
 
 # Define what to print
 printQueue = [
-        'con.to_mandel6(I_mandel9)',
-        'con.to_mandel9(I_mandel6)',
+        'tensors.I2',
+        'con.to_mandel6(tensors.I2)',
+        'np.arange(9).reshape(3,3)',
+        'con.to_mandel6(np.arange(9).reshape(3,3))',
+        'tensors.I4s',
+        'con.to_mandel6(tensors.I4s)',
+        'con.to_mandel9(tensors.I4s)',
+        'con.to_mandel9(tensors.I4a)',
         ]
 
 

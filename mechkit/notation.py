@@ -1,15 +1,172 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''Notation
-'''
+'''Notation'''
 
 import numpy as np
 
 
 class Converter(object):
+    r'''
+    Converter to change between common notations of numerical tensors.
+
+    Supported notations
+
+    - tensor
+
+        - 2 order tensor: (3, 3)
+        - 4 order tensor: (3, 3, 3, 3,)
+
+    - mandel6
+
+        - 2 order tensor: (6,)      [(symmetric)]
+        - 4 order tensor: (6, 6)    [(left- and right- symmetric)]
+
+    - mandel9
+
+        - 2 order tensor: (9,)
+        - 4 order tensor: (9, 9)
+
+    Base dyads:
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{B}_1 &= \boldsymbol{e}_1 \otimes \boldsymbol{e}_1    \\
+            \boldsymbol{B}_2 &= \boldsymbol{e}_2 \otimes \boldsymbol{e}_2    \\
+            \boldsymbol{B}_3 &= \boldsymbol{e}_3 \otimes \boldsymbol{e}_3    \\
+            \boldsymbol{B}_4 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_3
+                    +
+                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
+                    \right)                                                 \\
+            \boldsymbol{B}_5 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
+                    +
+                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
+                    \right)                                                 \\
+            \boldsymbol{B}_6 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_2
+                    +
+                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
+                    \right)                                                 \\
+            \boldsymbol{B}_7 &= \frac{\sqrt{2}}{2}\left(
+                    -\boldsymbol{e}_2 \otimes \boldsymbol{e}_3
+                    +
+                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
+                    \right)                                                 \\
+            \boldsymbol{B}_8 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
+                    -
+                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
+                    \right)                                                 \\
+            \boldsymbol{B}_9 &= \frac{\sqrt{2}}{2}\left(
+                    -\boldsymbol{e}_1 \otimes \boldsymbol{e}_2
+                    +
+                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
+                    \right)                                                 \\
+        \boldsymbol{B}_{\alpha} &\cdot \boldsymbol{B}_{\beta} = \delta_{\alpha\beta}
+        \end{align*}
+
+    Conversion:
+
+    .. math::
+        \begin{align*}
+            \sigma_{\alpha} &= \boldsymbol{\sigma} \cdot \boldsymbol{B}_{\alpha}    \\
+            C_{\alpha\beta} &=
+            \boldsymbol{B}_{\alpha} \cdot
+            \mathbb{C} \left[\boldsymbol{B}_{\beta}\right]    \\
+            \boldsymbol{\sigma} &= \sigma_{\alpha} \boldsymbol{B}_{\alpha}    \\
+            \mathbb{C} &= C_{\alpha\beta}
+                            \boldsymbol{B}_{\alpha} \otimes
+                            \boldsymbol{B}_{\beta}   \\
+        \end{align*}
+
+    Methods
+    -------
+    to_tensor(inp)
+        Convert to tensor notation
+
+    to_mandel6(inp)
+        Convert to Mandel notation with 6 symmetric base dyads
+
+    to_mandel9(inp)
+        Convert to Mandel notation with 6 symmetric and 3 skew base dyads
+
+    Examples
+    --------
+
+    >>> tensors.I4s
+    [[1. 0. 0.]
+     [0. 1. 0.]
+     [0. 0. 1.]]
+    >>> con.to_mandel6(tensors.I2)
+    [1. 1. 1. 0. 0. 0.]
+
+    >>> np.arange(9).reshape(3,3)
+    [[0 1 2]
+     [3 4 5]
+     [6 7 8]]
+    >>> con.to_mandel6(np.arange(9).reshape(3,3))
+    [0.   4.   8.   8.49 5.66 2.83]
+
+    >>> mechkit.tensors.I4s
+    [[[[1.  0.  0. ]
+       [0.  0.  0. ]
+       [0.  0.  0. ]]
+      [[0.  0.5 0. ]
+       [0.5 0.  0. ]
+       [0.  0.  0. ]]
+      [[0.  0.  0.5]
+       [0.  0.  0. ]
+       [0.5 0.  0. ]]]
+     [[[0.  0.5 0. ]
+       [0.5 0.  0. ]
+       [0.  0.  0. ]]
+      [[0.  0.  0. ]
+       [0.  1.  0. ]
+       [0.  0.  0. ]]
+      [[0.  0.  0. ]
+       [0.  0.  0.5]
+       [0.  0.5 0. ]]]
+     [[[0.  0.  0.5]
+       [0.  0.  0. ]
+       [0.5 0.  0. ]]
+      [[0.  0.  0. ]
+       [0.  0.  0.5]
+       [0.  0.5 0. ]]
+      [[0.  0.  0. ]
+       [0.  0.  0. ]
+       [0.  0.  1. ]]]]
+    >>> con.to_mandel6(tensors.I4s)
+    [[1. 0. 0. 0. 0. 0.]
+     [0. 1. 0. 0. 0. 0.]
+     [0. 0. 1. 0. 0. 0.]
+     [0. 0. 0. 1. 0. 0.]
+     [0. 0. 0. 0. 1. 0.]
+     [0. 0. 0. 0. 0. 1.]]
+    >>> con.to_mandel9(tensors.I4s)
+    [[1. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 1. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 1. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 1. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 1. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 1. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+    >>> con.to_mandel9(tensors.I4a)
+    [[0. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 1. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 1. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0. 1.]]
+
+    '''
 
     def __init__(self, dtype='float64'):
-        '''...'''
 
         self.dtype = dtype
         self.factor = np.sqrt(2.) / 2.
@@ -22,18 +179,21 @@ class Converter(object):
         self.BASE9 = self.get_mandel_base_skw()
 
     def get_mandel_base_sym(self,):
-        '''Calc orthonormal base for symmetric second order tensors following
+        '''Get orthonormal base for symmetric second order tensors following
         [1] referencing [2], [3]
 
         This base can be used to transform
-            symmetric tensors of second order into vectors with 6 components
-            tensors of fourth order with minor symmetries into (6 x 6) matrices
 
-        [1] = Böhlke, T., Skript zur Vorlesung Plastizitaetstheorie SS 2014
-        [2] = Cowin, S.C., 1989. Properties of the anisotropic elasticity
-        tensor. The Quarterly Journal of Mechanics and Applied Mathematics,
-        42(2), pp.249-266.
-        [3] Fedorov, F.I., 1968. Theory of elastic waves in crystals.
+        - symmetric tensors of second order into vectors with 6 components
+        - tensors of fourth order with minor symmetries into (6 x 6) matrices
+
+        .. [1] = Böhlke, T., Skript zur Vorlesung Plastizitaetstheorie SS 2014
+
+        .. [2] = Cowin, S.C., 1989. Properties of the anisotropic elasticity
+            tensor. The Quarterly Journal of Mechanics and Applied Mathematics,
+            42(2), pp.249-266.
+
+        .. [3] Fedorov, F.I., 1968. Theory of elastic waves in crystals.
 
         Returns
         -------
@@ -55,14 +215,15 @@ class Converter(object):
         return B
 
     def get_mandel_base_skw(self,):
-        '''Calc orthonormal base for possibly non-symmetric second order tensors
+        '''Get orthonormal base for possibly non-symmetric second order tensors
         following [4]
 
-        [4] = https://csmbrannon.net/tag/mandel-notation/
+        .. [4] = https://csmbrannon.net/tag/mandel-notation/
 
         This base can be used to transform
-            tensors of second order into vectors with 9 components
-            tensors of fourth order into (9 x 9) matrices
+
+        - tensors of second order into vectors with 9 components
+        - tensors of fourth order into (9 x 9) matrices
 
         Returns
         -------
@@ -84,34 +245,6 @@ class Converter(object):
         B[8, 1, 0] = self.factor
 
         return B
-
-    def get_type_by_shape(self, inp):
-        '''Identify type depending on inp.shape
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Representation of tensor/mandel6/mandel9.
-
-        Returns
-        -------
-        string
-            Descriptor of type
-        '''
-
-        dim = (self.DIM,)
-        dim_mandel6 = (self.DIM_MANDEL6,)
-        dim_mandel9 = (self.DIM_MANDEL9,)
-
-        types = {
-                2*dim:           't_2',
-                4*dim:           't_4',
-                1*dim_mandel6:   'm6_2',
-                2*dim_mandel6:   'm6_4',
-                1*dim_mandel9:   'm9_2',
-                2*dim_mandel9:   'm9_4',
-                }
-        return types[inp.shape]
 
     def to_mandel6(self, inp):
         '''Convert to Mandel6 notation
@@ -166,6 +299,34 @@ class Converter(object):
 
         f = self.get_to_tensor_func(inp=inp)
         return f(inp=inp)
+
+    def get_type_by_shape(self, inp):
+        '''Identify type depending on inp.shape
+
+        Parameters
+        ----------
+        inp : np.array with unknown shape
+            Representation of tensor/mandel6/mandel9.
+
+        Returns
+        -------
+        string
+            Descriptor of type
+        '''
+
+        dim = (self.DIM,)
+        dim_mandel6 = (self.DIM_MANDEL6,)
+        dim_mandel9 = (self.DIM_MANDEL9,)
+
+        types = {
+                2*dim:           't_2',
+                4*dim:           't_4',
+                1*dim_mandel6:   'm6_2',
+                2*dim_mandel6:   'm6_4',
+                1*dim_mandel9:   'm9_2',
+                2*dim_mandel9:   'm9_4',
+                }
+        return types[inp.shape]
 
     def get_to_mandel6_func(self, inp):
         '''Select transformation function by type
@@ -328,8 +489,41 @@ class Converter(object):
 
 
 class VoigtConverter(Converter):
-    '''Converter with additional methods handling Voigt notation'''
+    '''
+    Extended converter handling Voigt notation
 
+    Voigt notation for the following physical quantities are supported:
+
+    - stress
+    - strain
+    - stiffness
+    - compliance
+
+    Warning
+    =======
+
+    Usage of Voigt-representations is highly discouraged.
+    Don't use representations in Voigt notation in function
+    lacking "voigt" in the method name.
+    The results will be wrong.
+
+    Tensor representations in Voigt notation have the same
+    dimensions than those in Mandel6 notation and therefore are
+    treated as representations in Mandel6 notation, when passed
+    to methods not including "voigt" in the method name.
+
+    Methods
+    -------
+    mandel6_to_voigt(inp, voigt_type)
+        Convert from Mandel6 to Voigt notation based on physical meaning of inp
+    voigt_to_mandel6(inp, voigt_type)
+        Convert from Voigt to Mandel6 notation based on physical meaning of inp
+
+    Examples
+    --------
+
+    Todo: Add Example Ones Tensors->Mandel->Voigt
+    '''
     def __init__(self, silent=False):
 
         if not silent:

@@ -10,8 +10,6 @@ import pytest
 
 sys.path.append(os.path.join('..'))
 import mechkit
-from mechkit import tensors as t
-from mechkit import utils
 
 ##################################
 # Helpers
@@ -22,7 +20,7 @@ def assertException(
                 message,
                 args=[],
                 kwargs={},
-                exception=utils.Ex,
+                exception=mechkit.utils.Ex,
                 ):
     with pytest.raises(exception) as excinfo:
         func(*args, **kwargs)
@@ -37,6 +35,7 @@ def assertException(
 def test_compare_P1_P2_mandel6_tensor():
 
     con = mechkit.notation.Converter()
+    t = mechkit.tensors.basic()
 
     # Prepare
     P1_mandel6 = 1./3. * np.array(
@@ -234,7 +233,7 @@ def test_ones_tensors_to_mandel6_to_voigt_to_mandel6():
 
 def isotropic_stiffness_mandel6(EW1, EW2):
     con = mechkit.notation.Converter()
-    tensors = mechkit.tensors
+    tensors = mechkit.tensors.basic()
     P1 = con.to_mandel6(tensors.P1)
     P2 = con.to_mandel6(tensors.P2)
     return P1 * EW1 + P2 * EW2

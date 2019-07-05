@@ -1,33 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''Basic tensors
+'''Common tensors in tensor notation
 '''
-
 import numpy as np
 
-DTYPE = 'float64'
 
-###################################################################
-# Basic tensors
+class basic(object):
+    '''Basic tensors: Identities, isotropic projectors...'''
+    def __init__(self,):
 
-I2 = np.eye(3, dtype=DTYPE)
+        self.DTYPE = 'float64'
+        self.I2 = np.eye(3, dtype=self.DTYPE)
 
-I4 = np.einsum('ik, lj -> ijkl', I2, I2)
+        self.I4 = np.einsum('ik, lj -> ijkl', self.I2, self.I2)
 
-I4s = 0.5 * (I4 + np.einsum('ijkl -> ijlk', I4))
+        self.I4s = 0.5 * (self.I4 + np.einsum('ijkl -> ijlk', self.I4))
 
-I4a = 0.5 * (I4 - np.einsum('ijkl -> ijlk', I4))
+        self.I4a = 0.5 * (self.I4 - np.einsum('ijkl -> ijlk', self.I4))
 
-P1 = 1./3. * np.einsum('ij, kl -> ijkl', I2, I2)
+        self.P1 = 1./3. * np.einsum('ij, kl -> ijkl', self.I2, self.I2)
 
-P2 = I4s - P1
+        self.P2 = self.I4s - self.P1
 
+        self.ricci = self.levi_civita_tensor()
 
-def levi_civita_tensor():
-    eijk = np.zeros((3, 3, 3))
-    eijk[0, 1, 2] = eijk[1, 2, 0] = eijk[2, 0, 1] = 1
-    eijk[0, 2, 1] = eijk[2, 1, 0] = eijk[1, 0, 2] = -1
-    return eijk
-
-
-ricci = levi_civita_tensor()
+    def levi_civita_tensor(self,):
+        eijk = np.zeros((3, 3, 3))
+        eijk[0, 1, 2] = eijk[1, 2, 0] = eijk[2, 0, 1] = 1
+        eijk[0, 2, 1] = eijk[2, 1, 0] = eijk[1, 0, 2] = -1
+        return eijk
