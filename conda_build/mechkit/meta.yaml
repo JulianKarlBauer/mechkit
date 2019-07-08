@@ -1,0 +1,40 @@
+{% set name = "mechkit" %}
+{% set version = "0.0.1" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: "895d165c150fb85db800c9473eb21a2295924c9d0801e4eb2f1b3f0340487e1a"
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+
+requirements:
+  host:
+    - numpy
+    - pip
+    - python
+  run:
+    - numpy
+    - python
+
+test:
+  imports:
+    - mechkit
+
+about:
+  home: "https://github.com/JulianBauerKIT/mechkit"
+  license: "MIT"
+  license_family: "MIT"
+  license_file: ""
+  summary: "Basic tools for continuum mechanics using numpy"
+  doc_url: ""
+  dev_url: ""
+
+extra:
+  recipe-maintainers:
+    - your-github-id-here
