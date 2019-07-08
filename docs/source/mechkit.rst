@@ -1,5 +1,5 @@
-MechKIT package
-===============
+MechKIT
+=======
 
 .. automodule:: mechkit
 
