@@ -1,0 +1,5 @@
+[user]
+	name = JulianBauerKIT
+	email = julianbauerKIT@gmail.com
+[diff]
+	tool = meld
