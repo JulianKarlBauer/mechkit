@@ -4,8 +4,8 @@
 '''
 
 import numpy as np
-import mechkit as mk
 import importlib
+import mechkit as mk
 importlib.reload(mk)
 
 np.set_printoptions(
@@ -14,12 +14,13 @@ np.set_printoptions(
         # suppress=False,
         )
 
+import mechkit as mk
 con = mk.notation.Converter()
 tensors = mk.tensors.basic()
 
-
 # Define what to print
 printQueue = [
+        # import mechkit as mk
         'tensors.I2',
         'con.to_mandel6(tensors.I2)',
         'np.arange(9).reshape(3,3)',
@@ -27,7 +28,7 @@ printQueue = [
         'tensors.I4s',
         'con.to_mandel6(tensors.I4s)',
         'con.to_mandel9(tensors.I4s)',
-        'con.to_mandel9(tensors.I4a)',
+        'con.to_mandel9(tensors.I4s)',
         ]
 
 

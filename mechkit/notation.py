@@ -62,23 +62,48 @@ class Converter(object):
                     -\boldsymbol{e}_1 \otimes \boldsymbol{e}_2
                     +
                     \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
-                    \right)                                                 \\
-        \boldsymbol{B}_{\alpha} &\cdot \boldsymbol{B}_{\beta} = \delta_{\alpha\beta}
+                    \right)
         \end{align*}
 
-    Conversion:
+    Orthogonality:
 
     .. math::
         \begin{align*}
-            \sigma_{\alpha} &= \boldsymbol{\sigma} \cdot \boldsymbol{B}_{\alpha}    \\
-            C_{\alpha\beta} &=
-            \boldsymbol{B}_{\alpha} \cdot
-            \mathbb{C} \left[\boldsymbol{B}_{\beta}\right]    \\
-            \boldsymbol{\sigma} &= \sigma_{\alpha} \boldsymbol{B}_{\alpha}    \\
-            \mathbb{C} &= C_{\alpha\beta}
-                            \boldsymbol{B}_{\alpha} \otimes
-                            \boldsymbol{B}_{\beta}   \\
+                    \boldsymbol{B}_{\alpha} &\cdot \boldsymbol{B}_{\beta}
+                            = \delta_{\alpha\beta}
         \end{align*}
+
+    Conversions: (Einstein notation applies)
+
+    .. math::
+        \begin{align*}
+            \sigma_{\alpha} &=
+                \boldsymbol{\sigma}
+                \cdot
+                \boldsymbol{B}_{\alpha}    \\
+            C_{\alpha\beta} &=
+                \boldsymbol{B}_{\alpha}
+                \cdot
+                \mathbb{C} \left[\boldsymbol{B}_{\beta}\right]    \\
+            \boldsymbol{\sigma} &=
+                \sigma_{\alpha}
+                \boldsymbol{B}_{\alpha}    \\
+            \mathbb{C} &=
+                C_{\alpha\beta}
+                \boldsymbol{B}_{\alpha}
+                \otimes
+                \boldsymbol{B}_{\beta}   \\
+        \end{align*}
+
+    With:
+
+        - :math:`\sigma_{\alpha}` : Component of second order tensor in Mandel notation
+        - :math:`\boldsymbol{\sigma}` : Second order tensor
+        - :math:`C_{\alpha\beta}` : Component of fourth order tensor
+        - :math:`\mathbb{C}` : Fourth order tensor
+
+
+
 
     Methods
     -------
@@ -93,8 +118,11 @@ class Converter(object):
 
     Examples
     --------
+    >>> import mechkit as mk
+    >>> con = mk.notation.Converter()
+    >>> tensors = mk.tensors.basic()
 
-    >>> tensors.I4s
+    >>> tensors.I2
     [[1. 0. 0.]
      [0. 1. 0.]
      [0. 0. 1.]]
@@ -108,7 +136,7 @@ class Converter(object):
     >>> con.to_mandel6(np.arange(9).reshape(3,3))
     [0.   4.   8.   8.49 5.66 2.83]
 
-    >>> mechkit.tensors.I4s
+    >>> tensors.I4s
     [[[[1.  0.  0. ]
        [0.  0.  0. ]
        [0.  0.  0. ]]
@@ -153,6 +181,8 @@ class Converter(object):
      [0. 0. 0. 0. 0. 0. 0. 0. 0.]
      [0. 0. 0. 0. 0. 0. 0. 0. 0.]
      [0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+
+    >>> #Asymmetric identity
     >>> con.to_mandel9(tensors.I4a)
     [[0. 0. 0. 0. 0. 0. 0. 0. 0.]
      [0. 0. 0. 0. 0. 0. 0. 0. 0.]
@@ -180,7 +210,7 @@ class Converter(object):
 
     def get_mandel_base_sym(self,):
         '''Get orthonormal base for symmetric second order tensors following
-        [1] referencing [2], [3]
+        [1], [2], [3]
 
         This base can be used to transform
 
@@ -260,7 +290,7 @@ class Converter(object):
             Input in Mandel6 notation
         '''
 
-        f = self.get_to_mandel6_func(inp=inp)
+        f = self._get_to_mandel6_func(inp=inp)
         return f(inp=inp)
 
     def to_mandel9(self, inp, verbose=False):
@@ -280,7 +310,7 @@ class Converter(object):
         if verbose:
             print('Skew parts are lost!')
 
-        f = self.get_to_mandel9_func(inp=inp)
+        f = self._get_to_mandel9_func(inp=inp)
         return f(inp=inp)
 
     def to_tensor(self, inp):
@@ -297,10 +327,10 @@ class Converter(object):
             Input in tensor notation
         '''
 
-        f = self.get_to_tensor_func(inp=inp)
+        f = self._get_to_tensor_func(inp=inp)
         return f(inp=inp)
 
-    def get_type_by_shape(self, inp):
+    def _get_type_by_shape(self, inp):
         '''Identify type depending on inp.shape
 
         Parameters
@@ -328,7 +358,7 @@ class Converter(object):
                 }
         return types[inp.shape]
 
-    def get_to_mandel6_func(self, inp):
+    def _get_to_mandel6_func(self, inp):
         '''Select transformation function by type
 
         Parameters
@@ -342,19 +372,19 @@ class Converter(object):
             Function transforming input to Mandel6
         '''
 
-        type_ = self.get_type_by_shape(inp)
+        type_ = self._get_type_by_shape(inp)
 
         functions = {
-                't_2':      self.tensor2_to_mandel6,
-                't_4':      self.tensor4_to_mandel6,
-                'm6_2':     self.pass_through,
-                'm6_4':     self.pass_through,
-                'm9_2':     self.mandel9_2_to_mandel6,
-                'm9_4':     self.mandel9_4_to_mandel6,
+                't_2':      self._tensor2_to_mandel6,
+                't_4':      self._tensor4_to_mandel6,
+                'm6_2':     self._pass_through,
+                'm6_4':     self._pass_through,
+                'm9_2':     self._mandel9_2_to_mandel6,
+                'm9_4':     self._mandel9_4_to_mandel6,
                 }
         return functions[type_]
 
-    def get_to_mandel9_func(self, inp):
+    def _get_to_mandel9_func(self, inp):
         '''Select transformation function by type
 
         Parameters
@@ -368,19 +398,19 @@ class Converter(object):
             Function transforming input to Mandel9
         '''
 
-        type_ = self.get_type_by_shape(inp)
+        type_ = self._get_type_by_shape(inp)
 
         functions = {
-                't_2':      self.tensor2_to_mandel9,
-                't_4':      self.tensor4_to_mandel9,
-                'm6_2':     self.mandel6_2_to_mandel9,
-                'm6_4':     self.mandel6_4_to_mandel9,
-                'm9_2':     self.pass_through,
-                'm9_4':     self.pass_through,
+                't_2':      self._tensor2_to_mandel9,
+                't_4':      self._tensor4_to_mandel9,
+                'm6_2':     self._mandel6_2_to_mandel9,
+                'm6_4':     self._mandel6_4_to_mandel9,
+                'm9_2':     self._pass_through,
+                'm9_4':     self._pass_through,
                 }
         return functions[type_]
 
-    def get_to_tensor_func(self, inp):
+    def _get_to_tensor_func(self, inp):
         '''Select transformation function by type
 
         Parameters
@@ -394,23 +424,23 @@ class Converter(object):
             Function transforming input to tensor
         '''
 
-        type_ = self.get_type_by_shape(inp)
+        type_ = self._get_type_by_shape(inp)
 
         functions = {
-                't_2':      self.pass_through,
-                't_4':      self.pass_through,
-                'm6_2':     self.mandel6_2_to_tensor,
-                'm6_4':     self.mandel6_4_to_tensor,
-                'm9_2':     self.mandel9_2_to_tensor,
-                'm9_4':     self.mandel9_4_to_tensor,
+                't_2':      self._pass_through,
+                't_4':      self._pass_through,
+                'm6_2':     self._mandel6_2_to_tensor,
+                'm6_4':     self._mandel6_4_to_tensor,
+                'm9_2':     self._mandel9_2_to_tensor,
+                'm9_4':     self._mandel9_4_to_tensor,
                 }
         return functions[type_]
 
-    def pass_through(self, inp):
+    def _pass_through(self, inp):
         '''Do nothing, return argument'''
         return inp
 
-    def tensor2_to_mandel(self, inp, base):
+    def _tensor2_to_mandel(self, inp, base):
         out = np.einsum(
                     'aij, ij ->a',
                     base,
@@ -418,7 +448,7 @@ class Converter(object):
                     )
         return out
 
-    def tensor4_to_mandel(self, inp, base):
+    def _tensor4_to_mandel(self, inp, base):
         out = np.einsum(
                     'aij, ijkl, bkl ->ab',
                     base,
@@ -427,19 +457,19 @@ class Converter(object):
                     )
         return out
 
-    def tensor2_to_mandel6(self, inp):
-        return self.tensor2_to_mandel(inp=inp, base=self.BASE6)
+    def _tensor2_to_mandel6(self, inp):
+        return self._tensor2_to_mandel(inp=inp, base=self.BASE6)
 
-    def tensor2_to_mandel9(self, inp):
-        return self.tensor2_to_mandel(inp=inp, base=self.BASE9)
+    def _tensor2_to_mandel9(self, inp):
+        return self._tensor2_to_mandel(inp=inp, base=self.BASE9)
 
-    def tensor4_to_mandel6(self, inp):
-        return self.tensor4_to_mandel(inp=inp, base=self.BASE6)
+    def _tensor4_to_mandel6(self, inp):
+        return self._tensor4_to_mandel(inp=inp, base=self.BASE6)
 
-    def tensor4_to_mandel9(self, inp):
-        return self.tensor4_to_mandel(inp=inp, base=self.BASE9)
+    def _tensor4_to_mandel9(self, inp):
+        return self._tensor4_to_mandel(inp=inp, base=self.BASE9)
 
-    def mandel_2_to_tensor(self, inp, base):
+    def _mandel_2_to_tensor(self, inp, base):
         out = np.einsum(
                     'ajk, a->jk',
                     base,
@@ -447,7 +477,7 @@ class Converter(object):
                     )
         return out
 
-    def mandel_4_to_tensor(self, inp, base):
+    def _mandel_4_to_tensor(self, inp, base):
         out = np.einsum(
                     'ajk, ab, bmn->jkmn',
                     base,
@@ -456,24 +486,24 @@ class Converter(object):
                     )
         return out
 
-    def mandel6_2_to_tensor(self, inp):
-        return self.mandel_2_to_tensor(inp=inp, base=self.BASE6)
+    def _mandel6_2_to_tensor(self, inp):
+        return self._mandel_2_to_tensor(inp=inp, base=self.BASE6)
 
-    def mandel6_4_to_tensor(self, inp):
-        return self.mandel_4_to_tensor(inp=inp, base=self.BASE6)
+    def _mandel6_4_to_tensor(self, inp):
+        return self._mandel_4_to_tensor(inp=inp, base=self.BASE6)
 
-    def mandel9_2_to_tensor(self, inp):
-        return self.mandel_2_to_tensor(inp=inp, base=self.BASE9)
+    def _mandel9_2_to_tensor(self, inp):
+        return self._mandel_2_to_tensor(inp=inp, base=self.BASE9)
 
-    def mandel9_4_to_tensor(self, inp):
-        return self.mandel_4_to_tensor(inp=inp, base=self.BASE9)
+    def _mandel9_4_to_tensor(self, inp):
+        return self._mandel_4_to_tensor(inp=inp, base=self.BASE9)
 
-    def mandel6_2_to_mandel9(self, inp):
+    def _mandel6_2_to_mandel9(self, inp):
         zeros = np.zeros((self.DIM_MANDEL9, ), dtype=self.dtype)
         zeros[self.SLICE6] = inp
         return zeros
 
-    def mandel6_4_to_mandel9(self, inp):
+    def _mandel6_4_to_mandel9(self, inp):
         zeros = np.zeros(
                     (self.DIM_MANDEL9, self.DIM_MANDEL9),
                     dtype=self.dtype,
@@ -481,10 +511,10 @@ class Converter(object):
         zeros[self.SLICE6, self.SLICE6] = inp
         return zeros
 
-    def mandel9_2_to_mandel6(self, inp):
+    def _mandel9_2_to_mandel6(self, inp):
         return inp[self.SLICE6]
 
-    def mandel9_4_to_mandel6(self, inp):
+    def _mandel9_4_to_mandel6(self, inp):
         return inp[self.SLICE6, self.SLICE6]
 
 
@@ -522,7 +552,42 @@ class VoigtConverter(Converter):
     Examples
     --------
 
-    Todo: Add Example Ones Tensors->Mandel->Voigt
+    >>> import mechkit as mk
+    >>> con = mk.notation.VoigtConverter()
+
+    >>> ones_2 = np.ones((3, 3),)
+    [[1. 1. 1.]
+     [1. 1. 1.]
+     [1. 1. 1.]]
+    >>> ones_2_mandel = con.to_mandel6(ones_2)
+    [1.   1.   1.   1.41 1.41 1.41]
+    >>> con.mandel6_to_voigt(inp=ones_2_mandel, voigt_type='stress')
+    [1. 1. 1. 1. 1. 1.]
+    >>> con.mandel6_to_voigt(inp=ones_2_mandel, voigt_type='strain')
+    [1. 1. 1. 2. 2. 2.]
+
+    >>> ones_4_mandel = con.to_mandel6(np.ones((3, 3, 3, 3),))
+    [[1.   1.   1.   1.41 1.41 1.41]
+     [1.   1.   1.   1.41 1.41 1.41]
+     [1.   1.   1.   1.41 1.41 1.41]
+     [1.41 1.41 1.41 2.   2.   2.  ]
+     [1.41 1.41 1.41 2.   2.   2.  ]
+     [1.41 1.41 1.41 2.   2.   2.  ]]
+    >>> con.mandel6_to_voigt(inp=ones_4_mandel, voigt_type='stiffness')
+    [[1. 1. 1. 1. 1. 1.]
+     [1. 1. 1. 1. 1. 1.]
+     [1. 1. 1. 1. 1. 1.]
+     [1. 1. 1. 1. 1. 1.]
+     [1. 1. 1. 1. 1. 1.]
+     [1. 1. 1. 1. 1. 1.]]
+    >>> con.mandel6_to_voigt(inp=ones_4_mandel, voigt_type='compliance')
+    [[1. 1. 1. 2. 2. 2.]
+     [1. 1. 1. 2. 2. 2.]
+     [1. 1. 1. 2. 2. 2.]
+     [2. 2. 2. 4. 4. 4.]
+     [2. 2. 2. 4. 4. 4.]
+     [2. 2. 2. 4. 4. 4.]]
+
     '''
     def __init__(self, silent=False):
 
@@ -610,4 +675,53 @@ class VoigtConverter(Converter):
 
 
 if __name__ == '__main__':
-    pass
+    # Examples
+
+    np.set_printoptions(
+            linewidth=140,
+            precision=2,
+            # suppress=False,
+            )
+
+    # Converter
+
+    import mechkit as mk
+    con = mk.notation.Converter()
+    tensors = mk.tensors.basic()
+
+    printQueue = [
+            # import mechkit as mk
+            'tensors.I2',
+            'con.to_mandel6(tensors.I2)',
+            'np.arange(9).reshape(3,3)',
+            'con.to_mandel6(np.arange(9).reshape(3,3))',
+            'tensors.I4s',
+            'con.to_mandel6(tensors.I4s)',
+            'con.to_mandel9(tensors.I4s)',
+            'con.to_mandel9(tensors.I4s)',
+            ]
+    for val in printQueue:
+        print(val)
+        print(eval(val), '\n')
+
+    # VoigtConverter
+
+    import mechkit as mk
+    con = mk.notation.VoigtConverter()
+
+    ones_2 = np.ones((3, 3),)
+    ones_2_mandel = con.to_mandel6(ones_2)
+    ones_4_mandel = con.to_mandel6(np.ones((3, 3, 3, 3),))
+
+    printQueue = [
+            'ones_2',
+            'ones_2_mandel',
+            "con.mandel6_to_voigt(inp=ones_2_mandel, voigt_type='stress')",
+            "con.mandel6_to_voigt(inp=ones_2_mandel, voigt_type='strain')",
+            'ones_4_mandel',
+            "con.mandel6_to_voigt(inp=ones_4_mandel, voigt_type='stiffness')",
+            "con.mandel6_to_voigt(inp=ones_4_mandel, voigt_type='compliance')",
+            ]
+    for val in printQueue:
+        print(val)
+        print(eval(val), '\n')

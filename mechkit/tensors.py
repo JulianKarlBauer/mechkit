@@ -6,7 +6,32 @@ import numpy as np
 
 
 class basic(object):
-    '''Basic tensors: Identities, isotropic projectors...'''
+    '''
+    Basic tensors in tensor notations
+
+    Attributes
+    ----------
+    I2 : np.array of shape (3, 3,)
+        Identity on second order tensors
+
+    I4 : np.array of shape (3, 3, 3, 3,)
+        Identity on fourth order tensors
+
+    I4s : np.array of shape (3, 3, 3, 3,)
+        Identity on symmetric fourth order tensors
+
+    I4a : np.array of shape (3, 3, 3, 3,)
+        Identity on asymmetric fourth order tensors
+
+    P1 : np.array of shape (3, 3, 3, 3,)
+        First isotropic projector.
+        Projecting second order tensors onto its spherical part
+
+    P2 : np.array of shape (3, 3, 3, 3,)
+        Second isotropic projector.
+        Projecting second order tensors onto its symmetric deviatoric part
+
+    '''
     def __init__(self,):
 
         self.DTYPE = 'float64'
@@ -22,9 +47,9 @@ class basic(object):
 
         self.P2 = self.I4s - self.P1
 
-        self.ricci = self.levi_civita_tensor()
+        self.ricci = self._levi_civita_tensor()
 
-    def levi_civita_tensor(self,):
+    def _levi_civita_tensor(self,):
         eijk = np.zeros((3, 3, 3))
         eijk[0, 1, 2] = eijk[1, 2, 0] = eijk[2, 0, 1] = 1
         eijk[0, 2, 1] = eijk[2, 1, 0] = eijk[1, 0, 2] = -1
