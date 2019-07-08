@@ -1,3 +1,5 @@
+[docs]
+
 # Mechkit
 
 Basic tools for continuum mechanics using numpy developed at KIT
@@ -36,6 +38,8 @@ Basic tools for continuum mechanics using numpy developed at KIT
             - (Original, Elementary, Haibach, Liu-Zenner, Consistent)
 
 [markov]: http://archiv.windenergietage.de/WT25/25WT1011_F5_0935_EUROS.pdf
+
+[docs]: https://readthedocs.org/projects/pip/badge/
 
 --------------------------------------------------------------------------
 # Development
@@ -87,7 +91,7 @@ Follow [PyPa](https://packaging.python.org/tutorials/packaging-projects/)
 - Install
         conda install twine
 - Do
-        python3 twine upload dist/*
+        python3 -m twine upload dist/*
 
 ### Install from PyPi and check
 Create virtual environment
@@ -103,3 +107,10 @@ Install
 Deactivate virtualenv
 
     deactivate
+
+## ReadTheDocs
+
+- Log in to [ReadTheDocs](https://readthedocs.org) using github account.
+- Add repository and click "Next"...
+
+## Packaging for Conda
