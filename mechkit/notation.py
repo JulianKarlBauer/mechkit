@@ -3,7 +3,7 @@
 '''Notation'''
 
 import numpy as np
-
+from mechkit.utils import Ex
 
 class Converter(object):
     r'''
@@ -276,7 +276,7 @@ class Converter(object):
 
         return B
 
-    def to_mandel6(self, inp):
+    def to_mandel6(self, inp, verbose=False):
         '''Convert to Mandel6 notation
 
         Parameters
@@ -290,10 +290,13 @@ class Converter(object):
             Input in Mandel6 notation
         '''
 
+        if verbose:
+            print('Skew parts are lost!')
+
         f = self._get_to_mandel6_func(inp=inp)
         return f(inp=inp)
 
-    def to_mandel9(self, inp, verbose=False):
+    def to_mandel9(self, inp):
         '''Convert to Mandel9 notation
 
         Parameters
@@ -306,9 +309,6 @@ class Converter(object):
         np.array
             Input in Mandel9 notation
         '''
-
-        if verbose:
-            print('Skew parts are lost!')
 
         f = self._get_to_mandel9_func(inp=inp)
         return f(inp=inp)
@@ -356,7 +356,17 @@ class Converter(object):
                 1*dim_mandel9:   'm9_2',
                 2*dim_mandel9:   'm9_4',
                 }
-        return types[inp.shape]
+
+        # assert(inp.shape in types), 'Tensor shape not supported'    \
+        #                             '\n Supported shapes: {}'.format(types)
+
+        try:
+            type_ = types[inp.shape]
+        except KeyError:
+            raise Ex('Tensor shape not supported.'
+                     '\n Supported shapes: {}'.format(types)
+                     )
+        return type_
 
     def _get_to_mandel6_func(self, inp):
         '''Select transformation function by type
