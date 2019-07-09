@@ -31,6 +31,17 @@ def assertException(
 ##################################
 # Test
 
+def test_unsupported_shape():
+
+    con = mechkit.notation.Converter()
+    assertException(
+                con.to_mandel6,
+                'Tensor shape not supported',
+                args=[],
+                kwargs={'inp': np.ones((3, 2))},
+                exception=mechkit.utils.Ex,
+                )
+
 
 def test_compare_P1_P2_mandel6_tensor():
 
