@@ -210,20 +210,16 @@ class Converter(object):
 
     def get_mandel_base_sym(self,):
         '''Get orthonormal base for symmetric second order tensors following
-        [1], [2], [3]
+        [1], [2]
 
         This base can be used to transform
 
         - symmetric tensors of second order into vectors with 6 components
         - tensors of fourth order with minor symmetries into (6 x 6) matrices
 
-        .. [1] = Böhlke, T., Skript zur Vorlesung Plastizitaetstheorie SS 2014
+        .. [1] Böhlke, T., Skript zur Vorlesung Plastizitaetstheorie SS 2014
 
-        .. [2] = Cowin, S.C., 1989. Properties of the anisotropic elasticity
-            tensor. The Quarterly Journal of Mechanics and Applied Mathematics,
-            42(2), pp.249-266.
-
-        .. [3] Fedorov, F.I., 1968. Theory of elastic waves in crystals.
+        .. [2] Fedorov, F.I., 1968. Theory of elastic waves in crystals.
 
         Returns
         -------
@@ -248,7 +244,7 @@ class Converter(object):
         '''Get orthonormal base for possibly non-symmetric second order tensors
         following [4]
 
-        .. [4] = https://csmbrannon.net/tag/mandel-notation/
+        .. [4] https://csmbrannon.net/tag/mandel-notation/
 
         This base can be used to transform
 
