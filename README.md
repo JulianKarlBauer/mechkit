@@ -11,8 +11,6 @@ Basic tools for continuum mechanics using numpy developed at KIT
     - Notation / Converter
     - Tensors
 
-
-
 - Todo:
     - Meanfield
         - Localizations
@@ -39,6 +37,7 @@ Basic tools for continuum mechanics using numpy developed at KIT
           - Woehler curve
           - Miner rule
             - (Original, Elementary, Haibach, Liu-Zenner, Consistent)
+    - ...
 
 [conda]: https://anaconda.org/JulianBauerKIT/mechkit
 [PyPi]: https://pypi.org/project/mechkit/
@@ -48,6 +47,7 @@ Basic tools for continuum mechanics using numpy developed at KIT
 
 # Ship new release
 (See following sections for more details on single steps)
+
 - Doc
         cd mechkit/docs
         make clean
