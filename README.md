@@ -49,23 +49,28 @@ Basic tools for continuum mechanics using numpy developed at KIT
 (See following sections for more details on single steps)
 
 - Doc
+
         cd mechkit/docs
         make clean
         make html
 
 - PyPi
 
-    Change version-variable in `setup.py`
+    - Change version-variable in `setup.py`
 
-        source activate mechkit
-        cd mechkit
-        python3 setup.py sdist bdist_wheel
-        python3 -m twine upload dist/*
+            source activate mechkit
+            cd mechkit
+            python3 setup.py sdist bdist_wheel
+            python3 -m twine upload dist/*
 
 - Conda
-        cd mechkit/conda_build
-        conda skeleton pypi mechkit
-        ./conda_build_versions_environments.sh
+
+    - Wait 5-10 minutes after uploading to PyPi as PyPi-server has a delay time
+    - Make sure you once logged in to anaconda using command `anaconda login`
+
+            cd mechkit/conda_build
+            conda skeleton pypi mechkit
+            ./conda_build_versions_environments.sh
 
 ----------------------------------------------------------------------
 # Development
@@ -202,7 +207,6 @@ to build the module
         conda install --use-local mechkit
 
 #### Convert to other environments
-[conda_build_script]:
 
     mkdir tmp
     cd tmp
