@@ -11,7 +11,7 @@ system=$(basename $tmp)
 root_dir=$(dirname $tmp)
 
 
-for py_version in '2.7' '3.5' '3.6'
+for py_version in '2.7' '3.5' '3.6' '3.7'
 do
   package_name=$(basename $(conda-build --python ${py_version} --output .))
   package_path="${root_dir}/${py_version}/${system}/${package_name}"
