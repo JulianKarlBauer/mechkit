@@ -269,7 +269,6 @@ class Converter(object):
         B[7, 2, 0] = -self.factor
         B[8, 0, 1] = -self.factor
         B[8, 1, 0] = self.factor
-
         return B
 
     def to_mandel6(self, inp, verbose=False):
