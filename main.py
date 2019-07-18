@@ -20,17 +20,8 @@ tensors = mk.tensors.basic()
 
 # Define what to print
 printQueue = [
-        # import mechkit as mk
-        'tensors.I2',
-        'con.to_mandel6(tensors.I2)',
-        'np.arange(9).reshape(3,3)',
-        'con.to_mandel6(np.arange(9).reshape(3,3))',
-        'tensors.I4s',
-        'con.to_mandel6(tensors.I4s)',
-        'con.to_mandel9(tensors.I4s)',
-        'con.to_mandel9(tensors.I4s)',
+        "'Hi'",
         ]
-
 
 for val in printQueue:
     print(val)

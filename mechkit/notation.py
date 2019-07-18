@@ -102,9 +102,6 @@ class Converter(object):
         - :math:`C_{\alpha\beta}` : Component of fourth order tensor
         - :math:`\mathbb{C}` : Fourth order tensor
 
-
-
-
     Methods
     -------
     to_tensor(inp)
@@ -115,6 +112,9 @@ class Converter(object):
 
     to_mandel9(inp)
         Convert to Mandel notation with 6 symmetric and 3 skew base dyads
+
+    to_like(inp, like)
+        Convert input to notation of like
 
     Examples
     --------
@@ -325,13 +325,40 @@ class Converter(object):
         f = self._get_to_tensor_func(inp=inp)
         return f(inp=inp)
 
+    def to_like(self, inp, like):
+        '''Convert input to notation of like
+
+        Parameters
+        ----------
+        inp : np.array with unknown shape
+            Input
+
+        like : np.array with unknown shape
+            Tensor in desired notation
+
+        Returns
+        -------
+        np.array
+            Input in notation of like
+        '''
+
+        type_like = self._get_type_by_shape(like)
+
+        functions = {
+                't_':           self.to_tensor,
+                'm6':           self.to_mandel6,
+                'm9':           self.to_mandel9,
+                }
+
+        return functions[type_like[0:2]](inp)
+
     def _get_type_by_shape(self, inp):
         '''Identify type depending on inp.shape
 
         Parameters
         ----------
         inp : np.array with unknown shape
-            Representation of tensor/mandel6/mandel9.
+            Representation of tensor/mandel6/mandel9
 
         Returns
         -------

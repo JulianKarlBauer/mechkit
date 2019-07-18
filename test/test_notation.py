@@ -239,6 +239,59 @@ def test_ones_tensors_to_mandel6_to_voigt_to_mandel6():
                         )
 
 
+def test_to_like():
+    con = mechkit.notation.Converter()
+
+    m6_2 = np.random.rand(6, )
+    m6_4 = np.random.rand(6, 6,)
+    m9_2 = np.random.rand(9, )
+    m9_4 = np.random.rand(9, 9,)
+    t2 = np.random.rand(3, 3,)
+    t4 = np.random.rand(3, 3, 3, 3,)
+
+    t2_sym = con.to_tensor(con.to_mandel6(t2))
+    t4_sym = con.to_tensor(con.to_mandel6(t4))
+
+    funcs_pairs = {
+            con.to_tensor:  [
+                {'inp': t2,     'like': t2},
+                {'inp': m6_2,   'like': t2},
+                {'inp': m9_2,   'like': t2},
+                {'inp': t4,     'like': t4},
+                {'inp': m6_4,   'like': t4},
+                {'inp': m9_4,   'like': t4},
+                ],
+            con.to_mandel6:  [
+                {'inp': t2_sym, 'like': m6_2},
+                {'inp': m6_2,   'like': m6_2},
+                {'inp': m9_2,   'like': m6_2},
+                {'inp': t4_sym, 'like': m6_4},
+                {'inp': m6_4,   'like': m6_4},
+                {'inp': m9_4,   'like': m6_4},
+                ],
+            con.to_mandel9:  [
+                {'inp': t2,     'like': m9_2},
+                {'inp': m6_2,   'like': m9_2},
+                {'inp': m9_2,   'like': m9_2},
+                {'inp': t4,     'like': m9_4},
+                {'inp': m6_4,   'like': m9_4},
+                {'inp': m9_4,   'like': m9_4},
+                ],
+            }
+
+    for func, pairs in funcs_pairs.items():
+        for pair in pairs:
+            inp = pair['inp']
+            like = pair['like']
+
+            assert con.to_like(inp=inp, like=like).shape \
+                == like.shape
+
+            assert np.allclose(
+                        con.to_like(inp=inp, like=like),
+                        func(inp)
+                        )
+
 ##################################
 # Test eigenvalues
 
