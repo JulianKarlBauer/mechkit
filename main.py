@@ -18,9 +18,16 @@ import mechkit as mk
 con = mk.notation.Converter()
 tensors = mk.tensors.basic()
 
+t2 = np.array(
+    [[1., 6., 5., ],
+     [6., 2., 4., ],
+     [5., 4., 3., ], ]
+    )
+
 # Define what to print
 printQueue = [
-        "'Hi'",
+        "con.to_mandel6(t2)",
+        'np.sqrt(2.)',
         ]
 
 for val in printQueue:

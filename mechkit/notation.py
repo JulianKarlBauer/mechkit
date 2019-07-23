@@ -118,16 +118,21 @@ class Converter(object):
 
     Examples
     --------
+    >>> import numpy as np
     >>> import mechkit as mk
     >>> con = mk.notation.Converter()
     >>> tensors = mk.tensors.basic()
 
-    >>> tensors.I2
-    [[1. 0. 0.]
-     [0. 1. 0.]
-     [0. 0. 1.]]
-    >>> con.to_mandel6(tensors.I2)
-    [1. 1. 1. 0. 0. 0.]
+    >>> t2 = np.array(
+    >>>     [[1., 6., 5., ],
+    >>>      [6., 2., 4., ],
+    >>>      [5., 4., 3., ], ]
+    >>>      )
+    >>> con.to_mandel6(t2)
+    [1.   2.   3.   5.66 7.07 8.49]
+
+    >>> np.sqrt(2.)
+    1.414213
 
     >>> np.arange(9).reshape(3,3)
     [[0 1 2]
