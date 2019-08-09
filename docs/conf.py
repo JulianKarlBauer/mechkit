@@ -25,6 +25,13 @@ sys.path.insert(0, os.path.abspath(os.path.join('..',)))
 # print(sys.path)
 autodoc_mock_imports = ["numpy", 'np']
 
+# autodoc_default_options = {
+#     'member-order': 'bysource',
+#     }
+
+autodoc_member_order = 'bysource'
+
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
