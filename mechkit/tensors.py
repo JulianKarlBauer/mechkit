@@ -5,7 +5,7 @@
 import numpy as np
 
 
-class basic(object):
+class Basic(object):
     '''
     Basic tensors in tensor notations
 

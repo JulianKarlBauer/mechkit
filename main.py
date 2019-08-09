@@ -16,7 +16,7 @@ np.set_printoptions(
 
 import mechkit as mk
 con = mk.notation.Converter()
-tensors = mk.tensors.basic()
+tensors = mk.tensors.Basic()
 
 t2 = np.array(
     [[1., 6., 5., ],

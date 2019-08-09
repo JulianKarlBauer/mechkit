@@ -46,7 +46,7 @@ def test_unsupported_shape():
 def test_compare_P1_P2_mandel6_tensor():
 
     con = mechkit.notation.Converter()
-    t = mechkit.tensors.basic()
+    t = mechkit.tensors.Basic()
 
     # Prepare
     P1_mandel6 = 1./3. * np.array(
@@ -297,7 +297,7 @@ def test_to_like():
 
 def isotropic_stiffness_mandel6(EW1, EW2):
     con = mechkit.notation.Converter()
-    tensors = mechkit.tensors.basic()
+    tensors = mechkit.tensors.Basic()
     P1 = con.to_mandel6(tensors.P1)
     P2 = con.to_mandel6(tensors.P2)
     return P1 * EW1 + P2 * EW2

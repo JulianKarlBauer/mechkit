@@ -7,100 +7,26 @@ from mechkit.utils import Ex
 
 class Converter(object):
     r'''
-    Converter to change between common notations of numerical tensors.
+    Convert numerical tensors from one notation to another.
 
-    Supported notations
+    Supported notations and shapes:
 
     - tensor
 
-        - 2 order tensor: (3, 3)
-        - 4 order tensor: (3, 3, 3, 3,)
+        - 2. order tensor: (3, 3)
+        - 4. order tensor: (3, 3, 3, 3,)
 
-    - mandel6
+    - mandel6 [Mandel1965]_
 
-        - 2 order tensor: (6,)      [(symmetric)]
-        - 4 order tensor: (6, 6)    [(left- and right- symmetric)]
+        - 2. order tensor: (6,)      [Symmetry]
+        - 4. order tensor: (6, 6)    [Left- and right- minor symmetry]
 
-    - mandel9
+    - mandel9 [Brannon2018]_
 
-        - 2 order tensor: (9,)
-        - 4 order tensor: (9, 9)
+        - 2. order tensor: (9,)
+        - 4. order tensor: (9, 9)
 
-    Base dyads:
-
-    .. math::
-        \begin{align*}
-            \boldsymbol{B}_1 &= \boldsymbol{e}_1 \otimes \boldsymbol{e}_1    \\
-            \boldsymbol{B}_2 &= \boldsymbol{e}_2 \otimes \boldsymbol{e}_2    \\
-            \boldsymbol{B}_3 &= \boldsymbol{e}_3 \otimes \boldsymbol{e}_3    \\
-            \boldsymbol{B}_4 &= \frac{\sqrt{2}}{2}\left(
-                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_3
-                    +
-                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
-                    \right)                                                 \\
-            \boldsymbol{B}_5 &= \frac{\sqrt{2}}{2}\left(
-                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
-                    +
-                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
-                    \right)                                                 \\
-            \boldsymbol{B}_6 &= \frac{\sqrt{2}}{2}\left(
-                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_2
-                    +
-                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
-                    \right)                                                 \\
-            \boldsymbol{B}_7 &= \frac{\sqrt{2}}{2}\left(
-                    -\boldsymbol{e}_2 \otimes \boldsymbol{e}_3
-                    +
-                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
-                    \right)                                                 \\
-            \boldsymbol{B}_8 &= \frac{\sqrt{2}}{2}\left(
-                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
-                    -
-                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
-                    \right)                                                 \\
-            \boldsymbol{B}_9 &= \frac{\sqrt{2}}{2}\left(
-                    -\boldsymbol{e}_1 \otimes \boldsymbol{e}_2
-                    +
-                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
-                    \right)
-        \end{align*}
-
-    Orthogonality:
-
-    .. math::
-        \begin{align*}
-                    \boldsymbol{B}_{\alpha} &\cdot \boldsymbol{B}_{\beta}
-                            = \delta_{\alpha\beta}
-        \end{align*}
-
-    Conversions: (Einstein notation applies)
-
-    .. math::
-        \begin{align*}
-            \sigma_{\alpha} &=
-                \boldsymbol{\sigma}
-                \cdot
-                \boldsymbol{B}_{\alpha}    \\
-            C_{\alpha\beta} &=
-                \boldsymbol{B}_{\alpha}
-                \cdot
-                \mathbb{C} \left[\boldsymbol{B}_{\beta}\right]    \\
-            \boldsymbol{\sigma} &=
-                \sigma_{\alpha}
-                \boldsymbol{B}_{\alpha}    \\
-            \mathbb{C} &=
-                C_{\alpha\beta}
-                \boldsymbol{B}_{\alpha}
-                \otimes
-                \boldsymbol{B}_{\beta}   \\
-        \end{align*}
-
-    With:
-
-        - :math:`\sigma_{\alpha}` : Component of second order tensor in Mandel notation
-        - :math:`\boldsymbol{\sigma}` : Second order tensor
-        - :math:`C_{\alpha\beta}` : Component of fourth order tensor
-        - :math:`\mathbb{C}` : Fourth order tensor
+    References and theory can be found in the method descriptions below.
 
     Methods
     -------
@@ -119,9 +45,9 @@ class Converter(object):
     Examples
     --------
     >>> import numpy as np
-    >>> import mechkit as mk
-    >>> con = mk.notation.Converter()
-    >>> tensors = mk.tensors.basic()
+    >>> import mechkit
+    >>> con = mechkit.notation.Converter()
+    >>> tensors = mechkit.tensors.Basic()
 
     >>> t2 = np.array(
     >>>     [[1., 6., 5., ],
@@ -214,17 +140,147 @@ class Converter(object):
         self.BASE9 = self.get_mandel_base_skw()
 
     def get_mandel_base_sym(self,):
-        '''Get orthonormal base for symmetric second order tensors following
-        [1], [2]
+        r'''Get orthonormal basis of Mandel6 representation introduced by
+        [Mandel1965]_ and [Fedorov1968]_ and used by [Cowin1989]_.
 
-        This base can be used to transform
+        Base dyads:
 
-        - symmetric tensors of second order into vectors with 6 components
-        - tensors of fourth order with minor symmetries into (6 x 6) matrices
+        .. math::
+            \begin{align*}
+                \boldsymbol{B}_1 &= \boldsymbol{e}_1 \otimes \boldsymbol{e}_1\\
+                \boldsymbol{B}_2 &= \boldsymbol{e}_2 \otimes \boldsymbol{e}_2\\
+                \boldsymbol{B}_3 &= \boldsymbol{e}_3 \otimes \boldsymbol{e}_3\\
+                \boldsymbol{B}_4 &= \frac{\sqrt{2}}{2}\left(
+                        \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
+                        +
+                        \boldsymbol{e}_2 \otimes \boldsymbol{e}_3
+                        \right)                                              \\
+                \boldsymbol{B}_5 &= \frac{\sqrt{2}}{2}\left(
+                        \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
+                        +
+                        \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
+                        \right)                                              \\
+                \boldsymbol{B}_6 &= \frac{\sqrt{2}}{2}\left(
+                        \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
+                        +
+                        \boldsymbol{e}_1 \otimes \boldsymbol{e}_2
+                        \right)
+            \end{align*}
 
-        .. [1] Böhlke, T., Skript zur Vorlesung Plastizitaetstheorie SS 2014
+        with
 
-        .. [2] Fedorov, F.I., 1968. Theory of elastic waves in crystals.
+            - :math:`\otimes` : Dyadic product
+            - :math:`\boldsymbol{e}_\text{i}` : i-th Vector of orthonormal basis
+
+        Orthogonality:
+
+        .. math::
+            \begin{align*}
+                        \boldsymbol{B}_{\alpha} &\cdot \boldsymbol{B}_{\beta}
+                                = \delta_{\alpha\beta}
+            \end{align*}
+
+        Conversions: (Einstein notation applies)
+
+        .. math::
+            \begin{align*}
+                \sigma_{\alpha}^{\text{M}} &=
+                    \boldsymbol{\sigma}
+                    \cdot
+                    \boldsymbol{B}_{\alpha}    \\
+                C_{\alpha\beta}^{\text{M}} &=
+                    \boldsymbol{B}_{\alpha}
+                    \cdot
+                    \mathbb{C} \left[\boldsymbol{B}_{\beta}\right]    \\
+                \boldsymbol{\sigma} &=
+                    \sigma_{\alpha}^{\text{M}}
+                    \boldsymbol{B}_{\alpha}    \\
+                \mathbb{C} &=
+                    C_{\alpha\beta}^{\text{M}}
+                    \boldsymbol{B}_{\alpha}
+                    \otimes
+                    \boldsymbol{B}_{\beta}   \\
+            \end{align*}
+
+        with
+
+            - :math:`\boldsymbol{\sigma}` : Second order tensor
+            - :math:`\mathbb{C}` : Fourth order tensor
+            - :math:`\sigma_{\alpha}^{\text{M}}` : Component in Mandel notation
+            - :math:`C_{\alpha\beta}^{\text{M}}` : Component in Mandel notation
+
+        Implications of the Mandel basis:
+
+            - Stress and strain are converted equally, as well as stiffness and compliance. This is in contrast to non-normalized Voigt notation, where conversion rules depend on the physical type of the tensor entity.
+            - Eigenvalues and eigenvectors of a component matrix in Mandel notation are equal to eigenvalues and eigenvectors of the tensor.
+            - Components of the stress and strain vectors:
+
+        .. math::
+            \begin{align*}
+                \boldsymbol{\sigma}^{\text{M6}}
+                =
+                \begin{bmatrix}
+                    \sigma_{\text{11}}  \\
+                    \sigma_{\text{22}}  \\
+                    \sigma_{\text{33}}  \\
+                    \frac{\sqrt{2}}{2}\left(
+                        \sigma_{\text{32}}
+                        +
+                        \sigma_{\text{23}}
+                    \right)             \\
+                    \frac{\sqrt{2}}{2}\left(
+                        \sigma_{\text{13}}
+                        +
+                        \sigma_{\text{31}}
+                    \right)             \\
+                    \frac{\sqrt{2}}{2}\left(
+                        \sigma_{\text{23}}
+                        +
+                        \sigma_{\text{12}}
+                    \right)
+                \end{bmatrix}
+                &\quad
+               \boldsymbol{\varepsilon}^{\text{M6}}
+               =
+               \begin{bmatrix}
+                   \varepsilon_{\text{11}}  \\
+                   \varepsilon_{\text{22}}  \\
+                   \varepsilon_{\text{33}}  \\
+                   \frac{\sqrt{2}}{2}\left(
+                       \varepsilon_{\text{32}}
+                       +
+                       \varepsilon_{\text{23}}
+                   \right)             \\
+                   \frac{\sqrt{2}}{2}\left(
+                       \varepsilon_{\text{13}}
+                       +
+                       \varepsilon_{\text{31}}
+                   \right)             \\
+                   \frac{\sqrt{2}}{2}\left(
+                       \varepsilon_{\text{23}}
+                       +
+                       \varepsilon_{\text{12}}
+                   \right)
+               \end{bmatrix}
+            \end{align*}
+
+        .. warning::
+
+            - (Most) unsymmetric parts are discarded during conversion (Exception: Major symmetry of fourth order tensors). Use Mandel9 notation to represent unsymmetric tensors.
+            - Components of stiffness matrices in Mandel notation differ from those in Voigt notation. See examples of VoigtConverter below.
+
+        .. rubric:: References
+
+        .. [Mandel1965] Mandel, J., 1965.
+            Généralisation de la théorie de plasticité de WT Koiter.
+            International Journal of Solids and structures, 1(3), pp.273-295.
+
+        .. [Fedorov1968] Fedorov, F.I., 1968.
+            Theory of elastic waves in crystals.
+
+        .. [Cowin1989] Cowin, S.C., 1989.
+            Properties of the anisotropic elasticity tensor. The Quarterly
+            Journal of Mechanics and Applied Mathematics, 42(2), pp.249-266.
 
         Returns
         -------
@@ -246,15 +302,66 @@ class Converter(object):
         return B
 
     def get_mandel_base_skw(self,):
-        '''Get orthonormal base for possibly non-symmetric second order tensors
-        following [4]
+        r'''
+        Get orthonormal basis of Mandel9 representation [csmbrannonMandel]_,
+        [Brannon2018]_. The basis of Mandel6 representation is extended by
 
-        .. [4] https://csmbrannon.net/tag/mandel-notation/
+        .. math::
+            \begin{align*}
+                \boldsymbol{B}_7 &= \frac{\sqrt{2}}{2}\left(
+                        \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
+                        -
+                        \boldsymbol{e}_2 \otimes \boldsymbol{e}_3
+                        \right)                                              \\
+                \boldsymbol{B}_8 &= \frac{\sqrt{2}}{2}\left(
+                        \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
+                        -
+                        \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
+                        \right)                                              \\
+                \boldsymbol{B}_9 &= \frac{\sqrt{2}}{2}\left(
+                        \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
+                        -
+                        \boldsymbol{e}_1 \otimes \boldsymbol{e}_2
+                        \right)
+            \end{align*}
 
-        This base can be used to transform
+        This basis is used to represent skew tensors and implies:
 
-        - tensors of second order into vectors with 9 components
-        - tensors of fourth order into (9 x 9) matrices
+        .. math::
+            \begin{align*}
+                \boldsymbol{\sigma}^{\text{M9}}
+                =
+                \begin{bmatrix}
+                    \boldsymbol{\sigma}^{\text{M6}}             \\
+                    \frac{\sqrt{2}}{2}\left(
+                        \sigma_{\text{32}}
+                        -
+                        \sigma_{\text{23}}
+                    \right)             \\
+                    \frac{\sqrt{2}}{2}\left(
+                        \sigma_{\text{13}}
+                        -
+                        \sigma_{\text{31}}
+                    \right)             \\
+                    \frac{\sqrt{2}}{2}\left(
+                        \sigma_{\text{23}}
+                        -
+                        \sigma_{\text{12}}
+                    \right)
+                \end{bmatrix}
+            \end{align*}
+
+        .. rubric:: References
+
+        .. [csmbrannonMandel] https://csmbrannon.net/tag/mandel-notation/
+
+        .. [Brannon2018] Brannon, R.M., 2018. Rotation, Reflection, and Frame
+           Changes; Orthogonal tensors in computational engineering mechanics.
+           Rotation, Reflection, and Frame Changes; Orthogonal tensors in
+           computational engineering mechanics, by Brannon, RM
+           ISBN: 978-0-7503-1454-1.
+           IOP ebooks. Bristol, UK: IOP Publishing, 2018.
+
 
         Returns
         -------
@@ -556,28 +663,27 @@ class Converter(object):
 
 
 class VoigtConverter(Converter):
-    '''
-    Extended converter handling Voigt notation
+    r'''
+    Extended converter handling Voigt notation.
 
-    Voigt notation for the following physical quantities are supported:
+    Voigt notation for the following physical quantities is supported:
 
     - stress
     - strain
     - stiffness
     - compliance
 
-    Warning
-    =======
+    .. warning::
 
-    Usage of Voigt-representations is highly discouraged.
-    Don't use representations in Voigt notation in function
-    lacking "voigt" in the method name.
-    The results will be wrong.
+        Usage of Voigt-representations is highly discouraged.
+        Don't use representations in Voigt notation in function
+        lacking "voigt" in the method name.
+        The results will be wrong.
 
-    Tensor representations in Voigt notation have the same
-    dimensions than those in Mandel6 notation and therefore are
-    treated as representations in Mandel6 notation, when passed
-    to methods not including "voigt" in the method name.
+        Tensor representations in Voigt notation have the same
+        dimensions than those in Mandel6 notation and therefore are
+        treated as representations in Mandel6 notation, when passed
+        to methods not including "voigt" in the method name.
 
     Methods
     -------
@@ -589,8 +695,8 @@ class VoigtConverter(Converter):
     Examples
     --------
 
-    >>> import mechkit as mk
-    >>> con = mk.notation.VoigtConverter()
+    >>> import mechkit
+    >>> con = mechkit.notation.VoigtConverter()
 
     >>> ones_2 = np.ones((3, 3),)
     [[1. 1. 1.]
@@ -722,9 +828,9 @@ if __name__ == '__main__':
 
     # Converter
 
-    import mechkit as mk
-    con = mk.notation.Converter()
-    tensors = mk.tensors.basic()
+    import mechkit
+    con = mechkit.notation.Converter()
+    tensors = mechkit.tensors.Basic()
 
     printQueue = [
             # import mechkit as mk
@@ -743,8 +849,8 @@ if __name__ == '__main__':
 
     # VoigtConverter
 
-    import mechkit as mk
-    con = mk.notation.VoigtConverter()
+    import mechkit
+    con = mechkit.notation.VoigtConverter()
 
     ones_2 = np.ones((3, 3),)
     ones_2_mandel = con.to_mandel6(ones_2)
