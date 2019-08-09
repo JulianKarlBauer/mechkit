@@ -267,7 +267,7 @@ class Converter(object):
         .. warning::
 
             - (Most) unsymmetric parts are discarded during conversion (Exception: Major symmetry of fourth order tensors). Use Mandel9 notation to represent unsymmetric tensors.
-            - Components of stiffness matrices in Mandel notation differ from those in Voigt notation. See examples of VoigtConverter below.
+            - Components of stiffness matrix in Mandel notation differ from those in Voigt notation. See examples of VoigtConverter below.
 
         .. rubric:: References
 
