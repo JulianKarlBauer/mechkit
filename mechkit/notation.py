@@ -141,7 +141,8 @@ class Converter(object):
 
     def get_mandel_base_sym(self,):
         r'''Get orthonormal basis of Mandel6 representation introduced by
-        [Mandel1965]_ and [Fedorov1968]_ and discussed by [Cowin1992]_.
+        [Mandel1965]_, [Fedorov1968]_, [Mehrabadi1990]_  and
+        discussed by [Cowin1992]_.
 
         Base dyads:
 
@@ -277,6 +278,11 @@ class Converter(object):
 
         .. [Fedorov1968] Fedorov, F.I., 1968.
             Theory of elastic waves in crystals.
+
+        .. [Mehrabadi1990] Mehrabadi, M.M. and Cowin, S.C., 1990.
+            Eigentensors of linear anisotropic elastic materials.
+            The Quarterly Journal of Mechanics and Applied Mathematics, 43(1),
+            pp.15-41.
 
         .. [Cowin1992] Cowin, S.C. and Mehrabadi, M.M., 1992.
             The structure of the linear anisotropic elastic symmetries.
