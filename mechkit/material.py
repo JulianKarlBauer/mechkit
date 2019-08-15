@@ -80,22 +80,18 @@ class Isotropic(object):
 
     '''
     def __init__(self, **kwargs):
-        self._names_aliases = self._define_names()
-        self._dict_funcs_to_K_G = self._funcs_to_K_G()
         self._con = mechkit.notation.Converter()
         self._tensors = mechkit.tensors.Basic()
 
-        self._kwargs = kwargs
-        self._input_names = self._get_input_names_from_kwargs(**kwargs)
-
-        self._check_nbr_input_names()
+        self._kwargs_keys = self._get_kwargs_keys_from_kwargs(**kwargs)
+        self._check_nbr_kwargs_keys()
         self._get_K_G()
 
     def __getitem__(self, key):
         '''Make attributes accessible dict-like.'''
         return getattr(self, key)
 
-    def _define_names(self, ):
+    def _get_names_aliases(self, ):
         names_aliases = {
             'K':    ['k', 'compression', 'compression_modulus'],
             'G':    ['g', 'mu', 'shear', 'shear_modulus'],
@@ -109,7 +105,7 @@ class Isotropic(object):
             }
         return names_aliases
 
-    def _funcs_to_K_G(self, ):
+    def _func_to_K_G(self, keywords):
         f = frozenset
         funcs_dict = {
             f(['K',  'E']):     [self._K_by_K,       self._G_by_K_E],
@@ -123,31 +119,30 @@ class Isotropic(object):
             f(['la', 'nu']):    [self._K_by_la_nu,   self._G_by_la_nu],
             f(['G',  'nu']):    [self._K_by_G_nu,    self._G_by_G],
             }
-        return funcs_dict
+        return funcs_dict[frozenset(keywords)]
 
-    def _get_input_names_from_kwargs(self, **kwargs):
-        input_names = {}
+    def _get_kwargs_keys_from_kwargs(self, **kwargs):
+        kwargs_keys = {}
         for key, val in kwargs.items():
-            for name, aliases in self._names_aliases.items():
+            for name, aliases in self._get_names_aliases().items():
                 if key.lower() in aliases:
-                    input_names[name] = val
-        return input_names
+                    kwargs_keys[name] = val
+        return kwargs_keys
 
-    def _check_nbr_input_names(self, ):
-        if len(self._input_names) != 2:
+    def _check_nbr_kwargs_keys(self, ):
+        if len(self._kwargs_keys) != 2:
             raise Ex(
                 'Number of input parameters has to be 2.\n'
                 'Note: Isotropic material is defined by 2 parameters.\n'
-                'Identified input parameters are:{}'.format(self._input_names)
+                'Identified input parameters are:{}'.format(
+                                                    self._kwargs_keys
+                                                    )
                 )
 
-    def _get_funcs(self, names):
-        return self._dict_funcs_to_K_G[frozenset(names)]
-
     def _get_K_G(self, ):
-        func_K, func_G = self._get_funcs(self._input_names.keys())
-        self.K = func_K(**self._input_names)
-        self.G = func_G(**self._input_names)
+        func_K, func_G = self._func_to_K_G(keywords=self._kwargs_keys.keys())
+        self.K = func_K(**self._kwargs_keys)
+        self.G = func_G(**self._kwargs_keys)
 
     def _R_by_E_la(self, E, la):
         return np.sqrt(E*E + 9.*la*la + 2.*E*la)

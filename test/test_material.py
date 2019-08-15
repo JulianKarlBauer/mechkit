@@ -62,7 +62,7 @@ def test_access_dict_like():
 def test_use_aliases():
     # Get aliases
     mat = mechkit.material.Isotropic(E=1, nu=0.3)
-    aliases = mat._names_aliases
+    aliases = mat._get_names_aliases()
 
     steel = get_steel_scalar()
     steel_tensor = get_steel_tensor()
