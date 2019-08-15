@@ -90,9 +90,6 @@ class Isotropic(object):
 
         self._check_nbr_input_names()
         self._get_K_G()
-        self._set_scalar()
-        self._set_stiffness()
-        self._set_compliance()
 
     def _define_names(self, ):
         names_aliases = {
@@ -147,32 +144,6 @@ class Isotropic(object):
         func_K, func_G = self._get_funcs(self._input_names.keys())
         self.K = func_K(**self._input_names)
         self.G = func_G(**self._input_names)
-
-    def _set_scalar(self, ):
-        KG = {'K': self.K, 'G': self.G}
-        attributes = {
-                'K':        self.K,
-                'G':        self.G,
-                'mu':       self.G,
-                'E':        self._E_by_K_G(**KG),
-                'la':       self._la_by_K_G(**KG),
-                'nu':       self._nu_by_K_G(**KG),
-                'poisson':  self._nu_by_K_G(**KG),
-                }
-        for key, val in attributes.items():
-            setattr(self, key, val)
-
-    def _set_stiffness(self, ):
-        self.stiffness = \
-            3.*self.K*self._tensors.P1 \
-            + 2.*self.G*self._tensors.P2
-        self.stiffness_mandel6 = self._con.to_mandel6(self.stiffness)
-
-    def _set_compliance(self, ):
-        self.compliance_mandel6 = np.linalg.inv(
-                                self.stiffness_mandel6
-                                )
-        self.compliance = self._con.to_tensor(self.compliance_mandel6)
 
     def _R_by_E_la(self, E, la):
         return np.sqrt(E*E + 9.*la*la + 2.*E*la)
@@ -229,6 +200,42 @@ class Isotropic(object):
 
     def _nu_by_K_G(self, K, G):
         return (3.*K - 2.*G) / (2. * (3.*K + G))
+
+    @property
+    def mu(self, ):
+        return self.G
+
+    @property
+    def E(self, ):
+        return self._E_by_K_G(K=self.K, G=self.G)
+
+    @property
+    def la(self, ):
+        return self._la_by_K_G(K=self.K, G=self.G)
+
+    @property
+    def nu(self, ):
+        return self._nu_by_K_G(K=self.K, G=self.G)
+
+    @property
+    def poisson(self, ):
+        return self.nu
+
+    @property
+    def stiffness(self, ):
+        return 3.*self.K*self._tensors.P1 + 2.*self.G*self._tensors.P2
+
+    @property
+    def stiffness_mandel6(self, ):
+        return self._con.to_mandel6(self.stiffness)
+
+    @property
+    def compliance_mandel6(self, ):
+        return np.linalg.inv(self.stiffness_mandel6)
+
+    @property
+    def compliance(self, ):
+        return self._con.to_tensor(self.compliance_mandel6)
 
 
 if __name__ == '__main__':
