@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 '''Material'''
 
+import numbers
 import numpy as np
 import mechkit
 from mechkit.utils import Ex
@@ -90,6 +91,27 @@ class Isotropic(object):
     def __getitem__(self, key):
         '''Make attributes accessible dict-like.'''
         return getattr(self, key)
+
+    def __add__(self, other):
+        K = self.K + other.K
+        G = self.G + other.G
+        return Isotropic(K=K, G=G)
+
+    def __sub__(self, other):
+        K = self.K - other.K
+        G = self.G - other.G
+        return Isotropic(K=K, G=G)
+
+    def __mul__(self, other):
+        if isinstance(other, numbers.Number):
+            K = other * self.K
+            G = other * self.G
+        else:
+            raise NotImplementedError('Multiply only with numbers.')
+        return Isotropic(K=K, G=G)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
     def _get_names_aliases(self, ):
         names_aliases = {
