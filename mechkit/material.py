@@ -91,6 +91,10 @@ class Isotropic(object):
         self._check_nbr_input_names()
         self._get_K_G()
 
+    def __getitem__(self, key):
+        '''Make attributes accessible dict-like.'''
+        return getattr(self, key)
+
     def _define_names(self, ):
         names_aliases = {
             'K':    ['k', 'compression', 'compression_modulus'],

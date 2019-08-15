@@ -50,6 +50,15 @@ def test_variants_arguments_steel():
             assert np.allclose(getattr(mat, key), val)
 
 
+def test_access_dict_like():
+    steel = get_steel_scalar()
+    steel_tensor = get_steel_tensor()
+    for comb in itertools.combinations(steel.keys(), 2):
+        mat = mechkit.material.Isotropic(**{k: steel[k] for k in comb})
+        for key, val in steel_tensor.items():
+            assert np.allclose(mat[key], val)
+
+
 def test_use_aliases():
     # Get aliases
     mat = mechkit.material.Isotropic(E=1, nu=0.3)
