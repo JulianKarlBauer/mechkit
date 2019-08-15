@@ -36,6 +36,7 @@ Basic tools for continuum mechanics using numpy developed at KIT
     - Make sure you once logged in to anaconda using command `anaconda login`
 
             cd mechkit/conda_build
+            rm -r mechkit
             conda skeleton pypi mechkit
             ./conda_build_versions_environments.sh
 

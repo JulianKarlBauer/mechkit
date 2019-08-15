@@ -16,7 +16,9 @@ class Isotropic(object):
 
         - Accepts most common descriptors as keyword arguments.
         - Covers most common attributes.
+        - Supports attribute and dict-like access.
         - Includes stiffness and compliance
+        - Supports operators +, -, * with numbers
 
     Attributes: (Following table 'Conversion formulae' [wikipedia]_)
 
@@ -41,15 +43,17 @@ class Isotropic(object):
     >>> mat = Isotropic(la=11e4, G=77e3)
     >>> mat.E
     199294.11
-    >>> mat.nu
+    >>> mat['E']
+    199294.11
+    >>> mat['nu']
     0.29
-    >>> mat.poisson
+    >>> mat['poisson']
     0.29
-    >>> mat.K
+    >>> mat['K']
     161333.3
-    >>> mat.G
+    >>> mat['G']
     77000.0
-    >>> mat.la
+    >>> mat['la']
     109999.9
 
     >>> mat.stiffness_mandel6
@@ -59,14 +63,14 @@ class Isotropic(object):
      [     0.      0.      0. 154000.      0.      0.]
      [     0.      0.      0.      0. 154000.      0.]
      [     0.      0.      0.      0.      0. 154000.]]
-    >>> mat.compliance_mandel6
+    >>> mat['compliance_mandel6']
     [[ 5.02e-06 -1.48e-06 -1.48e-06  0.00e+00  0.00e+00  0.00e+00]
      [-1.48e-06  5.02e-06 -1.48e-06  0.00e+00  0.00e+00  0.00e+00]
      [-1.48e-06 -1.48e-06  5.02e-06  0.00e+00  0.00e+00  0.00e+00]
      [ 0.00e+00 -0.00e+00 -0.00e+00  6.49e-06 -0.00e+00 -0.00e+00]
      [ 0.00e+00  0.00e+00  0.00e+00  0.00e+00  6.49e-06  0.00e+00]
      [ 0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00  6.49e-06]]
-    >>> mat.stiffness
+    >>> mat['stiffness']
     [[[[264000.      0.      0.]
        [     0. 110000.      0.]
        [     0.      0. 110000.]]

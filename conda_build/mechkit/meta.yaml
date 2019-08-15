@@ -1,5 +1,5 @@
 {% set name = "mechkit" %}
-{% set version = "0.0.4" %}
+{% set version = "0.0.5" %}
 
 package:
   name: "{{ name|lower }}"
@@ -7,7 +7,7 @@ package:
 
 source:
   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: "cf5721b9eb2e90a4ade548ab81a5cd3bed8633ef3cf616a8b276ad3afb7242e2"
+  sha256: "a22d1c3abf18d78deac9e5031c94378360c196927f88400b7947651914db37d8"
 
 build:
   number: 0
