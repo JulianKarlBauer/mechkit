@@ -37,10 +37,10 @@ class Isotropic(object):
     >>> import numpy as np
     >>> import mechkit
 
-    >>> mat = Isotropic(E=200000, nu=0.3)
-    >>> mat = Isotropic(K=16e4, NU=0.3)
+    >>> mat = mechkit.material.Isotropic(E=200000, nu=0.3)
+    >>> mat = mechkit.material.Isotropic(K=16e4, NU=0.3)
 
-    >>> mat = Isotropic(la=11e4, G=77e3)
+    >>> mat = mechkit.material.Isotropic(la=11e4, G=77e3)
     >>> mat.E
     199294.11
     >>> mat['E']
@@ -271,9 +271,9 @@ if __name__ == '__main__':
             # suppress=False,
             )
 
-    mat = Isotropic(E=200000, nu=0.3)
-    mat = Isotropic(K=16e4, NU=0.3)
-    mat = Isotropic(la=11e4, G=77e3)
+    mat = mechkit.material.Isotropic(E=200000, nu=0.3)
+    mat = mechkit.material.Isotropic(K=16e4, NU=0.3)
+    mat = mechkit.material.Isotropic(la=11e4, G=77e3)
 
     printQueue = [
             'mat.E',
