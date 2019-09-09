@@ -120,16 +120,16 @@ class Isotropic(object):
     def _get_names_aliases(self, ):
         names_aliases = {
             'K':    ['k', 'compression', 'compression_modulus'],
-            'G':    ['g', 'mu', 'shear', 'shear_modulus'],
+            'G':    ['g', 'mu', 'shear', 'shear_modulus',
+                     'secondlame', 'second_lame', 'lamesecond', 'lame_second',
+                     'lame2', 'lame_2'],
             'E':    ['e', 'young', 'youngs', 'youngs_modulus',
                      'elastic_modulus'],
             'la':   ['la', 'l', 'lam', 'lamb', 'lambd', 'lambdaa',
                      'firstlame', 'first_lame', 'lamefirst', 'lame_first',
                      'lame1', 'lame_1'],
             'nu':   ['nu', 'poisson', 'poissonration', 'poisson_ration',
-                     'poissons', 'poissonsratio', 'poisson_ration',
-                     'secondlame', 'second_lame', 'lamesecond', 'lame_second',
-                     'lame2', 'lame_2'],
+                     'poissons', 'poissonsratio', 'poisson_ration'],
             }
         return names_aliases
 
