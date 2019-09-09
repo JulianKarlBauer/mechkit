@@ -127,7 +127,9 @@ class Isotropic(object):
                      'firstlame', 'first_lame', 'lamefirst', 'lame_first',
                      'lame1', 'lame_1'],
             'nu':   ['nu', 'poisson', 'poissonration', 'poisson_ration',
-                     'poissons', 'poissonsratio', 'poisson_ration'],
+                     'poissons', 'poissonsratio', 'poisson_ration',
+                     'secondlame', 'second_lame', 'lamesecond', 'lame_second',
+                     'lame2', 'lame_2'],
             }
         return names_aliases
 
