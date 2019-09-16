@@ -4,7 +4,7 @@
 
 # Mechkit
 
-Basic tools for continuum mechanics using numpy developed at KIT
+Basic mechanics toolkit.
 
 [conda]: https://anaconda.org/JulianBauerKIT/mechkit
 [PyPi]: https://pypi.org/project/mechkit/
@@ -43,7 +43,7 @@ Basic tools for continuum mechanics using numpy developed at KIT
 ----------------------------------------------------------------------
 # Development
 
-- Ubuntu 16.04
+- Ubuntu 18.04
 - Anaconda 4.6.14
 
 ## Environment
@@ -200,7 +200,7 @@ to build the module
 - Install and test
 
         conda create -n test123 python=3
-        conda install -c julianbauerkit mechkit
+        conda install -c <user_name> mechkit
 
 - Clean up testing
 
