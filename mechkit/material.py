@@ -126,7 +126,7 @@ class Isotropic(object):
                      'c44', 'c_44', 'c44', 'c_44', 'c44', 'c_44', ],
             'E':    ['e', 'young', 'youngs', 'youngs_modulus',
                      'elastic_modulus', ],
-            'la':   ['la', 'l', 'lam', 'lamb', 'lambd', 'lambdaa',
+            'la':   ['la', 'l', 'lambda',
                      'firstlame', 'first_lame', 'lamefirst', 'lame_first',
                      'lame1', 'lame_1',
                      'c23', 'c_23', 'c13', 'c_13', 'c12', 'c_12',
