@@ -6,7 +6,7 @@
 
 Basic continuum mechanics toolkit.
 
-[conda]: https://anaconda.org/JulianBauerKIT/mechkit
+[conda]: https://anaconda.org/JulianKarlBauer/mechkit
 [PyPi]: https://pypi.org/project/mechkit/
 
 
