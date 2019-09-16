@@ -84,9 +84,10 @@ class Isotropic(object):
     .. [wikipedia] https://en.wikipedia.org/wiki/Elastic_modulus
 
     '''
-    def __init__(self, **kwargs):
+    def __init__(self, auxetic=False, **kwargs, ):
         self._con = mechkit.notation.VoigtConverter(silent=True)
         self._tensors = mechkit.tensors.Basic()
+        self.auxetic = auxetic
 
         self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
         self._check_nbr_useful_kwargs()
@@ -188,9 +189,8 @@ class Isotropic(object):
         return np.sqrt(E*E + 9.*la*la + 2.*E*la)
 
     def _S_by_E_M(self, E, M):
-        auxetic = False
         S = np.sqrt(E**2 + 9.*M**2 - 10.*E*M)
-        return S if not auxetic else -S
+        return S if not self.auxetic else -S
 
     def _K_by_K(self, **kwargs):
         return kwargs['K']
