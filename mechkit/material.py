@@ -92,6 +92,7 @@ class Isotropic(object):
         self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
         self._check_nbr_useful_kwargs()
         self._get_K_G()
+        self._check_positive_definiteness()
 
     def __getitem__(self, key):
         '''Make attributes accessible dict-like.'''
@@ -178,6 +179,14 @@ class Isotropic(object):
                 'Identified input parameters are:{}'.format(
                                                     self._useful_kwargs
                                                     )
+                )
+
+    def _check_positive_definiteness(self, ):
+        if not ((self.K >= 0.) and (self.G >= 0.)):
+            raise Ex(
+                'Negative K or G.\n'
+                'K and G of positiv definit isotropic material'
+                'have to be positive. \nK={} G={}'.format(self.K, self.G)
                 )
 
     def _get_K_G(self, ):
