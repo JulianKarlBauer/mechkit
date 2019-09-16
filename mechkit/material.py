@@ -88,8 +88,8 @@ class Isotropic(object):
         self._con = mechkit.notation.Converter()
         self._tensors = mechkit.tensors.Basic()
 
-        self._kwargs_keys = self._get_kwargs_keys_from_kwargs(**kwargs)
-        self._check_nbr_kwargs_keys()
+        self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
+        self._check_nbr_useful_kwargs()
         self._get_K_G()
 
     def __getitem__(self, key):
@@ -149,7 +149,7 @@ class Isotropic(object):
             }
         return funcs_dict[frozenset(keywords)]
 
-    def _get_kwargs_keys_from_kwargs(self, **kwargs):
+    def _get_useful_kwargs_from_kwargs(self, **kwargs):
         kwargs_keys = {}
         for key, val in kwargs.items():
             for name, aliases in self._get_names_aliases().items():
@@ -157,20 +157,20 @@ class Isotropic(object):
                     kwargs_keys[name] = val
         return kwargs_keys
 
-    def _check_nbr_kwargs_keys(self, ):
-        if len(self._kwargs_keys) != 2:
+    def _check_nbr_useful_kwargs(self, ):
+        if len(self._useful_kwargs) != 2:
             raise Ex(
                 'Number of input parameters has to be 2.\n'
                 'Note: Isotropic material is defined by 2 parameters.\n'
                 'Identified input parameters are:{}'.format(
-                                                    self._kwargs_keys
+                                                    self._useful_kwargs
                                                     )
                 )
 
     def _get_K_G(self, ):
-        func_K, func_G = self._func_to_K_G(keywords=self._kwargs_keys.keys())
-        self.K = func_K(**self._kwargs_keys)
-        self.G = func_G(**self._kwargs_keys)
+        func_K, func_G = self._func_to_K_G(keywords=self._useful_kwargs.keys())
+        self.K = func_K(**self._useful_kwargs)
+        self.G = func_G(**self._useful_kwargs)
 
     def _R_by_E_la(self, E, la):
         return np.sqrt(E*E + 9.*la*la + 2.*E*la)
