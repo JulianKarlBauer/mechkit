@@ -2,7 +2,7 @@
 [![Anaconda-Server Badge](https://anaconda.org/anaconda/markdown/badges/installer/conda.svg)][conda]
 [![PyPI version](https://badge.fury.io/py/mechkit.svg)][PyPi]
 
-# Mechkit
+# mechkit
 
 Basic continuum mechanics toolkit.
 
