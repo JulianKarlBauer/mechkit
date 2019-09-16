@@ -130,6 +130,9 @@ class Isotropic(object):
                      'lame1', 'lame_1'],
             'nu':   ['nu', 'poisson', 'poissonration', 'poisson_ration',
                      'poissons', 'poissonsratio', 'poisson_ration'],
+            'M':    ['m', 'pwavemodulus', 'p_wave_modulus',
+                     'longitudinal_modulus', 'longitudinalmodulus',
+                     'constrained modulus', 'constrainedmodulus'],
             }
         return names_aliases
 
@@ -140,12 +143,17 @@ class Isotropic(object):
             f(['K',  'la']):    [self._K_by_K,       self._G_by_K_la],
             f(['K',  'G']):     [self._K_by_K,       self._G_by_G],
             f(['K',  'nu']):    [self._K_by_K,       self._G_by_K_nu],
+            f(['K',  'M']):     [self._K_by_K,       self._G_by_K_M],
             f(['E',  'la']):    [self._K_by_E_la,    self._G_by_E_la],
             f(['E',  'G']):     [self._K_by_E_G,     self._G_by_G],
             f(['E',  'nu']):    [self._K_by_E_nu,    self._G_by_E_nu],
+            f(['E',  'M']):     [self._K_by_E_M,     self._G_by_E_M],
             f(['la', 'G']):     [self._K_by_la_G,    self._G_by_G],
             f(['la', 'nu']):    [self._K_by_la_nu,   self._G_by_la_nu],
+            f(['la', 'M']):     [self._K_by_la_M,    self._G_by_la_M],
             f(['G',  'nu']):    [self._K_by_G_nu,    self._G_by_G],
+            f(['G',  'M']):     [self._K_by_G_M,     self._G_by_G],
+            f(['nu',  'M']):    [self._K_by_nu_M,    self._G_by_nu_M],
             }
         return funcs_dict[frozenset(keywords)]
 
@@ -175,6 +183,11 @@ class Isotropic(object):
     def _R_by_E_la(self, E, la):
         return np.sqrt(E*E + 9.*la*la + 2.*E*la)
 
+    def _S_by_E_M(self, E, M):
+        auxetic = False
+        S = np.sqrt(E**2 + 9.*M**2 - 10.*E*M)
+        return S if not auxetic else -S
+
     def _K_by_K(self, **kwargs):
         return kwargs['K']
 
@@ -188,14 +201,26 @@ class Isotropic(object):
     def _K_by_E_nu(self, E, nu):
         return E / (3. * (1. - 2.*nu))
 
+    def _K_by_E_M(self, E, M):
+        return (3.*M - E + self._S_by_E_M(E=E, M=M)) / 6.
+
     def _K_by_la_G(self, la, G):
         return la + 2./3. * G
 
     def _K_by_la_nu(self, la, nu):
         return (la * (1. + nu)) / (3.*nu)
 
+    def _K_by_la_M(self, la, M):
+        return (M + 2.*la) / 3.
+
     def _K_by_G_nu(self, G, nu):
         return (2.*G * (1. + nu)) / (3. * (1. - 2.*nu))
+
+    def _K_by_G_M(self, G, M):
+        return M - (4.*G)/3
+
+    def _K_by_nu_M(self, nu, M):
+        return (M*(1.+nu)) / (3.*(1-nu))
 
     def _G_by_G(self, **kwargs):
         return kwargs['G']
@@ -209,6 +234,9 @@ class Isotropic(object):
     def _G_by_K_nu(self, K, nu):
         return (3.*K * (1. - 2.*nu)) / (2. * (1. + nu))
 
+    def _G_by_K_M(self, K, M):
+        return 3.*(M - K) / 4.
+
     def _G_by_E_la(self, E, la):
         R = self._R_by_E_la(E, la)
         return (E - 3.*la + R) / (4.)
@@ -216,8 +244,17 @@ class Isotropic(object):
     def _G_by_E_nu(self, E, nu):
         return E / (2. * (1. + nu))
 
+    def _G_by_E_M(self, E, M):
+        return (3.*M + E - self._S_by_E_M(E=E, M=M)) / 8.
+
     def _G_by_la_nu(self, la, nu):
         return (la * (1. - 2.*nu)) / (2.*nu)
+
+    def _G_by_la_M(self, la, M):
+        return (M - la) / 2.
+
+    def _G_by_nu_M(self, nu, M):
+        return (M*(1 - 2.*nu)) / (2.*(1 - nu))
 
     def _E_by_K_G(self, K, G):
         return (9.*K*G) / (3.*K + G)
@@ -227,6 +264,9 @@ class Isotropic(object):
 
     def _nu_by_K_G(self, K, G):
         return (3.*K - 2.*G) / (2. * (3.*K + G))
+
+    def _M_by_K_G(self, K, G):
+        return K + (4.*G)/3.
 
     @property
     def mu(self, ):
@@ -243,6 +283,10 @@ class Isotropic(object):
     @property
     def nu(self, ):
         return self._nu_by_K_G(K=self.K, G=self.G)
+
+    @property
+    def M(self, ):
+        return self._M_by_K_G(K=self.K, G=self.G)
 
     @property
     def poisson(self, ):

@@ -26,6 +26,7 @@ def get_steel_scalar():
         'K':    5e5/3.,
         'la':   1.5e6/13,
         'G':    1e6/13,
+        'M':    3.5e6/13,
         }
 
 
@@ -116,7 +117,7 @@ def test_arithmetic_mult_sub():
 
 
 if __name__ == '__main__':
-    test_arithmetic_add()
+    test_variants_arguments_steel()
 
 
 
