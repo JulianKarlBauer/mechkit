@@ -1,4 +1,4 @@
-MechKIT
+mechkit
 =======
 
 .. automodule:: mechkit

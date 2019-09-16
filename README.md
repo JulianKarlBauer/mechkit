@@ -4,7 +4,7 @@
 
 # Mechkit
 
-Basic mechanics toolkit.
+Basic continuum mechanics toolkit.
 
 [conda]: https://anaconda.org/JulianBauerKIT/mechkit
 [PyPi]: https://pypi.org/project/mechkit/
@@ -17,9 +17,7 @@ Basic mechanics toolkit.
 
 - Doc
 
-        cd mechkit/docs
-        make clean
-        make html
+        push master branch to origin
 
 - PyPi
 

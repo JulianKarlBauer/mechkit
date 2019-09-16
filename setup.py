@@ -5,14 +5,14 @@ import setuptools
 
 setuptools.setup(
     name="mechkit",
-    version="0.0.5",
+    version="0.1.0",
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
     description="Basic continuum mechanics toolkit",
     long_description="Basic continuum mechanics toolkit",
     # long_description=long_description,
     # long_description_content_type="text/markdown",
-    url="https://github.com/JulianBauerKIT/mechkit",
+    url="https://github.com/JulianKarlBauer/mechkit",
     packages=setuptools.find_packages(),
     install_requires=[
           'numpy',
