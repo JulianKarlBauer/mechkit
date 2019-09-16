@@ -85,7 +85,7 @@ class Isotropic(object):
 
     '''
     def __init__(self, **kwargs):
-        self._con = mechkit.notation.Converter()
+        self._con = mechkit.notation.VoigtConverter(silent=True)
         self._tensors = mechkit.tensors.Basic()
 
         self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
@@ -305,12 +305,26 @@ class Isotropic(object):
         return self._con.to_mandel6(self.stiffness)
 
     @property
+    def stiffness_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                    self.stiffness_mandel6,
+                    voigt_type='stiffness',
+                    )
+
+    @property
     def compliance_mandel6(self, ):
         return np.linalg.inv(self.stiffness_mandel6)
 
     @property
     def compliance(self, ):
         return self._con.to_tensor(self.compliance_mandel6)
+
+    @property
+    def compliance_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                    self.compliance_mandel6,
+                    voigt_type='compliance',
+                    )
 
 
 if __name__ == '__main__':

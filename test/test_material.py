@@ -33,13 +33,22 @@ def get_steel_scalar():
 def get_steel_tensor():
     steel = get_steel_scalar()
 
-    con = mechkit.notation.Converter()
+    con = mechkit.notation.VoigtConverter(silent=True)
     tensors = mechkit.tensors.Basic()
 
     steel['stiffness'] = 3.*steel['K']*tensors.P1 + 2.*steel['G']*tensors.P2
     steel['stiffness_mandel6'] = con.to_mandel6(steel['stiffness'])
+    steel['stiffness_voigt'] = con.mandel6_to_voigt(
+                                    steel['stiffness_mandel6'],
+                                    voigt_type='stiffness',
+                                    )
+
     steel['compliance_mandel6'] = np.linalg.inv(steel['stiffness_mandel6'])
     steel['compliance'] = con.to_tensor(steel['compliance_mandel6'])
+    steel['compliance_voigt'] = con.mandel6_to_voigt(
+                                    steel['compliance_mandel6'],
+                                    voigt_type='compliance',
+                                    )
     return steel
 
 
@@ -48,6 +57,7 @@ def get_additive_steel_tensor():
     steel.pop('nu')
     steel.pop('compliance_mandel6')
     steel.pop('compliance')
+    steel.pop('compliance_voigt')
     return steel
 
 
