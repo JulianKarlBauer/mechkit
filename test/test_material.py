@@ -19,7 +19,7 @@ np.set_printoptions(
         )
 
 
-def get_steel_scalar():
+def steel_scalars():
     return {
         'E':    2e5,
         'nu':   0.3,
@@ -30,49 +30,87 @@ def get_steel_scalar():
         }
 
 
-def get_steel_tensor():
-    steel = get_steel_scalar()
-
+def add_stiffnesses(inp):
     con = mechkit.notation.VoigtConverter(silent=True)
     tensors = mechkit.tensors.Basic()
 
-    steel['stiffness'] = 3.*steel['K']*tensors.P1 + 2.*steel['G']*tensors.P2
-    steel['stiffness_mandel6'] = con.to_mandel6(steel['stiffness'])
-    steel['stiffness_voigt'] = con.mandel6_to_voigt(
-                                    steel['stiffness_mandel6'],
+    inp['stiffness'] = 3.*inp['K']*tensors.P1 + 2.*inp['G']*tensors.P2
+    inp['stiffness_mandel6'] = con.to_mandel6(inp['stiffness'])
+    inp['stiffness_voigt'] = con.mandel6_to_voigt(
+                                    inp['stiffness_mandel6'],
                                     voigt_type='stiffness',
                                     )
+    return inp
 
-    steel['compliance_mandel6'] = np.linalg.inv(steel['stiffness_mandel6'])
-    steel['compliance'] = con.to_tensor(steel['compliance_mandel6'])
-    steel['compliance_voigt'] = con.mandel6_to_voigt(
-                                    steel['compliance_mandel6'],
+
+def add_compliances(inp):
+    con = mechkit.notation.VoigtConverter(silent=True)
+
+    inp['compliance_mandel6'] = np.linalg.inv(inp['stiffness_mandel6'])
+    inp['compliance'] = con.to_tensor(inp['compliance_mandel6'])
+    inp['compliance_voigt'] = con.mandel6_to_voigt(
+                                    inp['compliance_mandel6'],
                                     voigt_type='compliance',
                                     )
-    return steel
 
 
-def get_additive_steel_tensor():
-    steel = get_steel_tensor()
-    steel.pop('nu')
-    steel.pop('compliance_mandel6')
-    steel.pop('compliance')
-    steel.pop('compliance_voigt')
-    return steel
+def add_tensors(inp):
+    out = copy.deepcopy(inp)
+    add_stiffnesses(out)
+    add_compliances(out)
+    return out
+
+
+def add_additive_tensors(inp):
+    out = copy.deepcopy(inp)
+    out.pop('nu')
+    add_stiffnesses(out)
+    return out
 
 
 def test_variants_arguments_steel():
-    steel = get_steel_scalar()
-    steel_tensor = get_steel_tensor()
+    steel = steel_scalars()
+    steel_tensor = add_tensors(inp=steel)
     for comb in itertools.combinations(steel.keys(), 2):
         mat = mechkit.material.Isotropic(**{k: steel[k] for k in comb})
         for key, val in steel_tensor.items():
             assert np.allclose(getattr(mat, key), val)
 
 
+def test_reference():
+    return {
+            'C11': 15.755,                  # e11 Pa
+            'C44': 5.3184,                  # e11 Pa
+            'C12': 5.11850,                 # e11 Pa
+            'nu': 0.2452,
+            'E': 13.245,                    # e11 Pa
+            }
+
+
+def test_reference_values():
+    inp = test_reference()
+    for comb in itertools.combinations(inp.keys(), 2):
+        print('######################\n', comb)
+        mat = mechkit.material.Isotropic(**{k: inp[k] for k in comb})
+        keys = ['E', 'nu']
+        for key in keys:
+            calculated = getattr(mat, key)
+            reference = inp[key]
+            print(key)
+            print('calculated: ', calculated)
+            print('reference: ', reference)
+            print()
+            assert np.allclose(
+                        calculated,
+                        reference,
+                        rtol=1e-4,
+                        atol=1e-3,
+                        )
+
+
 def test_access_dict_like():
-    steel = get_steel_scalar()
-    steel_tensor = get_steel_tensor()
+    steel = steel_scalars()
+    steel_tensor = add_tensors(inp=steel)
     for comb in itertools.combinations(steel.keys(), 2):
         mat = mechkit.material.Isotropic(**{k: steel[k] for k in comb})
         for key, val in steel_tensor.items():
@@ -84,8 +122,8 @@ def test_use_aliases():
     mat = mechkit.material.Isotropic(E=1, nu=0.3)
     aliases = mat._get_names_aliases()
 
-    steel = get_steel_scalar()
-    steel_tensor = get_steel_tensor()
+    steel = steel_scalars()
+    steel_tensor = add_tensors(inp=steel)
 
     for comb in itertools.combinations(steel.keys(), 2):
         for alias0 in aliases[comb[0]]:
@@ -101,33 +139,37 @@ def test_use_aliases():
 
 
 def test_arithmetic_add():
-    additive_steel = get_additive_steel_tensor()
+
+    inp = steel_scalars()
+    result = add_tensors(inp)
+    additive_result = add_additive_tensors(inp)
 
     comb = ['K', 'G']
-    mat0 = mechkit.material.Isotropic(**{k: additive_steel[k] for k in comb})
+    mat0 = mechkit.material.Isotropic(**{k: additive_result[k] for k in comb})
     mat = mat0 + mat0
 
-    for key, val in additive_steel.items():
+    for key, val in additive_result.items():
         assert np.allclose(mat[key], 2*val)
 
     for key in ['compliance_mandel6', 'compliance']:
-        val = get_steel_tensor()[key]
-        assert np.allclose(mat[key], 0.5*val)
+        assert np.allclose(mat[key], 0.5*result[key])
 
 
 def test_arithmetic_mult_sub():
-    additive_steel = get_additive_steel_tensor()
+
+    inp = steel_scalars()
+    additive_result = add_additive_tensors(inp)
 
     comb = ['K', 'G']
-    mat0 = mechkit.material.Isotropic(**{k: additive_steel[k] for k in comb})
+    mat0 = mechkit.material.Isotropic(**{k: additive_result[k] for k in comb})
     mat = 4*mat0 - mat0
 
-    for key, val in additive_steel.items():
+    for key, val in additive_result.items():
         assert np.allclose(mat[key], 3*val)
 
 
 if __name__ == '__main__':
-    test_variants_arguments_steel()
+    test_reference_values()
 
 
 
