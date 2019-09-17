@@ -5,6 +5,7 @@
 import numbers
 import numpy as np
 import mechkit
+import warnings
 from mechkit.utils import Ex
 
 
@@ -172,10 +173,10 @@ class Isotropic(object):
     def _check_nbr_useful_kwargs(self, **kwargs):
         if len(self._useful_kwargs) != 2:
             raise Ex(
-                'Number of input parameters has to be 2.\n'
-                'Note: Isotropic material is defined by 2 parameters.\n'
-                'Given arguments are:{}\n'
-                'Identified primary input parameters are:{}\n'.format(
+                ('Number of input parameters has to be 2.\n'
+                 'Note: Isotropic material is defined by 2 parameters.\n'
+                 'Given arguments are:{}\n'
+                 'Identified primary input parameters are:{}\n').format(
                                                     kwargs,
                                                     self._useful_kwargs
                                                     )
@@ -198,6 +199,13 @@ class Isotropic(object):
         return np.sqrt(E*E + 9.*la*la + 2.*E*la)
 
     def _S_by_E_M(self, E, M):
+        warnings.warn(
+            message=(
+             "Using parameters 'E' and 'M' leads to an ambiguity.\n"
+             "Use 'auxetic=False' if you expect a positive poissons ratio.\n"
+             "Use 'auxetic=True' if you expect a negative poissons ratio."),
+            category=UserWarning,
+            )
         S = np.sqrt(E**2 + 9.*M**2 - 10.*E*M)
         return S if not self.auxetic else -S
 

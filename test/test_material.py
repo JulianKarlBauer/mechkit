@@ -9,6 +9,7 @@ import os
 import numpy as np
 import itertools
 import copy
+import pytest
 
 sys.path.append(os.path.join('..'))
 import mechkit
@@ -68,6 +69,7 @@ def add_additive_tensors(inp):
     return out
 
 
+@pytest.mark.filterwarnings('ignore::UserWarning')
 def test_variants_arguments_steel():
     steel = steel_scalars()
     steel_tensor = add_tensors(inp=steel)
@@ -87,6 +89,7 @@ def test_reference():
             }
 
 
+@pytest.mark.filterwarnings('ignore::UserWarning')
 def test_reference_values():
     inp = test_reference()
     for comb in itertools.combinations(inp.keys(), 2):
@@ -108,6 +111,7 @@ def test_reference_values():
                         )
 
 
+@pytest.mark.filterwarnings('ignore::UserWarning')
 def test_access_dict_like():
     steel = steel_scalars()
     steel_tensor = add_tensors(inp=steel)
@@ -117,6 +121,7 @@ def test_access_dict_like():
             assert np.allclose(mat[key], val)
 
 
+@pytest.mark.filterwarnings('ignore::UserWarning')
 def test_use_aliases():
     # Get aliases
     mat = mechkit.material.Isotropic(E=1, nu=0.3)
