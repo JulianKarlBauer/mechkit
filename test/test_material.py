@@ -79,9 +79,9 @@ def test_variants_arguments_steel():
 
 def test_reference():
     return {
-            'C11': 15.755,                  # e11 Pa
-            'C44': 5.3184,                  # e11 Pa
-            'C12': 5.11850,                 # e11 Pa
+            'C11_voigt': 15.755,                  # e11 Pa
+            'C44_voigt': 5.3184,                  # e11 Pa
+            'C12_voigt': 5.11850,                 # e11 Pa
             'nu': 0.2452,
             'E': 13.245,                    # e11 Pa
             }

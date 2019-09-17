@@ -124,15 +124,19 @@ class Isotropic(object):
             'K':    ['k', 'compression_modulus', ],
             'G':    ['g', 'mu', 'shear_modulus',
                      'second_lame', 'lame_2',
-                     'c44', 'c_44', 'c55', 'c_55', 'c66', 'c_66', ],
+                     'c44_voigt', 'c55_voigt', 'c66_voigt',
+                     'c2323', 'c1313', 'c1212'],
             'E':    ['e', 'youngs_modulus', 'elastic_modulus', ],
             'la':   ['la', 'lambda', 'first_lame', 'lame_1',
-                     'c23', 'c_23', 'c13', 'c_13', 'c12', 'c_12',
-                     'c32', 'c_32', 'c31', 'c_31', 'c21', 'c_21', ],
+                     'c23_voigt', 'c13_voigt', 'c12_voigt',
+                     'c32_voigt', 'c31_voigt', 'c21_voigt',
+                     'c2233', 'c1133', 'c1122',
+                     'c3322', 'c3311', 'c2211', ],
             'nu':   ['nu', 'poisson', 'poisson_ratio', ],
             'M':    ['m', 'p_wave_modulus', 'longitudinal_modulus',
                      'constrained modulus',
-                     'c11', 'c_11', 'c22', 'c_22', 'c33', 'c_33', ],
+                     'c11_voigt', 'c22_voigt', 'c33_voigt',
+                     'c1111', 'c2222', 'c3333', ],
             }
         return names_aliases
 
