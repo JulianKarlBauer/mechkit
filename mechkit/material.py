@@ -10,79 +10,318 @@ from mechkit.utils import Ex
 
 
 class Isotropic(object):
-    '''Representation of isotropic homogeneous material,
-    defined by exactly **two** parameters.
+    r'''Representation of isotropic homogeneous material.
 
-    Features:
+    Use cases:
 
-        - Accepts most common descriptors as keyword arguments.
-        - Covers most common attributes.
-        - Supports attribute and dict-like access.
-        - Includes stiffness and compliance
-        - Supports operators +, -, * with numbers
+        - Create an instance of this class and
 
-    Attributes: (Following table 'Conversion formulae' [wikipedia]_)
+            - use the instance as an container representing the material or
+            - access most common material parameters as attributes or dict-like
+              (implementation of [wikipedia_conversion_table]_)
+            - do arithemtic on eigenvalues using the operators
+              +, -, * with numbers.
 
-        - **E** : Young's modulus
-        - **poisson**, **nu** : Poissons ratio
+    **Two** independent material parameters uniquely define an isotropic
+    material [Betram2015]_ (chapter 4.1.2).
+    Therefore, exactly two material parameters have to be passed to the
+    constructor of this class.
+
+    The following primary arguments and aliases are valid, **case-insensitive**
+    **keyword arguments** of the constructor:
+
+        - **K** : Compression modulus
+
+            *Aliases* : compression_modulus
+
+        - **G** : Shear modulus
+
+            *Aliases* : mu, shear_modulus, second_lame, lame_2,
+            C44_voigt, C55_voigt, C66_voigt,
+            C2323, C1313, C1212
+
+        - **E** : Youngs modulus
+
+            *Aliases* : youngs_modulus, elastic_modulus
+
+        - **la**: First Lame parameter
+
+            *Aliases* : lambd, first_lame, lame_1,
+            C23_voigt, C13_voigt, C12_voigt,
+            C2233, C1133, C1122,
+            C3322, C3311, C2211
+
+        - **nu**: Poission's ratio
+
+            *Aliases* : poisson, poisson_ratio
+
+        - **M** : Constrained modulus or P-wave modulus
+
+            *Aliases* : p_wave_modulus, longitudinal_modulus,
+            constrained modulus,
+            C11_voigt, C22_voigt, C33_voigt,
+            C1111, C2222, C3333
+
+    with (See also note below)
+
+        - C<ij>_voigt : Component of stiffness matrix in Voigt notation
+        - C<ijkl> : Component of stiffness in tensor notation
+
+
+    Attributes: **(** Accessible both as attributes and dict-like['key'] **)**
+
         - **K** : Bulk modulus
         - **G**, **mu** : Shear modulus
+        - **E** : Young's modulus
+        - **nu**, **poisson** : Poissons ratio
         - **la** : Lame's first parameter
+
         - **stiffness** : Stiffness in tensor notation
         - **stiffness_mandel6** : Stiffness in Mandel6 notation
+        - **stiffness_voigt** : Stiffness in Voigt notation
+
         - **compliance** : Compliance in tensor notation
         - **compliance_mandel6** : Compliance in Mandel6 notation
+        - **compliance_voigt** : Compliance in Voigt notation
+
+    Warning
+    -------
+
+        Using parameters **E** and **M** leads to an **ambiguity**
+        as the poisson's ratio can be positive or negative.
+
+        - Use **auxetic=False** if you expect a **positive** poissons ratio.
+        - Use **auxetic=True** if you expect a **negative** poissons ratio.
+
+
+    Note
+    ----
+
+        Definition of stiffness components:
+
+        .. math::
+            \begin{align*}
+                \mathbb{C}
+                &=
+                C_{ijkl}
+                \;
+                \mathbf{e}_{i}
+                \otimes
+                \mathbf{e}_{j}
+                \otimes
+                \mathbf{e}_{k}
+                \otimes
+                \mathbf{e}_{l}  \\
+                &=
+                \begin{bmatrix}
+             C_{11}  & C_{12}       & C_{13} & C_{14} & C_{15} & C_{16} \\
+                     & C_{22}       & C_{23} & C_{24} & C_{25} & C_{26} \\
+                     &              & C_{33} & C_{34} & C_{35} & C_{36} \\
+                     &              &        & C_{44} & C_{45} & C_{46} \\
+                     & \text{sym}   &        &        & C_{55} & C_{56} \\
+                     &              &        &        &        & C_{66}
+                \end{bmatrix}_{[\text{Voigt}]}
+                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}        \\
+                &=
+                \begin{bmatrix}
+             C_{11}  & C_{12}       & C_{13} & \sqrt{2}C_{14} & \sqrt{2}C_{15} & \sqrt{2}C_{16} \\
+                     & C_{22}       & C_{23} & \sqrt{2}C_{24} & \sqrt{2}C_{25} & \sqrt{2}C_{26} \\
+                     &              & C_{33} & \sqrt{2}C_{34} & \sqrt{2}C_{35} & \sqrt{2}C_{36} \\
+                     &              &        & 2C_{44} & 2C_{45} & 2C_{46} \\
+                     & \text{sym}   &        &         & 2C_{55} & 2C_{56} \\
+                     &              &        &         &         & 2C_{66}
+                \end{bmatrix}_{[\text{Mandel6}]}
+                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+            \end{align*}
+
+        with
+
+        - :math:`\boldsymbol{B}_{\alpha}` : Base dyad of Mandel6 notation
+          (See :mod:`mechkit.notation`)
+        - :math:`\boldsymbol{V}_{\alpha}` : Base dyad of Voigt notation
+          (See [csmbrannonMandel]_)
+
+
+    Note
+    ----
+
+        Isotropic linear elasticity:
+
+        .. math::
+            \begin{align*}
+                \boldsymbol{\sigma}
+                &=
+                \mathbb{C}
+                \left[
+                    \boldsymbol{\varepsilon}
+                \right]         \\
+                &=
+                \left(
+                2 \mu \mathbb{I}^{\text{S}}
+                +
+                \lambda \mathbf{I} \otimes \mathbf{I}
+                \right)
+                \left[
+                    \boldsymbol{\varepsilon}
+                \right]         \\
+                &=
+                \left(
+                3 K \mathbb{P}_{\text{1}}
+                +
+                2 G \mathbb{P}_{\text{2}}
+                \right)
+                \left[
+                    \boldsymbol{\varepsilon}
+                \right]
+            \end{align*}
+
+        with (See :class:`mechkit.tensors.Basic` for details and definitions)
+
+        .. math::
+            \begin{align*}
+                \mathbb{I}^{\text{S}}
+                &=
+                \begin{bmatrix}
+              1 & 0 & 0 & 0 & 0 & 0 \\
+              0 & 1 & 0 & 0 & 0 & 0 \\
+              0 & 0 & 1 & 0 & 0 & 0 \\
+              0 & 0 & 0 & \frac{1}{2} & 0 & 0 \\
+              0 & 0 & 0 & 0 & \frac{1}{2} & 0 \\
+              0 & 0 & 0 & 0 & 0 & \frac{1}{2} \\
+                \end{bmatrix}_{[\text{Voigt}]}
+            &=
+                \begin{bmatrix}
+              1 & 0 & 0 & 0 & 0 & 0 \\
+              0 & 1 & 0 & 0 & 0 & 0 \\
+              0 & 0 & 1 & 0 & 0 & 0 \\
+              0 & 0 & 0 & 1 & 0 & 0 \\
+              0 & 0 & 0 & 0 & 1 & 0 \\
+              0 & 0 & 0 & 0 & 0 & 1 \\
+                \end{bmatrix}_{[\text{Mandel6}]}\\
+            \mathbf{I} \otimes \mathbf{I}
+            &=
+                \begin{bmatrix}
+              1 & 1 & 1 & 0 & 0 & 0 \\
+              1 & 1 & 1 & 0 & 0 & 0 \\
+              1 & 1 & 1 & 0 & 0 & 0 \\
+              0 & 0 & 0 & 0 & 0 & 0 \\
+              0 & 0 & 0 & 0 & 0 & 0 \\
+              0 & 0 & 0 & 0 & 0 & 0 \\
+                \end{bmatrix}_{[\text{Voigt}]}
+            &=
+                \begin{bmatrix}
+              1 & 1 & 1 & 0 & 0 & 0 \\
+              1 & 1 & 1 & 0 & 0 & 0 \\
+              1 & 1 & 1 & 0 & 0 & 0 \\
+              0 & 0 & 0 & 0 & 0 & 0 \\
+              0 & 0 & 0 & 0 & 0 & 0 \\
+              0 & 0 & 0 & 0 & 0 & 0 \\
+                \end{bmatrix}_{[\text{Mandel6}]}
+            \end{align*}
+
+        Therefore, with
+        :math:`\mu = G` and
+        :math:`M = \lambda + 2G`
+        the isotropic stiffness is
+
+        .. math::
+            \begin{align*}
+                \mathbb{C}_{\text{isotropic}}
+                &=
+                \begin{bmatrix}
+                    C_{11} & C_{12} & C_{13} & 0 & 0 & 0 \\
+                    C_{12} & C_{22} & C_{23} & 0 & 0 & 0 \\
+                    C_{13} & C_{23} & C_{33} & 0 & 0 & 0 \\
+                    0 & 0 & 0 & C_{44} & 0 & 0 \\
+                    0 & 0 & 0 & 0 & C_{55} & 0 \\
+                    0 & 0 & 0 & 0 & 0 & C_{66}
+                \end{bmatrix}_{[\text{Voigt}]}
+                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}  \\
+                &=
+                \begin{bmatrix}
+                    M & \lambda & \lambda & 0 & 0 & 0 \\
+                    \lambda & M & \lambda & 0 & 0 & 0 \\
+                    \lambda & \lambda & M & 0 & 0 & 0 \\
+                    0 & 0 & 0 & G & 0 & 0 \\
+                    0 & 0 & 0 & 0 & G & 0 \\
+                    0 & 0 & 0 & 0 & 0 & G
+                \end{bmatrix}_{[\text{Voigt}]}
+                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}  \\
+                &=
+                \begin{bmatrix}
+                    C_{11} & C_{12} & C_{13} & 0 & 0 & 0 \\
+                    C_{12} & C_{22} & C_{23} & 0 & 0 & 0 \\
+                    C_{13} & C_{23} & C_{33} & 0 & 0 & 0 \\
+                    0 & 0 & 0 & 2C_{44} & 0 & 0 \\
+                    0 & 0 & 0 & 0 & 2C_{55} & 0 \\
+                    0 & 0 & 0 & 0 & 0 & 2C_{66}
+                \end{bmatrix}_{[\text{Mandel6}]}
+                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}  \\
+                &=
+                \begin{bmatrix}
+                    M & \lambda & \lambda & 0 & 0 & 0 \\
+                    \lambda & M & \lambda & 0 & 0 & 0 \\
+                    \lambda & \lambda & M & 0 & 0 & 0 \\
+                    0 & 0 & 0 & 2G & 0 & 0 \\
+                    0 & 0 & 0 & 0 & 2G & 0 \\
+                    0 & 0 & 0 & 0 & 0 & 2G
+                \end{bmatrix}_{[\text{Mandel6}]}
+                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}  \\
+            \end{align*}
 
     Examples
     --------
-    >>> import numpy as np
     >>> import mechkit
 
-    >>> mat = mechkit.material.Isotropic(E=200000, nu=0.3)
-    >>> mat = mechkit.material.Isotropic(K=16e4, NU=0.3)
+    >>> mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
+    >>> mat = mechkit.material.Isotropic(E=2e6, K=(1/6)*1e7)
+    >>> mat1 = mechkit.material.Isotropic(M=15, G=5)
+    >>> mat2 = mechkit.material.Isotropic(C11_voigt=20, C44_voigt=5)
 
-    >>> mat = mechkit.material.Isotropic(la=11e4, G=77e3)
-    >>> mat.E
-    199294.11
-    >>> mat['E']
-    199294.11
-    >>> mat['nu']
-    0.29
-    >>> mat['poisson']
-    0.29
-    >>> mat['K']
-    161333.3
-    >>> mat['G']
-    77000.0
-    >>> mat['la']
-    109999.9
-
-    >>> mat.stiffness_mandel6
-    [[264000. 110000. 110000.      0.      0.      0.]
-     [110000. 264000. 110000.      0.      0.      0.]
-     [110000. 110000. 264000.      0.      0.      0.]
-     [     0.      0.      0. 154000.      0.      0.]
-     [     0.      0.      0.      0. 154000.      0.]
-     [     0.      0.      0.      0.      0. 154000.]]
-    >>> mat['compliance_mandel6']
-    [[ 5.02e-06 -1.48e-06 -1.48e-06  0.00e+00  0.00e+00  0.00e+00]
-     [-1.48e-06  5.02e-06 -1.48e-06  0.00e+00  0.00e+00  0.00e+00]
-     [-1.48e-06 -1.48e-06  5.02e-06  0.00e+00  0.00e+00  0.00e+00]
-     [ 0.00e+00 -0.00e+00 -0.00e+00  6.49e-06 -0.00e+00 -0.00e+00]
-     [ 0.00e+00  0.00e+00  0.00e+00  0.00e+00  6.49e-06  0.00e+00]
-     [ 0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00  6.49e-06]]
-    >>> mat['stiffness']
-    [[[[264000.      0.      0.]
-       [     0. 110000.      0.]
-       [     0.      0. 110000.]]
-      [[     0.  77000.      0.]
-       [ 77000.      0.      0.]
-       [     0.     ...
+    >>> mat1.stiffness_voigt
+    [[15.  5.  5.  0.  0.  0.]
+     [ 5. 15.  5.  0.  0.  0.]
+     [ 5.  5. 15.  0.  0.  0.]
+     [ 0.  0.  0.  5.  0.  0.]
+     [ 0.  0.  0.  0.  5.  0.]
+     [ 0.  0.  0.  0.  0.  5.]]
+    >>> mat2['stiffness_voigt']
+    [[20. 10. 10.  0.  0.  0.]
+     [10. 20. 10.  0.  0.  0.]
+     [10. 10. 20.  0.  0.  0.]
+     [ 0.  0.  0.  5.  0.  0.]
+     [ 0.  0.  0.  0.  5.  0.]
+     [ 0.  0.  0.  0.  0.  5.]]
+    >>> (0.5*mat1 + 0.5*mat2)['stiffness_voigt']
+    [[17.5  7.5  7.5  0.   0.   0. ]
+     [ 7.5 17.5  7.5  0.   0.   0. ]
+     [ 7.5  7.5 17.5  0.   0.   0. ]
+     [ 0.   0.   0.   5.   0.   0. ]
+     [ 0.   0.   0.   0.   5.   0. ]
+     [ 0.   0.   0.   0.   0.   5. ]]
+    >>> mat1['stiffness_mandel6']
+    [[15.  5.  5.  0.  0.  0.]
+     [ 5. 15.  5.  0.  0.  0.]
+     [ 5.  5. 15.  0.  0.  0.]
+     [ 0.  0.  0. 10.  0.  0.]
+     [ 0.  0.  0.  0. 10.  0.]
+     [ 0.  0.  0.  0.  0. 10.]]
+    >>> mat1['compliance_mandel6']
+    [[ 0.08 -0.02 -0.02  0.    0.    0.  ]
+     [-0.02  0.08 -0.02  0.    0.    0.  ]
+     [-0.02 -0.02  0.08  0.    0.    0.  ]
+     [ 0.   -0.   -0.    0.1  -0.   -0.  ]
+     [ 0.    0.    0.    0.    0.1   0.  ]
+     [ 0.    0.    0.    0.    0.    0.1 ]]
 
 
     .. rubric:: References
 
-    .. [wikipedia] https://en.wikipedia.org/wiki/Elastic_modulus
+    .. [Betram2015] Bertram, A., & Glüge, R. (2015).
+        Solid mechanics. Springer Int. Publ.
+
+    .. [wikipedia_conversion_table]
+       https://en.wikipedia.org/wiki/Template:Elastic_moduli
 
     '''
     def __init__(self, auxetic=False, **kwargs, ):
@@ -128,12 +367,12 @@ class Isotropic(object):
                      'c44_voigt', 'c55_voigt', 'c66_voigt',
                      'c2323', 'c1313', 'c1212'],
             'E':    ['e', 'youngs_modulus', 'elastic_modulus', ],
+            'nu':   ['nu', 'poisson', 'poisson_ratio', ],
             'la':   ['la', 'lambd', 'first_lame', 'lame_1',
                      'c23_voigt', 'c13_voigt', 'c12_voigt',
                      'c32_voigt', 'c31_voigt', 'c21_voigt',
                      'c2233', 'c1133', 'c1122',
                      'c3322', 'c3311', 'c2211', ],
-            'nu':   ['nu', 'poisson', 'poisson_ratio', ],
             'M':    ['m', 'p_wave_modulus', 'longitudinal_modulus',
                      'constrained modulus',
                      'c11_voigt', 'c22_voigt', 'c33_voigt',
@@ -367,21 +606,19 @@ if __name__ == '__main__':
             # suppress=False,
             )
 
-    mat = mechkit.material.Isotropic(E=200000, nu=0.3)
-    mat = mechkit.material.Isotropic(K=16e4, NU=0.3)
-    mat = mechkit.material.Isotropic(la=11e4, G=77e3)
+    import mechkit
+
+    mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
+    mat = mechkit.material.Isotropic(E=2e6, K=(1/6)*1e7)
+    mat1 = mechkit.material.Isotropic(M=15, G=5)
+    mat2 = mechkit.material.Isotropic(C11_voigt=20, C44_voigt=5)
 
     printQueue = [
-            'mat.E',
-            'mat.nu',
-            'mat.poisson',
-            'mat.K',
-            'mat.G',
-            'mat.la',
-            'mat.stiffness_mandel6',
-            'mat.compliance_mandel6',
-            'mat.stiffness',
-            'mat.compliance',
+            'mat1.stiffness_voigt',
+            "mat2['stiffness_voigt']",
+            "(0.5*mat1 + 0.5*mat2)['stiffness_voigt']",
+            "mat1['stiffness_mandel6']",
+            "mat1['compliance_mandel6']",
             ]
     for val in printQueue:
         print(val)
