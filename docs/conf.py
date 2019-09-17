@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# MechKIT documentation build configuration file, created by
+# Mechkit documentation build configuration file, created by
 # sphinx-quickstart on Fri Jul  5 12:15:38 2019.
 #
 # This file is execfile()d with the current directory set to its
