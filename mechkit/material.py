@@ -90,7 +90,7 @@ class Isotropic(object):
         self.auxetic = auxetic
 
         self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
-        self._check_nbr_useful_kwargs()
+        self._check_nbr_useful_kwargs(**kwargs)
         self._get_K_G()
         self._check_positive_definiteness()
 
@@ -169,12 +169,14 @@ class Isotropic(object):
                     kwargs_keys[name] = val
         return kwargs_keys
 
-    def _check_nbr_useful_kwargs(self, ):
+    def _check_nbr_useful_kwargs(self, **kwargs):
         if len(self._useful_kwargs) != 2:
             raise Ex(
                 'Number of input parameters has to be 2.\n'
                 'Note: Isotropic material is defined by 2 parameters.\n'
-                'Identified input parameters are:{}'.format(
+                'Given arguments are:{}\n'
+                'Identified primary input parameters are:{}\n'.format(
+                                                    kwargs,
                                                     self._useful_kwargs
                                                     )
                 )
