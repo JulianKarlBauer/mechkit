@@ -6,7 +6,7 @@ import numpy as np
 
 
 class Basic(object):
-    '''
+    r'''
     Basic tensors in tensor notations
 
     Attributes
@@ -14,22 +14,123 @@ class Basic(object):
     I2 : np.array of shape (3, 3,)
         Identity on second order tensors
 
+        .. math::
+            \begin{align*}
+                \mathbf{I}
+                &=
+                \delta_{ij}
+                    \;
+                    \mathbf{e}_{i}
+                    \otimes
+                    \mathbf{e}_{j}
+            \end{align*}
+
     I4 : np.array of shape (3, 3, 3, 3,)
         Identity on fourth order tensors
+
+        .. math::
+            \begin{align*}
+                \mathbb{I}
+                &=
+                \delta_{ik} \delta_{lj}
+                    \;
+                    \mathbf{e}_{i}
+                    \otimes
+                    \mathbf{e}_{j}
+                    \otimes
+                    \mathbf{e}_{k}
+                    \otimes
+                    \mathbf{e}_{l} \\
+            \end{align*}
 
     I4s : np.array of shape (3, 3, 3, 3,)
         Identity on symmetric fourth order tensors
 
+        .. math::
+            \begin{align*}
+                \mathbb{I}^{\text{S}}
+                &=
+                \frac{1}{2}
+                \left(
+                    \mathbb{I} + \mathbb{I}^{\text{T}_\text{R}}
+                \right)     \\
+                &=
+                \frac{1}{2}
+                \left(
+                    \delta_{ik} \delta_{lj} + \delta_{il} \delta_{kj}
+                \right)
+                    \;
+                    \mathbf{e}_{i}
+                    \otimes
+                    \mathbf{e}_{j}
+                    \otimes
+                    \mathbf{e}_{k}
+                    \otimes
+                    \mathbf{e}_{l} \\
+            \end{align*}
+
     I4a : np.array of shape (3, 3, 3, 3,)
         Identity on asymmetric fourth order tensors
 
+        .. math::
+            \begin{align*}
+                \mathbb{I}^{\text{S}}
+                &=
+                \frac{1}{2}
+                \left(
+                    \mathbb{I} - \mathbb{I}^{\text{T}_\text{R}}
+                \right)     \\
+                &=
+                \frac{1}{2}
+                \left(
+                    \delta_{ik} \delta_{lj} - \delta_{il} \delta_{kj}
+                \right)
+                    \;
+                    \mathbf{e}_{i}
+                    \otimes
+                    \mathbf{e}_{j}
+                    \otimes
+                    \mathbf{e}_{k}
+                    \otimes
+                    \mathbf{e}_{l} \\
+            \end{align*}
+
     P1 : np.array of shape (3, 3, 3, 3,)
         First isotropic projector.
-        Projecting second order tensors onto its spherical part
+        Projecting second order tensor onto its spherical part
+
+        .. math::
+            \begin{align*}
+                \mathbb{P}_{\text{1}}
+                &=
+                \frac{1}{3}
+                \mathbf{I} \otimes \mathbf{I}   \\
+                &=
+                \frac{1}{3}
+                \delta_{ij}
+                \delta_{kl}
+                    \;
+                    \mathbf{e}_{i}
+                    \otimes
+                    \mathbf{e}_{j}
+                    \otimes
+                    \mathbf{e}_{k}
+                    \otimes
+                    \mathbf{e}_{l}
+            \end{align*}
 
     P2 : np.array of shape (3, 3, 3, 3,)
         Second isotropic projector.
-        Projecting second order tensors onto its symmetric deviatoric part
+        Projecting second order tensor onto its symmetric deviatoric part
+
+        .. math::
+            \begin{align*}
+                \mathbb{P}_{\text{2}}
+                &=
+                \mathbb{I}^{\text{S}}
+                -
+                \mathbb{P}_{\text{1}}
+            \end{align*}
 
     '''
     def __init__(self,):
