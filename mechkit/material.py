@@ -121,23 +121,17 @@ class Isotropic(object):
 
     def _get_names_aliases(self, ):
         names_aliases = {
-            'K':    ['k', 'compression', 'compression_modulus', ],
-            'G':    ['g', 'mu', 'shear', 'shear_modulus',
-                     'secondlame', 'second_lame', 'lamesecond', 'lame_second',
-                     'lame2', 'lame_2',
-                     'c44', 'c_44', 'c44', 'c_44', 'c44', 'c_44', ],
-            'E':    ['e', 'young', 'youngs', 'youngs_modulus',
-                     'elastic_modulus', ],
-            'la':   ['la', 'l', 'lambda',
-                     'firstlame', 'first_lame', 'lamefirst', 'lame_first',
-                     'lame1', 'lame_1',
+            'K':    ['k', 'compression_modulus', ],
+            'G':    ['g', 'mu', 'shear_modulus',
+                     'second_lame', 'lame_2',
+                     'c44', 'c_44', 'c55', 'c_55', 'c66', 'c_66', ],
+            'E':    ['e', 'youngs_modulus', 'elastic_modulus', ],
+            'la':   ['la', 'lambda', 'first_lame', 'lame_1',
                      'c23', 'c_23', 'c13', 'c_13', 'c12', 'c_12',
                      'c32', 'c_32', 'c31', 'c_31', 'c21', 'c_21', ],
-            'nu':   ['nu', 'poisson', 'poissonration', 'poisson_ration',
-                     'poissons', 'poissonsratio', 'poisson_ration', ],
-            'M':    ['m', 'pwavemodulus', 'p_wave_modulus',
-                     'longitudinal_modulus', 'longitudinalmodulus',
-                     'constrained modulus', 'constrainedmodulus',
+            'nu':   ['nu', 'poisson', 'poisson_ratio', ],
+            'M':    ['m', 'p_wave_modulus', 'longitudinal_modulus',
+                     'constrained modulus',
                      'c11', 'c_11', 'c22', 'c_22', 'c33', 'c_33', ],
             }
         return names_aliases
