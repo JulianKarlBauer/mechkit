@@ -157,18 +157,18 @@ class Isotropic(object):
                 \right]         \\
                 &=
                 \left(
-                2 \mu \mathbb{I}^{\text{S}}
+                3 K \mathbb{P}_{\text{1}}
                 +
-                \lambda \mathbf{I} \otimes \mathbf{I}
+                2 G \mathbb{P}_{\text{2}}
                 \right)
                 \left[
                     \boldsymbol{\varepsilon}
                 \right]         \\
                 &=
                 \left(
-                3 K \mathbb{P}_{\text{1}}
+                2 \mu \mathbb{I}^{\text{S}}
                 +
-                2 G \mathbb{P}_{\text{2}}
+                \lambda \mathbf{I} \otimes \mathbf{I}
                 \right)
                 \left[
                     \boldsymbol{\varepsilon}
@@ -221,7 +221,7 @@ class Isotropic(object):
 
         Therefore, with
         :math:`\mu = G` and
-        :math:`M = \lambda + 2G`
+        :math:`M = 2G + \lambda`
         the isotropic stiffness is
 
         .. math::
