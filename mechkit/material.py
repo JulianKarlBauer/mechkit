@@ -128,7 +128,7 @@ class Isotropic(object):
                      'c44_voigt', 'c55_voigt', 'c66_voigt',
                      'c2323', 'c1313', 'c1212'],
             'E':    ['e', 'youngs_modulus', 'elastic_modulus', ],
-            'la':   ['la', 'lambda', 'first_lame', 'lame_1',
+            'la':   ['la', 'lambd', 'first_lame', 'lame_1',
                      'c23_voigt', 'c13_voigt', 'c12_voigt',
                      'c32_voigt', 'c31_voigt', 'c21_voigt',
                      'c2233', 'c1133', 'c1122',
@@ -163,12 +163,27 @@ class Isotropic(object):
         return funcs_dict[frozenset(keywords)]
 
     def _get_useful_kwargs_from_kwargs(self, **kwargs):
-        kwargs_keys = {}
+        useful = {}
         for key, val in kwargs.items():
             for name, aliases in self._get_names_aliases().items():
                 if key.lower() in aliases:
-                    kwargs_keys[name] = val
-        return kwargs_keys
+                    if name not in useful:
+                        useful[name] = val
+                    else:
+                        raise Ex(
+                            ('Redundant input for primary parameter {name}\n'
+                             'Failed to use \n{key}={val}\nbecause {name} '
+                             'is already assigned the value {useful}\n'
+                             'Given arguments are:{kwargs}\n'
+                             ).format(
+                                name=name,
+                                key=key,
+                                val=val,
+                                useful=useful[name],
+                                kwargs=kwargs,
+                                )
+                            )
+        return useful
 
     def _check_nbr_useful_kwargs(self, **kwargs):
         if len(self._useful_kwargs) != 2:

@@ -173,6 +173,18 @@ def test_arithmetic_mult_sub():
         assert np.allclose(mat[key], 3*val)
 
 
+def test_exception_nbr_parameter():
+    with pytest.raises(mechkit.utils.Ex) as excinfo:
+        mechkit.material.Isotropic(E=10, G=15, nu=0.3)
+    assert "Number of" in str(excinfo.value)
+
+
+def test_exception_duplicate_parameter():
+    with pytest.raises(mechkit.utils.Ex) as excinfo:
+        mechkit.material.Isotropic(E=10, youngs_modulus=15)
+    assert "Redundant" in str(excinfo.value)
+
+
 if __name__ == '__main__':
     test_reference_values()
 
