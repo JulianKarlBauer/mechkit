@@ -10,24 +10,36 @@ from mechkit.utils import Ex
 
 
 class Isotropic(object):
-    r'''Representation of isotropic homogeneous material.
+    r'''Representation of homogeneous isotropic material.
 
     Use cases:
 
         - Create an instance of this class and
 
-            - use the instance as an container representing the material or
+            - use the instance as an container representing the material
             - access most common material parameters as attributes or dict-like
               (implementation of [wikipedia_conversion_table]_)
             - do arithemtic on eigenvalues using the operators
               +, -, * with numbers.
+
+    Quickstart:
+
+    .. code-block:: python
+
+        # Create instance
+        mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
+
+        # Use attributes
+        G = mat.G
+        stiffness = mat.stiffness_mandel6
+
 
     **Two** independent material parameters uniquely define an isotropic
     material [Betram2015]_ (chapter 4.1.2).
     Therefore, exactly two material parameters have to be passed to the
     constructor of this class.
 
-    The following primary arguments and aliases are valid, **case-insensitive**
+    The following primary arguments and aliases are **case-insensitive**
     **keyword arguments** of the constructor:
 
         - **K** : Compression modulus
@@ -62,13 +74,16 @@ class Isotropic(object):
             C11_voigt, C22_voigt, C33_voigt,
             C1111, C2222, C3333
 
-    with (See also note below)
+    with
 
         - C<ij>_voigt : Component of stiffness matrix in Voigt notation
+          (See note below)
         - C<ijkl> : Component of stiffness in tensor notation
+          (See note below)
 
 
-    Attributes: **(** Accessible both as attributes and dict-like['key'] **)**
+    Attributes: **(** Accessible both as attributes and dict-like
+    ``mat['E']`` **)**
 
         - **K** : Bulk modulus
         - **G**, **mu** : Shear modulus
@@ -99,6 +114,8 @@ class Isotropic(object):
 
         Definition of stiffness components:
 
+        Tensor components: (See [Betram2015]_ page 99 for details.)
+
         .. math::
             \begin{align*}
                 \mathbb{C}
@@ -111,7 +128,14 @@ class Isotropic(object):
                 \otimes
                 \mathbf{e}_{k}
                 \otimes
-                \mathbf{e}_{l}  \\
+                \mathbf{e}_{l}\\
+            \end{align*}
+
+        Matrix components:
+
+        .. math::
+            \begin{align*}
+                \mathbb{C}
                 &=
                 \begin{bmatrix}
              C_{11}  & C_{12}       & C_{13} & C_{14} & C_{15} & C_{16} \\
@@ -120,8 +144,10 @@ class Isotropic(object):
                      &              &        & C_{44} & C_{45} & C_{46} \\
                      & \text{sym}   &        &        & C_{55} & C_{56} \\
                      &              &        &        &        & C_{66}
-                \end{bmatrix}_{[\text{Voigt}]}
-                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}        \\
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }   \\
                 &=
                 \begin{bmatrix}
              C_{11}  & C_{12}       & C_{13} & \sqrt{2}C_{14} & \sqrt{2}C_{15} & \sqrt{2}C_{16} \\
@@ -130,8 +156,10 @@ class Isotropic(object):
                      &              &        & 2C_{44} & 2C_{45} & 2C_{46} \\
                      & \text{sym}   &        &         & 2C_{55} & 2C_{56} \\
                      &              &        &         &         & 2C_{66}
-                \end{bmatrix}_{[\text{Mandel6}]}
-                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }
             \end{align*}
 
         with
@@ -178,7 +206,7 @@ class Isotropic(object):
         with (See :class:`mechkit.tensors.Basic` for details and definitions)
 
         .. math::
-            \begin{align*}
+            \begin{alignat}{2}
                 \mathbb{I}^{\text{S}}
                 &=
                 \begin{bmatrix}
@@ -187,8 +215,11 @@ class Isotropic(object):
               0 & 0 & 1 & 0 & 0 & 0 \\
               0 & 0 & 0 & \frac{1}{2} & 0 & 0 \\
               0 & 0 & 0 & 0 & \frac{1}{2} & 0 \\
-              0 & 0 & 0 & 0 & 0 & \frac{1}{2} \\
-                \end{bmatrix}_{[\text{Voigt}]}
+              0 & 0 & 0 & 0 & 0 & \frac{1}{2}
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }
             &=
                 \begin{bmatrix}
               1 & 0 & 0 & 0 & 0 & 0 \\
@@ -197,7 +228,10 @@ class Isotropic(object):
               0 & 0 & 0 & 1 & 0 & 0 \\
               0 & 0 & 0 & 0 & 1 & 0 \\
               0 & 0 & 0 & 0 & 0 & 1 \\
-                \end{bmatrix}_{[\text{Mandel6}]}\\
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }   \\
             \mathbf{I} \otimes \mathbf{I}
             &=
                 \begin{bmatrix}
@@ -207,7 +241,10 @@ class Isotropic(object):
               0 & 0 & 0 & 0 & 0 & 0 \\
               0 & 0 & 0 & 0 & 0 & 0 \\
               0 & 0 & 0 & 0 & 0 & 0 \\
-                \end{bmatrix}_{[\text{Voigt}]}
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }
             &=
                 \begin{bmatrix}
               1 & 1 & 1 & 0 & 0 & 0 \\
@@ -216,8 +253,11 @@ class Isotropic(object):
               0 & 0 & 0 & 0 & 0 & 0 \\
               0 & 0 & 0 & 0 & 0 & 0 \\
               0 & 0 & 0 & 0 & 0 & 0 \\
-                \end{bmatrix}_{[\text{Mandel6}]}
-            \end{align*}
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }
+            \end{alignat}
 
         Therefore, with
         :math:`\mu = G` and
@@ -235,8 +275,10 @@ class Isotropic(object):
                     0 & 0 & 0 & C_{44} & 0 & 0 \\
                     0 & 0 & 0 & 0 & C_{55} & 0 \\
                     0 & 0 & 0 & 0 & 0 & C_{66}
-                \end{bmatrix}_{[\text{Voigt}]}
-                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}  \\
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }   \\
                 &=
                 \begin{bmatrix}
                     M & \lambda & \lambda & 0 & 0 & 0 \\
@@ -245,8 +287,10 @@ class Isotropic(object):
                     0 & 0 & 0 & G & 0 & 0 \\
                     0 & 0 & 0 & 0 & G & 0 \\
                     0 & 0 & 0 & 0 & 0 & G
-                \end{bmatrix}_{[\text{Voigt}]}
-                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}  \\
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }   \\
                 &=
                 \begin{bmatrix}
                     C_{11} & C_{12} & C_{13} & 0 & 0 & 0 \\
@@ -255,8 +299,10 @@ class Isotropic(object):
                     0 & 0 & 0 & 2C_{44} & 0 & 0 \\
                     0 & 0 & 0 & 0 & 2C_{55} & 0 \\
                     0 & 0 & 0 & 0 & 0 & 2C_{66}
-                \end{bmatrix}_{[\text{Mandel6}]}
-                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}  \\
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }  \\
                 &=
                 \begin{bmatrix}
                     M & \lambda & \lambda & 0 & 0 & 0 \\
@@ -265,19 +311,29 @@ class Isotropic(object):
                     0 & 0 & 0 & 2G & 0 & 0 \\
                     0 & 0 & 0 & 0 & 2G & 0 \\
                     0 & 0 & 0 & 0 & 0 & 2G
-                \end{bmatrix}_{[\text{Mandel6}]}
-                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}  \\
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }
             \end{align*}
 
     Examples
     --------
     >>> import mechkit
 
+    >>> # Create instance
     >>> mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
-    >>> mat = mechkit.material.Isotropic(E=2e6, K=(1/6)*1e7)
+    >>> mat = mechkit.material.Isotropic(E=2e6, K=1e6)
+
+    >>> # Access attributes
+    >>> mat.G
+    857142
+    >>> mat['E']
+    2000000
+
+    >>> # More examples
     >>> mat1 = mechkit.material.Isotropic(M=15, G=5)
     >>> mat2 = mechkit.material.Isotropic(C11_voigt=20, C44_voigt=5)
-
     >>> mat1.stiffness_voigt
     [[15.  5.  5.  0.  0.  0.]
      [ 5. 15.  5.  0.  0.  0.]
@@ -606,15 +662,15 @@ if __name__ == '__main__':
             # suppress=False,
             )
 
-    import mechkit
-
     mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
-    mat = mechkit.material.Isotropic(E=2e6, K=(1/6)*1e7)
+    mat = mechkit.material.Isotropic(E=2e6, K=1e6)
     mat1 = mechkit.material.Isotropic(M=15, G=5)
     mat2 = mechkit.material.Isotropic(C11_voigt=20, C44_voigt=5)
 
     printQueue = [
-            'mat1.stiffness_voigt',
+            "mat.G",
+            "mat['E']",
+            "mat1['stiffness_voigt']",
             "mat2['stiffness_voigt']",
             "(0.5*mat1 + 0.5*mat2)['stiffness_voigt']",
             "mat1['stiffness_mandel6']",
