@@ -156,22 +156,20 @@ def test_effect_P2():
     assert np.allclose(G, G_result)
 
 
-# def test_I6s():
-#     # Note: A has to be symmetric. Otherwise formula for JA is not valid.
-#     A = np.einsum('ijkl, kl-> ij', basic.I4s, np.random.rand(3, 3))
-#     I2 = basic.I2
-#     JA = 1./4. * (
-#                 np.einsum('im, jn ->ijmn', A, I2) +
-#                 np.einsum('in, jm ->ijmn', A, I2) +
-#                 np.einsum('jn, im ->ijmn', A, I2) +
-#                 np.einsum('jm, in ->ijmn', A, I2)
-#                 )
-#     I6sA = np.einsum('ijklmn, mn->ijkl', basic.I6s, A)
-#     pprint.pprint(con.to_mandel9(JA))
-#     pprint.pprint(con.to_mandel9(I6sA))
-#     assert np.allclose(JA, I6sA)
-
-
+def test_I6s():
+    # Note: A has to be symmetric. Otherwise formula for JA is not valid.
+    A = np.einsum('ijkl, kl-> ij', basic.I4s, np.random.rand(3, 3))
+    I2 = basic.I2
+    JA = 1./4. * (
+                np.einsum('im, jn ->ijmn', A, I2) +
+                np.einsum('in, jm ->ijmn', A, I2) +
+                np.einsum('jn, im ->ijmn', A, I2) +
+                np.einsum('jm, in ->ijmn', A, I2)
+                )
+    I6sA = np.einsum('ijklmn, mn->ijkl', basic.I6s, A)
+    pprint.pprint(con.to_mandel9(JA))
+    pprint.pprint(con.to_mandel9(I6sA))
+    assert np.allclose(JA, I6sA)
 
 
 if __name__ == '__main__':
