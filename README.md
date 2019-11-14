@@ -33,7 +33,7 @@ Basic continuum mechanics toolkit.
     - Wait 5-10 minutes after uploading to PyPi as PyPi-server has a delay time
     - Make sure you once logged in to anaconda using command `anaconda login`
 
-            cd mechkit/conda_build
+            cd conda_build
             rm -r mechkit
             conda skeleton pypi mechkit
             ./conda_build_versions_environments.sh
