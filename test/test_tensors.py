@@ -157,7 +157,9 @@ def test_effect_P2():
 
 
 def test_I6s():
-    # Note: A has to be symmetric. Otherwise formula for JA is not valid.
+    # Note:
+    # Does A have to be symmetric for formula of JA being valid?
+    # Or is the implementation of I6s wrong?
     A = np.einsum('ijkl, kl-> ij', basic.I4s, np.random.rand(3, 3))
     I2 = basic.I2
     JA = 1./4. * (
