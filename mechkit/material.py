@@ -380,7 +380,7 @@ class Isotropic(object):
        https://en.wikipedia.org/wiki/Template:Elastic_moduli
 
     '''
-    def __init__(self, auxetic=False, **kwargs, ):
+    def __init__(self, auxetic=False, **kwargs):
         self._con = mechkit.notation.VoigtConverter(silent=True)
         self._tensors = mechkit.tensors.Basic()
         self.auxetic = auxetic
