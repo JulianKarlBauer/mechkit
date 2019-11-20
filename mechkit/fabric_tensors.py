@@ -107,3 +107,34 @@ class Basic(object):
         '''Make attributes accessible dict-like.'''
         return getattr(self, key)
 
+
+def first_kind_discrete(orientations, order=4):
+    '''
+    Calc orientation tensors of first kind for given discrete vectors
+    '''
+    # Normalize orientations
+    orientations = [np.array(v) / np.linalg.norm(v) for v in orientations]
+
+    # Symmetrize orientations
+#    orientations_reversed = [-v for v in orientations]
+#    orientations = orientations + orientations_reversed
+
+    einsumStrings = {
+        1:  'ij             -> j',
+        2:  'ij, ik         -> jk',
+        3:  'ij, ik, il     -> jkl',
+        4:  'ij, ik, il, im -> jklm',
+        5:  'ij, ik, il, im, in     -> jklmn',
+        6:  'ij, ik, il, im, in, ip -> jklmnp',
+        }
+
+    if order > 6:
+        raise Exception('Not implemented')
+
+    einsumArgs = [orientations for i in range(order)]
+
+    N = 1./len(orientations) * np.einsum(
+                                    einsumStrings[order],
+                                    *einsumArgs,
+                                    )
+    return N
