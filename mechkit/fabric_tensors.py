@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+'''fabric tensors in Mandel6 notation
+'''
+import numpy as np
+import mechkit
+
+
+class Basic(object):
+    r'''
+    Fabric tensors of the first kind ([Kanatani1984]_) for special cases
+
+    - iso
+    - planar_iso_xy
+    - planar_iso_xz
+    - planar_iso_yz
+    - ud_x
+    - ud_y
+    - ud_z
+
+    .. rubric:: References
+
+    .. [Kanatani1984] Ken-Ichi, K. (1984).
+        Distribution of directional data and fabric tensors.
+        International Journal of Engineering Science, 22(2), 149-164.
+
+    Examples
+    --------
+    >>> import mechkit
+
+    >>> N2 = mechkit.fabric_tensors.Basic()['N2']['iso']
+    >>> N4 = mechkit.fabric_tensors.Basic()['N4']['iso']
+
+    '''
+    def __init__(self, ):
+        self.N4 = {
+            'iso':
+                1./5. * np.array(
+                 [[1.,      1./3.,     1./3.,     0.,     0.,     0., ],
+                  [1./3.,   1.,        1./3.,     0.,     0.,     0., ],
+                  [1./3.,   1./3.,     1.,        0.,     0.,     0., ],
+                  [0.,      0.,        0.,        2./3.,  0.,     0., ],
+                  [0.,      0.,        0.,        0.,     2./3.,  0., ],
+                  [0.,      0.,        0.,        0.,     0.,     2./3., ],
+                  ]),
+            'planar_iso_xy':
+                1./8. * np.array(
+                     [[3.,      1.,      0.,       0.,     0.,     0., ],
+                      [1.,      3.,      0.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     2., ],
+                      ]),
+            'planar_iso_xz':
+                1./8. * np.array(
+                     [[3.,      0.,      1.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     0., ],
+                      [1.,      0.,      3.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     2.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     0., ],
+                      ]),
+            'planar_iso_yz':
+                1./8. * np.array(
+                     [[0.,      0.,      0.,       0.,     0.,     0., ],
+                      [0.,      3.,      1.,       0.,     0.,     0., ],
+                      [0.,      1.,      3.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       2.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     0., ],
+                      [0.,      0.,      0.,       0.,     0.,     0., ],
+                      ]),
+            'ud_x':
+                np.array(
+                     [[1.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      ]),
+            'ud_y':
+                np.array(
+                     [[0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      1.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      ]),
+            'ud_z':
+                np.array(
+                     [[0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       1.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      [0.,      0.,       0.,       0.,     0.,     0., ],
+                      ]),
+            }
+        con = mechkit.notation.Converter()
+        I2 = con.to_mandel6(mechkit.tensors.Basic().I2)
+
+        self.N2 = {direction: val @ I2 for direction, val in self.N4.items()}
+
+    def __getitem__(self, key):
+        '''Make attributes accessible dict-like.'''
+        return getattr(self, key)
+
