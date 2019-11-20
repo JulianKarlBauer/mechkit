@@ -11,3 +11,4 @@ mechkit
     /source/material
     /source/tensors
     /source/utils
+    /source/visualization
