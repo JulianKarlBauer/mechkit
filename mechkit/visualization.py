@@ -62,7 +62,7 @@ class StiffnessAnalyser(object):
              / np.linalg.norm(self.P2)**2
 
     @property
-    def compliance(self, ):
+    def _compliance(self, ):
         return self.con.to_tensor(
                             np.linalg.inv(
                                 self.con.to_mandel6(self.stiffness)
@@ -74,7 +74,7 @@ class StiffnessAnalyser(object):
         Calculate Youngs modulus in specified direction
         '''
         d = direction / np.linalg.norm(direction)
-        S = self.compliance
+        S = self._compliance
         E = 1. / np.einsum('i, j, ijkl, k, l -> ', d, d, S, d, d)
 
         if normalize:
@@ -90,7 +90,7 @@ class StiffnessAnalyser(object):
         '''
 
         d = direction / np.linalg.norm(direction)
-        S = self.compliance
+        S = self._compliance
         I2 = mechkit.tensors.Basic().I2
         K = 1. / (3. * np.einsum('ij, ijkl, k, l -> ', I2, S, d, d, ))
 
