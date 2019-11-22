@@ -1,0 +1,2 @@
+- Remove doc-strings using Find&Replace in Atom
+	- Regex: r'''[\s\S]*?'''
