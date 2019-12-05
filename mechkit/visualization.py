@@ -6,15 +6,7 @@ import mechkit
 
 
 class StiffnessAnalyser(object):
-    '''Analyse lineare elastic stiffness following [Boehlke2001]_
-
-    References
-    ----------
-
-    .. [Boehlke2001] Böhlke, T. and Brüggemann, C., 2001.
-        Graphical representation of the generalized Hooke’s law.
-        Technische Mechanik, 21(2), pp.145-158.
-
+    '''Analyse linear elastic stiffness
 
     Examples
     --------
