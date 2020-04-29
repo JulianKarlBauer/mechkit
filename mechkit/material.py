@@ -40,6 +40,17 @@ class AbstractMaterial(object):
                                 kwargs=kwargs,
                                 )
                             )
+        if len(kwargs) != len(useful):
+            raise Ex(
+                    ('Not all keyword arguments are identified as material '
+                     'parameters.\n'
+                     'Identified material parameters: {useful}\n'
+                     'Given kwargs are: {kwargs}'
+                     ).format(
+                        useful=useful,
+                        kwargs=kwargs,
+                        )
+                )
         return useful
 
 
