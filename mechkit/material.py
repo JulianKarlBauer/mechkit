@@ -53,6 +53,19 @@ class AbstractMaterial(object):
                 )
         return useful
 
+    def _check_nbr_useful_kwargs(self, **kwargs):
+        if len(self._useful_kwargs) != self._nbr_useful_kwargs:
+            raise Ex(
+                ('Number of input parameters has to be {nbr}.\n'
+                 'Note: Isotropic material is defined by {nbr} parameters.\n'
+                 'Given arguments are:{kwargs}\n'
+                 'Identified primary input parameters are:{useful}\n').format(
+                                                    kwargs=kwargs,
+                                                    useful=self._useful_kwargs,
+                                                    nbr=self._nbr_useful_kwargs
+                                                    )
+                )
+
 
 class Isotropic(AbstractMaterial):
     r'''Representation of homogeneous isotropic material.
@@ -502,19 +515,6 @@ class Isotropic(AbstractMaterial):
             f(['nu',  'M']):    [self._K_by_nu_M,    self._G_by_nu_M],
             }
         return funcs_dict[frozenset(keywords)]
-
-    def _check_nbr_useful_kwargs(self, **kwargs):
-        if len(self._useful_kwargs) != self._nbr_useful_kwargs:
-            raise Ex(
-                ('Number of input parameters has to be {nbr}.\n'
-                 'Note: Isotropic material is defined by {nbr} parameters.\n'
-                 'Given arguments are:{kwargs}\n'
-                 'Identified primary input parameters are:{useful}\n').format(
-                                                    kwargs=kwargs,
-                                                    useful=self._useful_kwargs,
-                                                    nbr=self._nbr_useful_kwargs
-                                                    )
-                )
 
     def _check_positive_definiteness(self, ):
         if not ((self.K >= 0.) and (self.G >= 0.)):
