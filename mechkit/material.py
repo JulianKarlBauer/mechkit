@@ -66,6 +66,32 @@ class AbstractMaterial(object):
                                                     )
                 )
 
+    @property
+    def stiffness_mandel6(self, ):
+        return self._con.to_mandel6(self.stiffness)
+
+    @property
+    def stiffness_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.stiffness_mandel6,
+                   voigt_type='stiffness',
+                   )
+
+    @property
+    def compliance_mandel6(self, ):
+        return np.linalg.inv(self.stiffness_mandel6)
+
+    @property
+    def compliance(self, ):
+        return self._con.to_tensor(self.compliance_mandel6)
+
+    @property
+    def compliance_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.compliance_mandel6,
+                   voigt_type='compliance',
+                   )
+
 
 class Isotropic(AbstractMaterial):
     r'''Representation of homogeneous isotropic material.
@@ -449,10 +475,6 @@ class Isotropic(AbstractMaterial):
         self._get_K_G()
         self._check_positive_definiteness()
 
-    def __getitem__(self, key):
-        '''Make attributes accessible dict-like.'''
-        return getattr(self, key)
-
     def __add__(self, other):
         K = self.K + other.K
         G = self.G + other.G
@@ -651,31 +673,10 @@ class Isotropic(AbstractMaterial):
     def stiffness(self, ):
         return 3.*self.K*self._tensors.P1 + 2.*self.G*self._tensors.P2
 
-    @property
-    def stiffness_mandel6(self, ):
-        return self._con.to_mandel6(self.stiffness)
 
-    @property
-    def stiffness_voigt(self, ):
-        return self._con.mandel6_to_voigt(
-                    self.stiffness_mandel6,
-                    voigt_type='stiffness',
-                    )
 
-    @property
-    def compliance_mandel6(self, ):
-        return np.linalg.inv(self.stiffness_mandel6)
 
-    @property
-    def compliance(self, ):
-        return self._con.to_tensor(self.compliance_mandel6)
 
-    @property
-    def compliance_voigt(self, ):
-        return self._con.mandel6_to_voigt(
-                    self.compliance_mandel6,
-                    voigt_type='compliance',
-                    )
 
 
 if __name__ == '__main__':
