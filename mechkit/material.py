@@ -9,7 +9,41 @@ import warnings
 from mechkit.utils import Ex
 
 
-class Isotropic(object):
+class AbstractMaterial(object):
+    def __init__(self, **kwargs):
+        self._con = mechkit.notation.VoigtConverter(silent=True)
+
+    def __getitem__(self, key):
+        '''Make attributes accessible dict-like.'''
+        return getattr(self, key)
+
+    def _get_useful_kwargs_from_kwargs(self, **kwargs):
+        names_aliases = self._get_names_aliases()
+
+        useful = {}
+        for key, val in kwargs.items():
+            for name, aliases in names_aliases.items():
+                if key.lower() in aliases:
+                    if name not in useful:
+                        useful[name] = val
+                    else:
+                        raise Ex(
+                            ('Redundant input for primary parameter {name}\n'
+                             'Failed to use \n{key}={val}\nbecause {name} '
+                             'is already assigned the value {useful}\n'
+                             'Given arguments are:{kwargs}\n'
+                             ).format(
+                                name=name,
+                                key=key,
+                                val=val,
+                                useful=useful[name],
+                                kwargs=kwargs,
+                                )
+                            )
+        return useful
+
+
+class Isotropic(AbstractMaterial):
     r'''Representation of homogeneous isotropic material.
 
     Use cases:
@@ -381,8 +415,9 @@ class Isotropic(object):
 
     '''
     def __init__(self, auxetic=False, **kwargs):
-        self._con = mechkit.notation.VoigtConverter(silent=True)
+        super().__init__()
         self._tensors = mechkit.tensors.Basic()
+        self._nbr_useful_kwargs = 2
         self.auxetic = auxetic
 
         self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
@@ -457,38 +492,16 @@ class Isotropic(object):
             }
         return funcs_dict[frozenset(keywords)]
 
-    def _get_useful_kwargs_from_kwargs(self, **kwargs):
-        useful = {}
-        for key, val in kwargs.items():
-            for name, aliases in self._get_names_aliases().items():
-                if key.lower() in aliases:
-                    if name not in useful:
-                        useful[name] = val
-                    else:
-                        raise Ex(
-                            ('Redundant input for primary parameter {name}\n'
-                             'Failed to use \n{key}={val}\nbecause {name} '
-                             'is already assigned the value {useful}\n'
-                             'Given arguments are:{kwargs}\n'
-                             ).format(
-                                name=name,
-                                key=key,
-                                val=val,
-                                useful=useful[name],
-                                kwargs=kwargs,
-                                )
-                            )
-        return useful
-
     def _check_nbr_useful_kwargs(self, **kwargs):
-        if len(self._useful_kwargs) != 2:
+        if len(self._useful_kwargs) != self._nbr_useful_kwargs:
             raise Ex(
-                ('Number of input parameters has to be 2.\n'
-                 'Note: Isotropic material is defined by 2 parameters.\n'
-                 'Given arguments are:{}\n'
-                 'Identified primary input parameters are:{}\n').format(
-                                                    kwargs,
-                                                    self._useful_kwargs
+                ('Number of input parameters has to be {nbr}.\n'
+                 'Note: Isotropic material is defined by {nbr} parameters.\n'
+                 'Given arguments are:{kwargs}\n'
+                 'Identified primary input parameters are:{useful}\n').format(
+                                                    kwargs=kwargs,
+                                                    useful=self._useful_kwargs,
+                                                    nbr=self._nbr_useful_kwargs
                                                     )
                 )
 
@@ -496,7 +509,7 @@ class Isotropic(object):
         if not ((self.K >= 0.) and (self.G >= 0.)):
             raise Ex(
                 'Negative K or G.\n'
-                'K and G of positiv definit isotropic material'
+                'K and G of positiv definit isotropic material '
                 'have to be positive. \nK={} G={}'.format(self.K, self.G)
                 )
 
