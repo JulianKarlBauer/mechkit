@@ -66,32 +66,6 @@ class AbstractMaterial(object):
                                                     )
                 )
 
-    @property
-    def stiffness_mandel6(self, ):
-        return self._con.to_mandel6(self.stiffness)
-
-    @property
-    def stiffness_voigt(self, ):
-        return self._con.mandel6_to_voigt(
-                   self.stiffness_mandel6,
-                   voigt_type='stiffness',
-                   )
-
-    @property
-    def compliance_mandel6(self, ):
-        return np.linalg.inv(self.stiffness_mandel6)
-
-    @property
-    def compliance(self, ):
-        return self._con.to_tensor(self.compliance_mandel6)
-
-    @property
-    def compliance_voigt(self, ):
-        return self._con.mandel6_to_voigt(
-                   self.compliance_mandel6,
-                   voigt_type='compliance',
-                   )
-
 
 class Isotropic(AbstractMaterial):
     r'''Representation of homogeneous isotropic material.
@@ -673,10 +647,178 @@ class Isotropic(AbstractMaterial):
     def stiffness(self, ):
         return 3.*self.K*self._tensors.P1 + 2.*self.G*self._tensors.P2
 
+    @property
+    def stiffness_mandel6(self, ):
+        return self._con.to_mandel6(self.stiffness)
+
+    @property
+    def stiffness_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.stiffness_mandel6,
+                   voigt_type='stiffness',
+                   )
+
+    @property
+    def compliance_mandel6(self, ):
+        return np.linalg.inv(self.stiffness_mandel6)
+
+    @property
+    def compliance(self, ):
+        return self._con.to_tensor(self.compliance_mandel6)
+
+    @property
+    def compliance_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.compliance_mandel6,
+                   voigt_type='compliance',
+                   )
 
 
+class AbstractMaterialCompliance():
+    @property
+    def compliance_mandel6(self, ):
+        return self._con.voigt_to_mandel6(
+                   self.compliance_voigt,
+                   voigt_type='compliance',
+                   )
+
+    @property
+    def compliance(self, ):
+        return self._con.to_tensor(self.compliance_mandel6)
+
+    @property
+    def stiffness_mandel6(self, ):
+        return np.linalg.inv(self.compliance_mandel6)
+
+    @property
+    def stiffness(self, ):
+        return self._con.to_tensor(self.stiffness_mandel6)
+
+    @property
+    def stiffness_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.stiffness_mandel6,
+                   voigt_type='stiffness',
+                   )
 
 
+class Orthotropic(AbstractMaterialCompliance):
+    def __init__(self, E1, E2, E3, nu12, nu13, nu23, G12, G13, G23):
+        S12 = -nu12 / E1
+        S13 = -nu13 / E1
+        S23 = -nu23 / E2
+        self.compliance_voigt = np.array(
+                [
+                    [1./E1, S12,    S13,    0,      0,      0],
+                    [S12,   1./E2,  S23,    0,      0,      0],
+                    [S13,   S23,    1./E3,  0,      0,      0],
+                    [0,     0,      0,      1./G23, 0,      0],
+                    [0,     0,      0,      0,      1./G13, 0],
+                    [0,     0,      0,      0,      0,      1./G12],
+                ],
+                dtype='float64',
+                )
+
+
+class TransversalIsotropic(AbstractMaterial, AbstractMaterialCompliance):
+    def __init__(self, **kwargs):
+        super().__init__()
+        self._tensors = mechkit.tensors.Basic()
+        self._nbr_useful_kwargs = 5
+
+        self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
+        self._check_nbr_useful_kwargs(**kwargs)
+        self._get_primary_parameters()
+        self._check_positive_definiteness()
+
+    def _get_names_aliases(self, ):
+        names_aliases = {
+            'E1':   ['e1'],
+            'E2':   ['e2', 'e3'],
+            'G12':  ['g12', 'g13'],
+            'G23':  ['g23'],
+            'nu12': ['nu12', 'nu13'],
+            'nu21': ['nu21', 'nu31'],
+            'nu23': ['nu23', 'nu32'],
+            }
+        return names_aliases
+
+    def _raise_required(self, key):
+        raise Ex(
+                    (
+                        'Parameter {key} is required.\n'
+                        'Aliases are {aliases}.'
+                    ).format(
+                        key=key,
+                        aliases=self._get_names_aliases[key],
+                        )
+                )
+
+    def _raise_required_either_or(self, keys):
+        raise Ex(
+                    (
+                        'Either {key0} or {key1} is required.\n'
+                        'Aliases of {key0} are {aliases0}\n'
+                        'Aliases of {key1} are {aliases1}\n'
+                    ).format(
+                        key0=keys[0],
+                        key1=keys[1],
+                        aliases0=self._get_names_aliases[keys[0]],
+                        aliases1=self._get_names_aliases[keys[1]],
+                        )
+                )
+
+    def _get_primary_parameters(self, ):
+        useful = self._useful_kwargs
+
+        for key in ['E1', 'E2', 'G12']:
+            if key in useful:
+                setattr(self, key, useful[key])
+            else:
+                self._raise_required(key=key)
+
+        if 'nu12' in useful:
+            self.nu12 = useful['nu12']
+        elif 'nu21' in useful:
+            self.nu12 = self._nu12(nu21=useful['nu21'])
+        else:
+            self._raise_required_either_or(keys=['nu12', 'nu21'])
+
+        if 'G23' in useful:
+            self.G23 = useful['G23']
+        elif 'nu23' in useful:
+            self.G23 = self._G23(nu23=useful['nu23'])
+        else:
+            self._raise_required_either_or(keys=['G23', 'nu23'])
+
+    def _check_positive_definiteness(self, ):
+        if not (0.0 < min(np.linalg.eigh(self.stiffness_mandel6)[0])):
+            raise Ex(
+                'Stiffness Mandel6 is not positive definite'
+                )
+
+    def _nu12(self, nu21):
+        return nu21 * self.E1 / self.E2
+
+    def _G23(self, nu23):
+        return self.E2 / (2. * (1. + nu23))
+
+    def _nu23(self, ):
+        return self.E2 / (2. * self.G23) - 1.
+
+    @property
+    def compliance_voigt(self, ):
+        return Orthotropic(
+                E1=self.E1,
+                E2=self.E2,
+                E3=self.E2,
+                nu12=self.nu12,
+                nu13=self.nu12,
+                nu23=self._nu23(),
+                G12=self.G12,
+                G13=self.G12,
+                G23=self.G23,
+                ).compliance_voigt
 
 
 if __name__ == '__main__':
