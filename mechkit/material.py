@@ -761,14 +761,28 @@ class TransversalIsotropic(AbstractMaterial):
             self.stiffness = self._rotate_stiffness_into_principal_axis()
 
     def _get_names_aliases(self, ):
+        '''Note: There are different definitions of poissons ratio.
+
+        (VDI 2014 Blatt 3 page 14)
+        In case of the Poisson’s ratios there are different ways
+        for the indexing in international practice. In the
+        guideline VDI 2014 the required two indices are uti-
+        lized as follows: The 1 st index indicates the direction
+        of the transverse contraction. The 2 nd index denotes
+        the stress, which causes the contraction. As a conse-
+        quence the Poisson’s ratios ν ⊥|| is the larger and ν ||⊥
+        the smaller one. (In the English literature the two indices related to the
+        contraction and acting stress are
+        used in the reverse sequence.)
+        '''
         names_aliases = {
-            'E1':   ['e1'],
-            'E2':   ['e2', 'e3'],
-            'G12':  ['g12', 'g13'],
-            'G23':  ['g23'],
-            'nu12': ['nu12', 'nu13'],
-            'nu21': ['nu21', 'nu31'],
-            'nu23': ['nu23', 'nu32'],
+            'E1':   ['e1', 'el', 'e_l'],
+            'E2':   ['e2', 'e3', 'et', 'e_t'],
+            'G12':  ['g12', 'g13', 'glt', 'g_lt'],
+            'G23':  ['g23', 'gtt', 'g_tt'],
+            'nu12': ['nu12', 'nu13', 'nult', 'nu_lt'],
+            'nu21': ['nu21', 'nu31', 'nutl', 'nu_tl'],
+            'nu23': ['nu23', 'nu32', 'nutt', 'nu_tt'],
             }
         return names_aliases
 
