@@ -671,7 +671,6 @@ class Orthotropic():
 
 class TransversalIsotropic(AbstractMaterial):
     '''
-    .. image:: images/picture.png
     '''
     def __init__(self, principal_axis=[1, 0, 0], **kwargs):
         super().__init__()
