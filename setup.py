@@ -5,7 +5,7 @@ import setuptools
 
 setuptools.setup(
     name="mechkit",
-    version="0.2.1",
+    version="0.2.2",
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
     description="Basic continuum mechanics toolkit",
