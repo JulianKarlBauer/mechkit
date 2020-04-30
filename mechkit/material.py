@@ -826,6 +826,9 @@ class TransversalIsotropic(AbstractMaterial):
     def _nu_lt(self, nu_tl):
         return nu_tl * self.E_l / self.E_t
 
+    def _nu_tl(self, nu_lt):
+        return nu_lt * self.E_t / self.E_l
+
     def _G_tt(self, nu_tt):
         return self.E_t / (2. * (1. + nu_tt))
 
@@ -851,6 +854,15 @@ class TransversalIsotropic(AbstractMaterial):
                         end_vector=self.principal_axis,
                         )
         return np.einsum('ij, kl, mn, op, jlnp->ikmo', R, R, R, R, self.stiffness)
+
+    @property
+    def nu_tl(self, ):
+        return self._nu_tl(nu_lt=self.nu_lt)
+
+    @property
+    def nu_tt(self, ):
+        return self._nu_tt()
+
 
 
 if __name__ == '__main__':
