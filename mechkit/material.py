@@ -613,8 +613,55 @@ class Isotropic(AbstractMaterial):
 
 
 class Orthotropic():
+    r'''Representation of homogeneous orthotropic material.
+
+    **Nine** independent material parameters uniquely define an orthotropic
+    material [Betram2015]_ (chapter 4.1.2), aligned with the coordinate axes.
+
+    See definitions of :ref:`EngineeringConstants`.
+
+    Attributes:
+
+    - Keyword arguments
+
+    - **stiffness** : Stiffness in tensor notation
+    - **stiffness_mandel6** : Stiffness in Mandel6 notation
+    - **stiffness_voigt** : Stiffness in Voigt notation
+
+    - **compliance** : Compliance in tensor notation
+    - **compliance_mandel6** : Compliance in Mandel6 notation
+    - **compliance_voigt** : Compliance in Voigt notation
+
+
+    Compliance
+
+        .. math::
+            \begin{align*}
+                \mathbb{C}^{-1}_{\text{orthotropic}}
+                &=
+                \begin{bmatrix}
+                    \frac{1}{E_1}   & -\frac{\nu_{21}}{E_2}     & -\frac{\nu_{31}}{E_3} & 0 & 0 & 0 \\
+                    -\frac{\nu_{12}}{E_1}   & \frac{1}{E_2}     & -\frac{\nu_{32}}{E_3} & 0 & 0 & 0 \\
+                    -\frac{\nu_{13}}{E_1}   & -\frac{\nu_{23}}{E_2} & \frac{1}{E_3}     & 0 & 0 & 0 \\
+                    0 & 0 & 0 & \frac{1}{G_{23}} & 0 & 0 \\
+                    0 & 0 & 0 & 0 & \frac{1}{G_{31}} & 0 \\
+                    0 & 0 & 0 & 0 & 0 & \frac{1}{G_{12}}
+                \end{bmatrix}_{[\text{Voigt}]}  \\
+                &=
+                \begin{bmatrix}
+                    \frac{1}{E_1}   & -\frac{\nu_{12}}{E_1}     & -\frac{\nu_{13}}{E_1} & 0 & 0 & 0 \\
+                                    & \frac{1}{E_2}     & -\frac{\nu_{23}}{E_2} & 0 & 0 & 0 \\
+                                    &                   &\frac{1}{E_3}     & 0 & 0 & 0 \\
+                    & & & \frac{1}{G_{23}} & 0 & 0 \\
+                    & sym & & & \frac{1}{G_{31}} & 0 \\
+                    & & & & & \frac{1}{G_{12}}
+                \end{bmatrix}_{[\text{Voigt}]}
+            \end{align*}
+
+    '''
 
     def __init__(self, E1, E2, E3, nu12, nu13, nu23, G12, G13, G23):
+
         self.E1 = E1
         self.E2 = E2
         self.E3 = E3
