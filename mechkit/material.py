@@ -158,13 +158,10 @@ class Isotropic(AbstractMaterial):
             C11_voigt, C22_voigt, C33_voigt,
             C1111, C2222, C3333
 
-    with
+    with (See :ref:`DefinitionStiffnessComponents`)
 
         - C<ij>_voigt : Component of stiffness matrix in Voigt notation
-          (See note below)
         - C<ijkl> : Component of stiffness in tensor notation
-          (See note below)
-
 
     Attributes: **(** Accessible both as attributes and dict-like
     ``mat['E']`` **)**

@@ -1,3 +1,5 @@
+.. _DefinitionStiffnessComponents:
+
 Definition of stiffness components
 ----------------------------------
 
