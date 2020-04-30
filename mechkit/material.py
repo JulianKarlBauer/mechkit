@@ -66,6 +66,32 @@ class AbstractMaterial(object):
                                                     )
                 )
 
+    @property
+    def stiffness_mandel6(self, ):
+        return self._con.to_mandel6(self.stiffness)
+
+    @property
+    def stiffness_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.stiffness_mandel6,
+                   voigt_type='stiffness',
+                   )
+
+    @property
+    def compliance_mandel6(self, ):
+        return np.linalg.inv(self.stiffness_mandel6)
+
+    @property
+    def compliance(self, ):
+        return self._con.to_tensor(self.compliance_mandel6)
+
+    @property
+    def compliance_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.compliance_mandel6,
+                   voigt_type='compliance',
+                   )
+
 
 class Isotropic(AbstractMaterial):
     r'''Representation of homogeneous isotropic material.
@@ -647,34 +673,37 @@ class Isotropic(AbstractMaterial):
     def stiffness(self, ):
         return 3.*self.K*self._tensors.P1 + 2.*self.G*self._tensors.P2
 
-    @property
-    def stiffness_mandel6(self, ):
-        return self._con.to_mandel6(self.stiffness)
 
-    @property
-    def stiffness_voigt(self, ):
-        return self._con.mandel6_to_voigt(
-                   self.stiffness_mandel6,
-                   voigt_type='stiffness',
-                   )
+class Orthotropic():
 
-    @property
-    def compliance_mandel6(self, ):
-        return np.linalg.inv(self.stiffness_mandel6)
+    def __init__(self, E1, E2, E3, nu12, nu13, nu23, G12, G13, G23):
+        self.E1 = E1
+        self.E2 = E2
+        self.E3 = E3
+        self.nu12 = nu12
+        self.nu13 = nu13
+        self.nu23 = nu23
+        self.G12 = G12
+        self.G13 = G13
+        self.G23 = G23
 
-    @property
-    def compliance(self, ):
-        return self._con.to_tensor(self.compliance_mandel6)
+        S12 = -nu12 / E1
+        S13 = -nu13 / E1
+        S23 = -nu23 / E2
+        self.compliance_voigt = np.array(
+                [
+                    [1./E1, S12,    S13,    0,      0,      0],
+                    [S12,   1./E2,  S23,    0,      0,      0],
+                    [S13,   S23,    1./E3,  0,      0,      0],
+                    [0,     0,      0,      1./G23, 0,      0],
+                    [0,     0,      0,      0,      1./G13, 0],
+                    [0,     0,      0,      0,      0,      1./G12],
+                ],
+                dtype='float64',
+                )
 
-    @property
-    def compliance_voigt(self, ):
-        return self._con.mandel6_to_voigt(
-                   self.compliance_mandel6,
-                   voigt_type='compliance',
-                   )
+        self._con = mechkit.notation.VoigtConverter(silent=True)
 
-
-class AbstractMaterialCompliance():
     @property
     def compliance_mandel6(self, ):
         return self._con.voigt_to_mandel6(
@@ -700,24 +729,6 @@ class AbstractMaterialCompliance():
                    self.stiffness_mandel6,
                    voigt_type='stiffness',
                    )
-
-
-class Orthotropic(AbstractMaterialCompliance):
-    def __init__(self, E1, E2, E3, nu12, nu13, nu23, G12, G13, G23):
-        S12 = -nu12 / E1
-        S13 = -nu13 / E1
-        S23 = -nu23 / E2
-        self.compliance_voigt = np.array(
-                [
-                    [1./E1, S12,    S13,    0,      0,      0],
-                    [S12,   1./E2,  S23,    0,      0,      0],
-                    [S13,   S23,    1./E3,  0,      0,      0],
-                    [0,     0,      0,      1./G23, 0,      0],
-                    [0,     0,      0,      0,      1./G13, 0],
-                    [0,     0,      0,      0,      0,      1./G12],
-                ],
-                dtype='float64',
-                )
 
 
 class TransversalIsotropic(AbstractMaterial, AbstractMaterialCompliance):
