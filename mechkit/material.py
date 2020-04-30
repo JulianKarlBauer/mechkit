@@ -780,9 +780,9 @@ class TransversalIsotropic(AbstractMaterial):
             'E2':   ['e2', 'e3', 'et'],
             'G12':  ['g12', 'g13', 'glt'],
             'G23':  ['g23', 'gtt'],
-            'nu12': ['nu12', 'nu13', 'nult'],
-            'nu21': ['nu21', 'nu31', 'nutl'],
-            'nu23': ['nu23', 'nu32', 'nutt'],
+            'nu12': ['nu12', 'nu13', 'nult', 'v12', 'v13', 'vlt'],
+            'nu21': ['nu21', 'nu31', 'nutl', 'v21', 'v31', 'vtl'],
+            'nu23': ['nu23', 'nu32', 'nutt', 'v23', 'v32', 'vtt'],
             }
         return names_aliases
 
