@@ -717,8 +717,97 @@ class Orthotropic():
 
 
 class TransversalIsotropic(AbstractMaterial):
+    r'''Representation of homogeneous transversal isotropic material.
+
+    Quickstart:
+
+    .. code-block:: python
+
+        # Create instance
+        mat = mechkit.material.TransversalIsotropic(
+            E_l=100.0, E_t=20.0, nu_lt=0.3, G_lt=10.0, G_tt=7.0,
+            principal_axis=[1, 1, 0]
+        )
+
+        # Use attributes
+        stiffness = mat.stiffness_mandel6
+
+    **Five** independent material parameters uniquely define an isotropic
+    material [Betram2015]_ (chapter 4.1.2).
+    Therefore, exactly five material parameters have to be passed to the
+    constructor of this class.
+
+    See definitions of :ref:`EngineeringConstants`.
+
+    Coordinate-free indices are used
+
+        - *l* : longitudinal, i.e. in direction of principal axis
+        - *t* : transversal, i.e. perpendicular to principal axis
+
+    and the direction of the principal axis can be given in vector format as
+    **principal_axis**. The default principal axis is the x-axis.
+    The vector does not have to be normalized.
+
+    Valid **case-insensitive** keyword arguments and aliases of the constructor are
+    (Format: - **keyword arguments** : Aliases)
+
+        - **E_l** : El
+        - **E_t** : Et
+        - **G_lt** : Glt
+        - **G_tt** : Gtt
+        - **nu_lt** : nult, v_lt, vlt
+        - **nu_tl** : nutl, v_tl, vtl
+        - **nu_tt** : nutt, v_tt, vtt
+
+    Only four combinations of these arguments are valid:
+
+        - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_lt**
+        - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_tl**
+        - **E_l**, **E_t**, **G_lt**, **nu_lt**, **nu_tt**
+        - **E_l**, **E_t**, **G_lt**, **nu_tl**, **nu_tt**
+
+    Attributes: **(** Accessible both as attributes and dict-like **)**
+
+        - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_lt**, **nu_tl**, **nu_tt**
+
+        - **stiffness** : Stiffness in tensor notation
+        - **stiffness_mandel6** : Stiffness in Mandel6 notation
+        - **stiffness_voigt** : Stiffness in Voigt notation
+
+        - **compliance** : Compliance in tensor notation
+        - **compliance_mandel6** : Compliance in Mandel6 notation
+        - **compliance_voigt** : Compliance in Voigt notation
+
+    Examples
+    --------
+    >>> import mechkit
+
+    >>> # Create instance
+    >>> mat = mechkit.material.TransversalIsotropic(
+            E_l=100.0, E_t=20.0, nu_lt=0.3, G_lt=10.0, G_tt=7.0,
+            principal_axis=[0, 1, 0]
+        )
+
+    >>> # Access attributes
+    >>> mat.compliance_voigt
+    [[ 0.05  -0.003 -0.021  0.     0.     0.   ]
+     [-0.003  0.01  -0.003  0.     0.     0.   ]
+     [-0.021 -0.003  0.05   0.     0.     0.   ]
+     [ 0.    -0.    -0.     0.1   -0.    -0.   ]
+     [ 0.     0.     0.     0.     0.143  0.   ]
+     [ 0.     0.     0.     0.     0.     0.1  ]]
+
+
+    >>> mat.stiffness_mandel6
+    [[ 25.68  11.21  11.68   0.     0.     0.  ]
+     [ 11.21 106.72  11.21   0.     0.     0.  ]
+     [ 11.68  11.21  25.68   0.     0.     0.  ]
+     [  0.     0.     0.    20.     0.     0.  ]
+     [  0.     0.     0.     0.    14.     0.  ]
+     [  0.     0.     0.     0.     0.    20.  ]]
+
     '''
-    '''
+
     def __init__(self, principal_axis=[1, 0, 0], **kwargs):
         super().__init__()
         self.principal_axis = principal_axis
@@ -865,11 +954,12 @@ class TransversalIsotropic(AbstractMaterial):
 
 
 
+
 if __name__ == '__main__':
 
     np.set_printoptions(
             linewidth=140,
-            precision=2,
+            precision=3,
             # suppress=False,
             )
 
@@ -890,6 +980,19 @@ if __name__ == '__main__':
     for val in printQueue:
         print(val)
         print(eval(val), '\n')
+
+    mat = mechkit.material.TransversalIsotropic(
+        E_l=100.0, E_t=20.0, nu_lt=0.3, G_lt=10.0, G_tt=7.0, principal_axis=[0, 1, 0]
+    )
+
+    printQueue = [
+            "mat.compliance_voigt",
+            "mat.stiffness_mandel6",
+            ]
+    for val in printQueue:
+        print(val)
+        print(eval(val), '\n')
+
 
 
 
