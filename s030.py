@@ -7,7 +7,7 @@ np.set_printoptions(
     # suppress=False,
 )
 
-kwargs = {"E1": 100.0, "E2": 20.0, "nu12": 0.3, "G12": 10.0, "G23": 7.0}
+kwargs = {"E_l": 100.0, "E_t": 20.0, "nu_lt": 0.3, "G_lt": 10.0, "G_tt": 7.0}
 
 m = mechkit.material.TransversalIsotropic(**kwargs)
 m2 = mechkit.material.TransversalIsotropic(**kwargs, principal_axis=[0, 1, 0])

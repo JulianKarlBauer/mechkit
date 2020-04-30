@@ -732,9 +732,9 @@ class Orthotropic():
 
 
 class TransversalIsotropic(AbstractMaterial):
-    def __init__(self, rotate_principal_axis_to=[1, 0, 0], **kwargs):
+    def __init__(self, principal_axis=[1, 0, 0], **kwargs):
         super().__init__()
-        self.principal_axis = rotate_principal_axis_to
+        self.principal_axis = principal_axis
         self._nbr_useful_kwargs = 5
         self._default_principal_axis = [1, 0, 0]
 
@@ -742,15 +742,15 @@ class TransversalIsotropic(AbstractMaterial):
         self._check_nbr_useful_kwargs(**kwargs)
         self._get_primary_parameters()
         self.stiffness = Orthotropic(
-                                    E1=self.E1,
-                                    E2=self.E2,
-                                    E3=self.E2,
-                                    nu12=self.nu12,
-                                    nu13=self.nu12,
-                                    nu23=self._nu23(),
-                                    G12=self.G12,
-                                    G13=self.G12,
-                                    G23=self.G23,
+                                    E1=self.E_l,
+                                    E2=self.E_t,
+                                    E3=self.E_t,
+                                    nu12=self.nu_lt,
+                                    nu13=self.nu_lt,
+                                    nu23=self._nu_tt(),
+                                    G12=self.G_lt,
+                                    G13=self.G_lt,
+                                    G23=self.G_tt,
                                     ).stiffness
         self._check_positive_definiteness()
 
@@ -766,19 +766,19 @@ class TransversalIsotropic(AbstractMaterial):
         lized as follows: The 1 st index indicates the direction
         of the transverse contraction. The 2 nd index denotes
         the stress, which causes the contraction. As a conse-
-        quence the Poisson’s ratios ν ⊥|| is the larger and ν ||⊥
+        quence the Poisson’s ratios nu_tl is the larger and nu_lt
         the smaller one. (In the English literature the two indices related to the
         contraction and acting stress are
         used in the reverse sequence.)
         '''
         names_aliases = {
-            'E1':   ['e1', 'el'],
-            'E2':   ['e2', 'e3', 'et'],
-            'G12':  ['g12', 'g13', 'glt'],
-            'G23':  ['g23', 'gtt'],
-            'nu12': ['nu12', 'nu13', 'nult', 'v12', 'v13', 'vlt'],
-            'nu21': ['nu21', 'nu31', 'nutl', 'v21', 'v31', 'vtl'],
-            'nu23': ['nu23', 'nu32', 'nutt', 'v23', 'v32', 'vtt'],
+            'E_l':   ['e_l', 'el'],
+            'E_t':   ['e_t', 'et'],
+            'G_lt':  ['g_lt', 'glt'],
+            'G_tt':  ['g_tt', 'gtt'],
+            'nu_lt': ['nu_lt', 'nult', 'v_lt', 'vlt'],
+            'nu_tl': ['nu_tl', 'nutl', 'v_tl', 'vtl'],
+            'nu_tt': ['nu_tt', 'nutt', 'v_tt', 'vtt'],
             }
         return names_aliases
 
@@ -810,25 +810,25 @@ class TransversalIsotropic(AbstractMaterial):
     def _get_primary_parameters(self, ):
         useful = self._useful_kwargs
 
-        for key in ['E1', 'E2', 'G12']:
+        for key in ['E_l', 'E_t', 'G_lt']:
             if key in useful:
                 setattr(self, key, useful[key])
             else:
                 self._raise_required(key=key)
 
-        if 'nu12' in useful:
-            self.nu12 = useful['nu12']
-        elif 'nu21' in useful:
-            self.nu12 = self._nu12(nu21=useful['nu21'])
+        if 'nu_lt' in useful:
+            self.nu_lt = useful['nu_lt']
+        elif 'nu_tl' in useful:
+            self.nu_lt = self._nu_lt(nu_tl=useful['nu_tl'])
         else:
-            self._raise_required_either_or(keys=['nu12', 'nu21'])
+            self._raise_required_either_or(keys=['nu_lt', 'nu_tl'])
 
-        if 'G23' in useful:
-            self.G23 = useful['G23']
-        elif 'nu23' in useful:
-            self.G23 = self._G23(nu23=useful['nu23'])
+        if 'G_tt' in useful:
+            self.G_tt = useful['G_tt']
+        elif 'nu_tt' in useful:
+            self.G_tt = self._G_tt(nu_tt=useful['nu_tt'])
         else:
-            self._raise_required_either_or(keys=['G23', 'nu23'])
+            self._raise_required_either_or(keys=['G_tt', 'nu_tt'])
 
     def _check_positive_definiteness(self, ):
         if not (0.0 < min(np.linalg.eigh(self.stiffness_mandel6)[0])):
@@ -836,14 +836,14 @@ class TransversalIsotropic(AbstractMaterial):
                 'Stiffness Mandel6 is not positive definite'
                 )
 
-    def _nu12(self, nu21):
-        return nu21 * self.E1 / self.E2
+    def _nu_lt(self, nu_tl):
+        return nu_tl * self.E_l / self.E_t
 
-    def _G23(self, nu23):
-        return self.E2 / (2. * (1. + nu23))
+    def _G_tt(self, nu_tt):
+        return self.E_t / (2. * (1. + nu_tt))
 
-    def _nu23(self, ):
-        return self.E2 / (2. * self.G23) - 1.
+    def _nu_tt(self, ):
+        return self.E_t / (2. * self.G_tt) - 1.
 
     def _get_rotation_matrix(self, start_vector, end_vector):
         '''Thanks to https://math.stackexchange.com/a/2672702/694025'''

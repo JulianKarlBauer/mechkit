@@ -222,12 +222,12 @@ class Test_TransversalIsotropic:
         nu12 = self.engineering["V32"]
 
         self.m = mechkit.material.TransversalIsotropic(
-            E1=E1,
-            E2=E2,
-            G12=G12,
-            G23=G23,
-            nu12=nu12,
-            rotate_principal_axis_to=[0, 0, 1],
+            E_l=E1,
+            E_t=E2,
+            G_lt=G12,
+            G_tt=G23,
+            nu_lt=nu12,
+            principal_axis=[0, 0, 1],
         )
 
         self.stiffness = stiffness = np.zeros((6, 6), dtype=np.float64)
