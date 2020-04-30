@@ -8,7 +8,7 @@ mechkit
 
     /source/fabric_tensors
     /source/notation
-    /source/material
+    /source/material_index
     /source/tensors
     /source/utils
     /source/visualization
