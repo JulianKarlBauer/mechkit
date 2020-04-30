@@ -953,8 +953,6 @@ class TransversalIsotropic(AbstractMaterial):
         return self._nu_tt()
 
 
-
-
 if __name__ == '__main__':
 
     np.set_printoptions(
