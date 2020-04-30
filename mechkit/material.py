@@ -732,11 +732,11 @@ class Orthotropic():
 
 
 class TransversalIsotropic(AbstractMaterial):
-    def __init__(self, principal_axis=None, **kwargs):
+    def __init__(self, rotate_principal_axis_to=[1, 0, 0], **kwargs):
         super().__init__()
-        self._tensors = mechkit.tensors.Basic()
+        self.principal_axis = rotate_principal_axis_to
         self._nbr_useful_kwargs = 5
-        self._default_principal_axis = np.array([1., 0., 0.])
+        self._default_principal_axis = [1, 0, 0]
 
         self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
         self._check_nbr_useful_kwargs(**kwargs)
@@ -754,15 +754,11 @@ class TransversalIsotropic(AbstractMaterial):
                                     ).stiffness
         self._check_positive_definiteness()
 
-        if principal_axis is None:
-            self.principal_axis = self._default_principal_axis
-        else:
-            self.principal_axis = np.array(principal_axis)
+        if self.principal_axis != self._default_principal_axis:
             self.stiffness = self._rotate_stiffness_into_principal_axis()
 
     def _get_names_aliases(self, ):
         '''Note: There are different definitions of poissons ratio.
-
         (VDI 2014 Blatt 3 page 14)
         In case of the Poisson’s ratios there are different ways
         for the indexing in international practice. In the
@@ -852,8 +848,8 @@ class TransversalIsotropic(AbstractMaterial):
     def _get_rotation_matrix(self, start_vector, end_vector):
         '''Thanks to https://math.stackexchange.com/a/2672702/694025'''
 
-        a = start_vector
-        b = end_vector
+        a = np.array(start_vector, dtype=np.float64)
+        b = np.array(end_vector, dtype=np.float64)
 
         # Reshape to get Matlab-like operations and normalize
         a = a.reshape(3, 1) / np.linalg.norm(a)
