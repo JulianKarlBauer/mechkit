@@ -181,7 +181,64 @@ def test_exception_duplicate_parameter():
 # Transversal-Isotropic
 
 
+class Test_TransversalIsotropic:
+    def test_compare_with_data(self,):
+        """Thanks to Tarkes Dora Pallicity for kindly supplying the data"""
+        # 3 is the fiber direction
+        self.engineering = {
+            "E11": 5.3270039971985339,
+            "V12": 0.56298804,
+            "V13": 0.090007581,
+            "E22": 5.32534381451564,
+            "V21": 0.56281298,
+            "V23": 0.090009078,
+            "E33": 20.473530537649701,
+            "V31": 0.34592915,
+            "V32": 0.34604305,
+            "G12": 1.7033673797711393,
+            "G13": 1.7748275369398245,
+            "G23": 1.7747282490254996,
+        }
+        # Mandel6
+        self.cij = C = {
+            "11": 8.8103098279815111,
+            "12": 5.401109750542668,
+            "13": 4.9167594461656954,
+            "21": 5.4011063730662592,
+            "22": 8.8076619701439434,
+            "23": 4.9162303281442874,
+            "31": 4.9167753488207184,
+            "32": 4.9162475330973479,
+            "33": 23.875619726551143,
+            "44": 3.5494564980509993,
+            "55": 3.5496550738796486,
+            "66": 3.4067347595422786,
+        }
+
+        E1 = self.engineering["E33"]
+        E2 = self.engineering["E11"]
+        G12 = self.engineering["G13"]
+        G23 = self.engineering["G12"]
+        nu12 = self.engineering["V32"]
+
+        self.m = mechkit.material.TransversalIsotropic(
+            E1=E1, E2=E2, G12=G12, G23=G23, nu12=nu12, principal_axis=[0, 0, 1]
+        )
+
+        self.stiffness = stiffness = np.zeros((6, 6), dtype=np.float64)
+        for i in range(3):
+            for j in range(3):
+                stiffness[i, j] = C["{}{}".format(i + 1, j + 1)]
+        stiffness[3, 3] = C["44"]
+        stiffness[4, 4] = C["55"]
+        stiffness[5, 5] = C["66"]
+
+        print(self.m.stiffness_mandel6)
+        print(self.stiffness)
+
+        assert np.allclose(self.stiffness, self.m.stiffness_mandel6, atol=1e-1)
 
 
 if __name__ == "__main__":
-    test_reference_values()
+    c = Test_TransversalIsotropic()
+    r = c.test_compare_with_data()
