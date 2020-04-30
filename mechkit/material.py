@@ -9,25 +9,121 @@ import warnings
 from mechkit.utils import Ex
 
 
-class Isotropic(object):
-    r'''Representation of isotropic homogeneous material.
+class AbstractMaterial(object):
+    def __init__(self, **kwargs):
+        self._con = mechkit.notation.VoigtConverter(silent=True)
+
+    def __getitem__(self, key):
+        '''Make attributes accessible dict-like.'''
+        return getattr(self, key)
+
+    def _get_useful_kwargs_from_kwargs(self, **kwargs):
+        names_aliases = self._get_names_aliases()
+
+        useful = {}
+        for key, val in kwargs.items():
+            for name, aliases in names_aliases.items():
+                if key.lower() in aliases:
+                    if name not in useful:
+                        useful[name] = val
+                    else:
+                        raise Ex(
+                            ('Redundant input for primary parameter {name}\n'
+                             'Failed to use \n{key}={val}\nbecause {name} '
+                             'is already assigned the value {useful}\n'
+                             'Given arguments are:{kwargs}\n'
+                             ).format(
+                                name=name,
+                                key=key,
+                                val=val,
+                                useful=useful[name],
+                                kwargs=kwargs,
+                                )
+                            )
+        if len(kwargs) != len(useful):
+            raise Ex(
+                    ('Not all keyword arguments are identified as material '
+                     'parameters.\n'
+                     'Identified material parameters: {useful}\n'
+                     'Given kwargs are: {kwargs}'
+                     ).format(
+                        useful=useful,
+                        kwargs=kwargs,
+                        )
+                )
+        return useful
+
+    def _check_nbr_useful_kwargs(self, **kwargs):
+        if len(self._useful_kwargs) != self._nbr_useful_kwargs:
+            raise Ex(
+                ('Number of input parameters has to be {nbr}.\n'
+                 'Note: Isotropic material is defined by {nbr} parameters.\n'
+                 'Given arguments are:{kwargs}\n'
+                 'Identified primary input parameters are:{useful}\n').format(
+                                                    kwargs=kwargs,
+                                                    useful=self._useful_kwargs,
+                                                    nbr=self._nbr_useful_kwargs
+                                                    )
+                )
+
+    @property
+    def stiffness_mandel6(self, ):
+        return self._con.to_mandel6(self.stiffness)
+
+    @property
+    def stiffness_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.stiffness_mandel6,
+                   voigt_type='stiffness',
+                   )
+
+    @property
+    def compliance_mandel6(self, ):
+        return np.linalg.inv(self.stiffness_mandel6)
+
+    @property
+    def compliance(self, ):
+        return self._con.to_tensor(self.compliance_mandel6)
+
+    @property
+    def compliance_voigt(self, ):
+        return self._con.mandel6_to_voigt(
+                   self.compliance_mandel6,
+                   voigt_type='compliance',
+                   )
+
+
+class Isotropic(AbstractMaterial):
+    r'''Representation of homogeneous isotropic material.
 
     Use cases:
 
         - Create an instance of this class and
 
-            - use the instance as an container representing the material or
+            - use the instance as an container representing the material
             - access most common material parameters as attributes or dict-like
               (implementation of [wikipedia_conversion_table]_)
             - do arithemtic on eigenvalues using the operators
               +, -, * with numbers.
+
+    Quickstart:
+
+    .. code-block:: python
+
+        # Create instance
+        mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
+
+        # Use attributes
+        G = mat.G
+        stiffness = mat.stiffness_mandel6
+
 
     **Two** independent material parameters uniquely define an isotropic
     material [Betram2015]_ (chapter 4.1.2).
     Therefore, exactly two material parameters have to be passed to the
     constructor of this class.
 
-    The following primary arguments and aliases are valid, **case-insensitive**
+    The following primary arguments and aliases are **case-insensitive**
     **keyword arguments** of the constructor:
 
         - **K** : Compression modulus
@@ -62,13 +158,13 @@ class Isotropic(object):
             C11_voigt, C22_voigt, C33_voigt,
             C1111, C2222, C3333
 
-    with (See also note below)
+    with (See :ref:`DefinitionStiffnessComponents`)
 
         - C<ij>_voigt : Component of stiffness matrix in Voigt notation
         - C<ijkl> : Component of stiffness in tensor notation
 
-
-    Attributes: **(** Accessible both as attributes and dict-like['key'] **)**
+    Attributes: **(** Accessible both as attributes and dict-like
+    ``mat['E']`` **)**
 
         - **K** : Bulk modulus
         - **G**, **mu** : Shear modulus
@@ -93,55 +189,6 @@ class Isotropic(object):
         - Use **auxetic=False** if you expect a **positive** poissons ratio.
         - Use **auxetic=True** if you expect a **negative** poissons ratio.
 
-
-    Note
-    ----
-
-        Definition of stiffness components:
-
-        .. math::
-            \begin{align*}
-                \mathbb{C}
-                &=
-                C_{ijkl}
-                \;
-                \mathbf{e}_{i}
-                \otimes
-                \mathbf{e}_{j}
-                \otimes
-                \mathbf{e}_{k}
-                \otimes
-                \mathbf{e}_{l}  \\
-                &=
-                \begin{bmatrix}
-             C_{11}  & C_{12}       & C_{13} & C_{14} & C_{15} & C_{16} \\
-                     & C_{22}       & C_{23} & C_{24} & C_{25} & C_{26} \\
-                     &              & C_{33} & C_{34} & C_{35} & C_{36} \\
-                     &              &        & C_{44} & C_{45} & C_{46} \\
-                     & \text{sym}   &        &        & C_{55} & C_{56} \\
-                     &              &        &        &        & C_{66}
-                \end{bmatrix}_{[\text{Voigt}]}
-                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}        \\
-                &=
-                \begin{bmatrix}
-             C_{11}  & C_{12}       & C_{13} & \sqrt{2}C_{14} & \sqrt{2}C_{15} & \sqrt{2}C_{16} \\
-                     & C_{22}       & C_{23} & \sqrt{2}C_{24} & \sqrt{2}C_{25} & \sqrt{2}C_{26} \\
-                     &              & C_{33} & \sqrt{2}C_{34} & \sqrt{2}C_{35} & \sqrt{2}C_{36} \\
-                     &              &        & 2C_{44} & 2C_{45} & 2C_{46} \\
-                     & \text{sym}   &        &         & 2C_{55} & 2C_{56} \\
-                     &              &        &         &         & 2C_{66}
-                \end{bmatrix}_{[\text{Mandel6}]}
-                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
-            \end{align*}
-
-        with
-
-        - :math:`\boldsymbol{B}_{\alpha}` : Base dyad of Mandel6 notation
-          (See :mod:`mechkit.notation`)
-        - :math:`\boldsymbol{V}_{\alpha}` : Base dyad of Voigt notation
-          (See [csmbrannonMandel]_)
-
-
     Note
     ----
 
@@ -157,18 +204,18 @@ class Isotropic(object):
                 \right]         \\
                 &=
                 \left(
-                2 \mu \mathbb{I}^{\text{S}}
+                3 K \mathbb{P}_{\text{1}}
                 +
-                \lambda \mathbf{I} \otimes \mathbf{I}
+                2 G \mathbb{P}_{\text{2}}
                 \right)
                 \left[
                     \boldsymbol{\varepsilon}
                 \right]         \\
                 &=
                 \left(
-                3 K \mathbb{P}_{\text{1}}
+                2 \mu \mathbb{I}^{\text{S}}
                 +
-                2 G \mathbb{P}_{\text{2}}
+                \lambda \mathbf{I} \otimes \mathbf{I}
                 \right)
                 \left[
                     \boldsymbol{\varepsilon}
@@ -178,7 +225,7 @@ class Isotropic(object):
         with (See :class:`mechkit.tensors.Basic` for details and definitions)
 
         .. math::
-            \begin{align*}
+            \begin{alignat}{2}
                 \mathbb{I}^{\text{S}}
                 &=
                 \begin{bmatrix}
@@ -187,8 +234,11 @@ class Isotropic(object):
               0 & 0 & 1 & 0 & 0 & 0 \\
               0 & 0 & 0 & \frac{1}{2} & 0 & 0 \\
               0 & 0 & 0 & 0 & \frac{1}{2} & 0 \\
-              0 & 0 & 0 & 0 & 0 & \frac{1}{2} \\
-                \end{bmatrix}_{[\text{Voigt}]}
+              0 & 0 & 0 & 0 & 0 & \frac{1}{2}
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }
             &=
                 \begin{bmatrix}
               1 & 0 & 0 & 0 & 0 & 0 \\
@@ -197,7 +247,10 @@ class Isotropic(object):
               0 & 0 & 0 & 1 & 0 & 0 \\
               0 & 0 & 0 & 0 & 1 & 0 \\
               0 & 0 & 0 & 0 & 0 & 1 \\
-                \end{bmatrix}_{[\text{Mandel6}]}\\
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }   \\
             \mathbf{I} \otimes \mathbf{I}
             &=
                 \begin{bmatrix}
@@ -207,7 +260,10 @@ class Isotropic(object):
               0 & 0 & 0 & 0 & 0 & 0 \\
               0 & 0 & 0 & 0 & 0 & 0 \\
               0 & 0 & 0 & 0 & 0 & 0 \\
-                \end{bmatrix}_{[\text{Voigt}]}
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }
             &=
                 \begin{bmatrix}
               1 & 1 & 1 & 0 & 0 & 0 \\
@@ -216,12 +272,15 @@ class Isotropic(object):
               0 & 0 & 0 & 0 & 0 & 0 \\
               0 & 0 & 0 & 0 & 0 & 0 \\
               0 & 0 & 0 & 0 & 0 & 0 \\
-                \end{bmatrix}_{[\text{Mandel6}]}
-            \end{align*}
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }
+            \end{alignat}
 
         Therefore, with
         :math:`\mu = G` and
-        :math:`M = \lambda + 2G`
+        :math:`M = 2G + \lambda`
         the isotropic stiffness is
 
         .. math::
@@ -235,8 +294,10 @@ class Isotropic(object):
                     0 & 0 & 0 & C_{44} & 0 & 0 \\
                     0 & 0 & 0 & 0 & C_{55} & 0 \\
                     0 & 0 & 0 & 0 & 0 & C_{66}
-                \end{bmatrix}_{[\text{Voigt}]}
-                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}  \\
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }   \\
                 &=
                 \begin{bmatrix}
                     M & \lambda & \lambda & 0 & 0 & 0 \\
@@ -245,8 +306,10 @@ class Isotropic(object):
                     0 & 0 & 0 & G & 0 & 0 \\
                     0 & 0 & 0 & 0 & G & 0 \\
                     0 & 0 & 0 & 0 & 0 & G
-                \end{bmatrix}_{[\text{Voigt}]}
-                \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}  \\
+                \end{bmatrix}_{[\text{Voigt}]}      \hspace{-10mm}
+                \scriptsize{
+                    \boldsymbol{V}_{\alpha} \otimes \boldsymbol{V}_{\beta}
+                    }   \\
                 &=
                 \begin{bmatrix}
                     C_{11} & C_{12} & C_{13} & 0 & 0 & 0 \\
@@ -255,8 +318,10 @@ class Isotropic(object):
                     0 & 0 & 0 & 2C_{44} & 0 & 0 \\
                     0 & 0 & 0 & 0 & 2C_{55} & 0 \\
                     0 & 0 & 0 & 0 & 0 & 2C_{66}
-                \end{bmatrix}_{[\text{Mandel6}]}
-                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}  \\
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }  \\
                 &=
                 \begin{bmatrix}
                     M & \lambda & \lambda & 0 & 0 & 0 \\
@@ -265,19 +330,29 @@ class Isotropic(object):
                     0 & 0 & 0 & 2G & 0 & 0 \\
                     0 & 0 & 0 & 0 & 2G & 0 \\
                     0 & 0 & 0 & 0 & 0 & 2G
-                \end{bmatrix}_{[\text{Mandel6}]}
-                \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}  \\
+                \end{bmatrix}_{[\text{Mandel6}]}    \hspace{-15mm}
+                \scriptsize{
+                    \boldsymbol{B}_{\alpha} \otimes \boldsymbol{B}_{\beta}
+                    }
             \end{align*}
 
     Examples
     --------
     >>> import mechkit
 
+    >>> # Create instance
     >>> mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
-    >>> mat = mechkit.material.Isotropic(E=2e6, K=(1/6)*1e7)
+    >>> mat = mechkit.material.Isotropic(E=2e6, K=1e6)
+
+    >>> # Access attributes
+    >>> mat.G
+    857142
+    >>> mat['E']
+    2000000
+
+    >>> # More examples
     >>> mat1 = mechkit.material.Isotropic(M=15, G=5)
     >>> mat2 = mechkit.material.Isotropic(C11_voigt=20, C44_voigt=5)
-
     >>> mat1.stiffness_voigt
     [[15.  5.  5.  0.  0.  0.]
      [ 5. 15.  5.  0.  0.  0.]
@@ -324,19 +399,16 @@ class Isotropic(object):
        https://en.wikipedia.org/wiki/Template:Elastic_moduli
 
     '''
-    def __init__(self, auxetic=False, **kwargs, ):
-        self._con = mechkit.notation.VoigtConverter(silent=True)
+    def __init__(self, auxetic=False, **kwargs):
+        super().__init__()
         self._tensors = mechkit.tensors.Basic()
+        self._nbr_useful_kwargs = 2
         self.auxetic = auxetic
 
         self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
         self._check_nbr_useful_kwargs(**kwargs)
         self._get_K_G()
         self._check_positive_definiteness()
-
-    def __getitem__(self, key):
-        '''Make attributes accessible dict-like.'''
-        return getattr(self, key)
 
     def __add__(self, other):
         K = self.K + other.K
@@ -401,46 +473,11 @@ class Isotropic(object):
             }
         return funcs_dict[frozenset(keywords)]
 
-    def _get_useful_kwargs_from_kwargs(self, **kwargs):
-        useful = {}
-        for key, val in kwargs.items():
-            for name, aliases in self._get_names_aliases().items():
-                if key.lower() in aliases:
-                    if name not in useful:
-                        useful[name] = val
-                    else:
-                        raise Ex(
-                            ('Redundant input for primary parameter {name}\n'
-                             'Failed to use \n{key}={val}\nbecause {name} '
-                             'is already assigned the value {useful}\n'
-                             'Given arguments are:{kwargs}\n'
-                             ).format(
-                                name=name,
-                                key=key,
-                                val=val,
-                                useful=useful[name],
-                                kwargs=kwargs,
-                                )
-                            )
-        return useful
-
-    def _check_nbr_useful_kwargs(self, **kwargs):
-        if len(self._useful_kwargs) != 2:
-            raise Ex(
-                ('Number of input parameters has to be 2.\n'
-                 'Note: Isotropic material is defined by 2 parameters.\n'
-                 'Given arguments are:{}\n'
-                 'Identified primary input parameters are:{}\n').format(
-                                                    kwargs,
-                                                    self._useful_kwargs
-                                                    )
-                )
-
     def _check_positive_definiteness(self, ):
         if not ((self.K >= 0.) and (self.G >= 0.)):
             raise Ex(
                 'Negative K or G.\n'
-                'K and G of positiv definit isotropic material'
+                'K and G of positiv definit isotropic material '
                 'have to be positive. \nK={} G={}'.format(self.K, self.G)
                 )
 
@@ -571,50 +608,365 @@ class Isotropic(object):
     def stiffness(self, ):
         return 3.*self.K*self._tensors.P1 + 2.*self.G*self._tensors.P2
 
-    @property
-    def stiffness_mandel6(self, ):
-        return self._con.to_mandel6(self.stiffness)
 
-    @property
-    def stiffness_voigt(self, ):
-        return self._con.mandel6_to_voigt(
-                    self.stiffness_mandel6,
-                    voigt_type='stiffness',
-                    )
+class Orthotropic():
+    r'''Representation of homogeneous orthotropic material.
+
+    **Nine** independent material parameters uniquely define an orthotropic
+    material [Betram2015]_ (chapter 4.1.2), aligned with the coordinate axes.
+
+    See definitions of :ref:`EngineeringConstants`.
+
+    Attributes:
+
+    - Keyword arguments
+
+    - **stiffness** : Stiffness in tensor notation
+    - **stiffness_mandel6** : Stiffness in Mandel6 notation
+    - **stiffness_voigt** : Stiffness in Voigt notation
+
+    - **compliance** : Compliance in tensor notation
+    - **compliance_mandel6** : Compliance in Mandel6 notation
+    - **compliance_voigt** : Compliance in Voigt notation
+
+
+    Compliance
+
+        .. math::
+            \begin{align*}
+                \mathbb{C}^{-1}_{\text{orthotropic}}
+                &=
+                \begin{bmatrix}
+                    \frac{1}{E_1}   & -\frac{\nu_{21}}{E_2}     & -\frac{\nu_{31}}{E_3} & 0 & 0 & 0 \\
+                    -\frac{\nu_{12}}{E_1}   & \frac{1}{E_2}     & -\frac{\nu_{32}}{E_3} & 0 & 0 & 0 \\
+                    -\frac{\nu_{13}}{E_1}   & -\frac{\nu_{23}}{E_2} & \frac{1}{E_3}     & 0 & 0 & 0 \\
+                    0 & 0 & 0 & \frac{1}{G_{23}} & 0 & 0 \\
+                    0 & 0 & 0 & 0 & \frac{1}{G_{31}} & 0 \\
+                    0 & 0 & 0 & 0 & 0 & \frac{1}{G_{12}}
+                \end{bmatrix}_{[\text{Voigt}]}  \\
+                &=
+                \begin{bmatrix}
+                    \frac{1}{E_1}   & -\frac{\nu_{12}}{E_1}     & -\frac{\nu_{13}}{E_1} & 0 & 0 & 0 \\
+                                    & \frac{1}{E_2}     & -\frac{\nu_{23}}{E_2} & 0 & 0 & 0 \\
+                                    &                   &\frac{1}{E_3}     & 0 & 0 & 0 \\
+                    & & & \frac{1}{G_{23}} & 0 & 0 \\
+                    & sym & & & \frac{1}{G_{31}} & 0 \\
+                    & & & & & \frac{1}{G_{12}}
+                \end{bmatrix}_{[\text{Voigt}]}
+            \end{align*}
+
+    '''
+
+    def __init__(self, E1, E2, E3, nu12, nu13, nu23, G12, G13, G23):
+
+        self.E1 = E1
+        self.E2 = E2
+        self.E3 = E3
+        self.nu12 = nu12
+        self.nu13 = nu13
+        self.nu23 = nu23
+        self.G12 = G12
+        self.G13 = G13
+        self.G23 = G23
+
+        S12 = -nu12 / E1
+        S13 = -nu13 / E1
+        S23 = -nu23 / E2
+        self.compliance_voigt = np.array(
+                [
+                    [1./E1, S12,    S13,    0,      0,      0],
+                    [S12,   1./E2,  S23,    0,      0,      0],
+                    [S13,   S23,    1./E3,  0,      0,      0],
+                    [0,     0,      0,      1./G23, 0,      0],
+                    [0,     0,      0,      0,      1./G13, 0],
+                    [0,     0,      0,      0,      0,      1./G12],
+                ],
+                dtype='float64',
+                )
+
+        self._con = mechkit.notation.VoigtConverter(silent=True)
 
     @property
     def compliance_mandel6(self, ):
-        return np.linalg.inv(self.stiffness_mandel6)
+        return self._con.voigt_to_mandel6(
+                   self.compliance_voigt,
+                   voigt_type='compliance',
+                   )
 
     @property
     def compliance(self, ):
         return self._con.to_tensor(self.compliance_mandel6)
 
     @property
-    def compliance_voigt(self, ):
+    def stiffness_mandel6(self, ):
+        return np.linalg.inv(self.compliance_mandel6)
+
+    @property
+    def stiffness(self, ):
+        return self._con.to_tensor(self.stiffness_mandel6)
+
+    @property
+    def stiffness_voigt(self, ):
         return self._con.mandel6_to_voigt(
-                    self.compliance_mandel6,
-                    voigt_type='compliance',
-                    )
+                   self.stiffness_mandel6,
+                   voigt_type='stiffness',
+                   )
+
+
+class TransversalIsotropic(AbstractMaterial):
+    r'''Representation of homogeneous transversal isotropic material.
+
+    Quickstart:
+
+    .. code-block:: python
+
+        # Create instance
+        mat = mechkit.material.TransversalIsotropic(
+            E_l=100.0, E_t=20.0, nu_lt=0.3, G_lt=10.0, G_tt=7.0,
+            principal_axis=[1, 1, 0]
+        )
+
+        # Use attributes
+        stiffness = mat.stiffness_mandel6
+
+    **Five** independent material parameters uniquely define an isotropic
+    material [Betram2015]_ (chapter 4.1.2).
+    Therefore, exactly five material parameters have to be passed to the
+    constructor of this class.
+
+    See definitions of :ref:`EngineeringConstants`.
+
+    Coordinate-free indices are used
+
+        - *l* : longitudinal, i.e. in direction of principal axis
+        - *t* : transversal, i.e. perpendicular to principal axis
+
+    and the direction of the principal axis can be given in vector format as
+    **principal_axis**. The default principal axis is the x-axis.
+    The vector does not have to be normalized.
+
+    Valid **case-insensitive** keyword arguments and aliases of the constructor are
+    (Format: - **keyword arguments** : Aliases)
+
+        - **E_l** : El
+        - **E_t** : Et
+        - **G_lt** : Glt
+        - **G_tt** : Gtt
+        - **nu_lt** : nult, v_lt, vlt
+        - **nu_tl** : nutl, v_tl, vtl
+        - **nu_tt** : nutt, v_tt, vtt
+
+    Only four combinations of these arguments are valid:
+
+        - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_lt**
+        - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_tl**
+        - **E_l**, **E_t**, **G_lt**, **nu_lt**, **nu_tt**
+        - **E_l**, **E_t**, **G_lt**, **nu_tl**, **nu_tt**
+
+    Attributes: **(** Accessible both as attributes and dict-like **)**
+
+        - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_lt**, **nu_tl**, **nu_tt**
+
+        - **stiffness** : Stiffness in tensor notation
+        - **stiffness_mandel6** : Stiffness in Mandel6 notation
+        - **stiffness_voigt** : Stiffness in Voigt notation
+
+        - **compliance** : Compliance in tensor notation
+        - **compliance_mandel6** : Compliance in Mandel6 notation
+        - **compliance_voigt** : Compliance in Voigt notation
+
+    Examples
+    --------
+    >>> import mechkit
+
+    >>> # Create instance
+    >>> mat = mechkit.material.TransversalIsotropic(
+            E_l=100.0, E_t=20.0, nu_lt=0.3, G_lt=10.0, G_tt=7.0,
+            principal_axis=[0, 1, 0]
+        )
+
+    >>> # Access attributes
+    >>> mat.compliance_voigt
+    [[ 0.05  -0.003 -0.021  0.     0.     0.   ]
+     [-0.003  0.01  -0.003  0.     0.     0.   ]
+     [-0.021 -0.003  0.05   0.     0.     0.   ]
+     [ 0.    -0.    -0.     0.1   -0.    -0.   ]
+     [ 0.     0.     0.     0.     0.143  0.   ]
+     [ 0.     0.     0.     0.     0.     0.1  ]]
+
+
+    >>> mat.stiffness_mandel6
+    [[ 25.68  11.21  11.68   0.     0.     0.  ]
+     [ 11.21 106.72  11.21   0.     0.     0.  ]
+     [ 11.68  11.21  25.68   0.     0.     0.  ]
+     [  0.     0.     0.    20.     0.     0.  ]
+     [  0.     0.     0.     0.    14.     0.  ]
+     [  0.     0.     0.     0.     0.    20.  ]]
+
+    '''
+
+    def __init__(self, principal_axis=[1, 0, 0], **kwargs):
+        super().__init__()
+        self.principal_axis = principal_axis
+        self._nbr_useful_kwargs = 5
+        self._default_principal_axis = [1, 0, 0]
+
+        self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
+        self._check_nbr_useful_kwargs(**kwargs)
+        self._get_primary_parameters()
+        self.stiffness = Orthotropic(
+                                    E1=self.E_l,
+                                    E2=self.E_t,
+                                    E3=self.E_t,
+                                    nu12=self.nu_lt,
+                                    nu13=self.nu_lt,
+                                    nu23=self._nu_tt(),
+                                    G12=self.G_lt,
+                                    G13=self.G_lt,
+                                    G23=self.G_tt,
+                                    ).stiffness
+        self._check_positive_definiteness()
+
+        if self.principal_axis != self._default_principal_axis:
+            self.stiffness = self._rotate_stiffness_into_principal_axis()
+
+    def _get_names_aliases(self, ):
+        '''Note: There are different definitions of poissons ratio.
+        (VDI 2014 Blatt 3 page 14)
+        In case of the Poisson’s ratios there are different ways
+        for the indexing in international practice. In the
+        guideline VDI 2014 the required two indices are uti-
+        lized as follows: The 1 st index indicates the direction
+        of the transverse contraction. The 2 nd index denotes
+        the stress, which causes the contraction. As a conse-
+        quence the Poisson’s ratios nu_tl is the larger and nu_lt
+        the smaller one. (In the English literature the two indices related to the
+        contraction and acting stress are
+        used in the reverse sequence.)
+        '''
+        names_aliases = {
+            'E_l':   ['e_l', 'el'],
+            'E_t':   ['e_t', 'et'],
+            'G_lt':  ['g_lt', 'glt'],
+            'G_tt':  ['g_tt', 'gtt'],
+            'nu_lt': ['nu_lt', 'nult', 'v_lt', 'vlt'],
+            'nu_tl': ['nu_tl', 'nutl', 'v_tl', 'vtl'],
+            'nu_tt': ['nu_tt', 'nutt', 'v_tt', 'vtt'],
+            }
+        return names_aliases
+
+    def _raise_required(self, key):
+        raise Ex(
+                    (
+                        'Parameter {key} is required.\n'
+                        'Aliases are {aliases}.'
+                    ).format(
+                        key=key,
+                        aliases=self._get_names_aliases[key],
+                        )
+                )
+
+    def _raise_required_either_or(self, keys):
+        raise Ex(
+                    (
+                        'Either {key0} or {key1} is required.\n'
+                        'Aliases of {key0} are {aliases0}\n'
+                        'Aliases of {key1} are {aliases1}\n'
+                    ).format(
+                        key0=keys[0],
+                        key1=keys[1],
+                        aliases0=self._get_names_aliases[keys[0]],
+                        aliases1=self._get_names_aliases[keys[1]],
+                        )
+                )
+
+    def _get_primary_parameters(self, ):
+        useful = self._useful_kwargs
+
+        for key in ['E_l', 'E_t', 'G_lt']:
+            if key in useful:
+                setattr(self, key, useful[key])
+            else:
+                self._raise_required(key=key)
+
+        if 'nu_lt' in useful:
+            self.nu_lt = useful['nu_lt']
+        elif 'nu_tl' in useful:
+            self.nu_lt = self._nu_lt(nu_tl=useful['nu_tl'])
+        else:
+            self._raise_required_either_or(keys=['nu_lt', 'nu_tl'])
+
+        if 'G_tt' in useful:
+            self.G_tt = useful['G_tt']
+        elif 'nu_tt' in useful:
+            self.G_tt = self._G_tt(nu_tt=useful['nu_tt'])
+        else:
+            self._raise_required_either_or(keys=['G_tt', 'nu_tt'])
+
+    def _check_positive_definiteness(self, ):
+        if not (0.0 < min(np.linalg.eigh(self.stiffness_mandel6)[0])):
+            raise Ex(
+                'Stiffness Mandel6 is not positive definite'
+                )
+
+    def _nu_lt(self, nu_tl):
+        return nu_tl * self.E_l / self.E_t
+
+    def _nu_tl(self, nu_lt):
+        return nu_lt * self.E_t / self.E_l
+
+    def _G_tt(self, nu_tt):
+        return self.E_t / (2. * (1. + nu_tt))
+
+    def _nu_tt(self, ):
+        return self.E_t / (2. * self.G_tt) - 1.
+
+    def _get_rotation_matrix(self, start_vector, end_vector):
+        '''Thanks to https://math.stackexchange.com/a/2672702/694025'''
+
+        a = np.array(start_vector, dtype=np.float64)
+        b = np.array(end_vector, dtype=np.float64)
+
+        # Reshape to get Matlab-like operations and normalize
+        a = a.reshape(3, 1) / np.linalg.norm(a)
+        b = b.reshape(3, 1) / np.linalg.norm(b)
+
+        c = a + b
+        return 2.0 * (c @ c.T) / (c.T @ c) - np.eye(3)
+
+    def _rotate_stiffness_into_principal_axis(self, ):
+        R = self._get_rotation_matrix(
+                        start_vector=self._default_principal_axis,
+                        end_vector=self.principal_axis,
+                        )
+        return np.einsum('ij, kl, mn, op, jlnp->ikmo', R, R, R, R, self.stiffness)
+
+    @property
+    def nu_tl(self, ):
+        return self._nu_tl(nu_lt=self.nu_lt)
+
+    @property
+    def nu_tt(self, ):
+        return self._nu_tt()
 
 
 if __name__ == '__main__':
 
     np.set_printoptions(
             linewidth=140,
-            precision=2,
+            precision=3,
             # suppress=False,
             )
 
-    import mechkit
-
     mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
-    mat = mechkit.material.Isotropic(E=2e6, K=(1/6)*1e7)
+    mat = mechkit.material.Isotropic(E=2e6, K=1e6)
     mat1 = mechkit.material.Isotropic(M=15, G=5)
     mat2 = mechkit.material.Isotropic(C11_voigt=20, C44_voigt=5)
 
     printQueue = [
-            'mat1.stiffness_voigt',
+            "mat.G",
+            "mat['E']",
+            "mat1['stiffness_voigt']",
             "mat2['stiffness_voigt']",
             "(0.5*mat1 + 0.5*mat2)['stiffness_voigt']",
             "mat1['stiffness_mandel6']",
@@ -623,6 +975,19 @@ if __name__ == '__main__':
     for val in printQueue:
         print(val)
         print(eval(val), '\n')
+
+    mat = mechkit.material.TransversalIsotropic(
+        E_l=100.0, E_t=20.0, nu_lt=0.3, G_lt=10.0, G_tt=7.0, principal_axis=[0, 1, 0]
+    )
+
+    printQueue = [
+            "mat.compliance_voigt",
+            "mat.stiffness_mandel6",
+            ]
+    for val in printQueue:
+        print(val)
+        print(eval(val), '\n')
+
 
 
 

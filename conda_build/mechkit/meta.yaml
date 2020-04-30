@@ -1,5 +1,5 @@
 {% set name = "mechkit" %}
-{% set version = "0.1.0" %}
+{% set version = "0.2.2" %}
 
 package:
   name: "{{ name|lower }}"
@@ -7,11 +7,11 @@ package:
 
 source:
   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: "fae4506a694a1045a05d2803840fc8947b0852fbefcbdd6ff02af9bb4020fa11"
+  sha256: 7d0ef6f67fd52eca9b1d32b786be04c02400766d19e7a9920159ab7a76688139
 
 build:
   number: 0
-  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+  script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
   host:
@@ -28,12 +28,12 @@ test:
 
 about:
   home: "https://github.com/JulianKarlBauer/mechkit"
-  license: "MIT"
-  license_family: "MIT"
-  license_file: ""
+  license: MIT
+  license_family: MIT
+  license_file: 
   summary: "Basic continuum mechanics toolkit"
-  doc_url: ""
-  dev_url: ""
+  doc_url: 
+  dev_url: 
 
 extra:
   recipe-maintainers:

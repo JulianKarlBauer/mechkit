@@ -150,6 +150,17 @@ class Basic(object):
 
         self.ricci = self._levi_civita_tensor()
 
+        I2 = self.I2
+        self.I6s = 1./8. * (np.einsum('ms, np, qr ->mnpqrs', I2, I2, I2) +
+                            np.einsum('ms, nq, pr ->mnpqrs', I2, I2, I2) +
+                            np.einsum('mr, np, qs ->mnpqrs', I2, I2, I2) +
+                            np.einsum('mr, nq, ps ->mnpqrs', I2, I2, I2) +
+                            np.einsum('mp, nr, qs ->mnpqrs', I2, I2, I2) +
+                            np.einsum('mp, ns, qr ->mnpqrs', I2, I2, I2) +
+                            np.einsum('mq, nr, ps ->mnpqrs', I2, I2, I2) +
+                            np.einsum('mq, ns, pr ->mnpqrs', I2, I2, I2)
+                            )
+
     def _levi_civita_tensor(self,):
         eijk = np.zeros((3, 3, 3))
         eijk[0, 1, 2] = eijk[1, 2, 0] = eijk[2, 0, 1] = 1
