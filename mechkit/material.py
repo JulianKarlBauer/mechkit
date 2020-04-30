@@ -731,16 +731,34 @@ class Orthotropic():
                    )
 
 
-class TransversalIsotropic(AbstractMaterial, AbstractMaterialCompliance):
-    def __init__(self, **kwargs):
+class TransversalIsotropic(AbstractMaterial):
+    def __init__(self, principal_axis=None, **kwargs):
         super().__init__()
         self._tensors = mechkit.tensors.Basic()
         self._nbr_useful_kwargs = 5
+        self._default_principal_axis = np.array([1., 0., 0.])
 
         self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
         self._check_nbr_useful_kwargs(**kwargs)
         self._get_primary_parameters()
+        self.stiffness = Orthotropic(
+                                    E1=self.E1,
+                                    E2=self.E2,
+                                    E3=self.E2,
+                                    nu12=self.nu12,
+                                    nu13=self.nu12,
+                                    nu23=self._nu23(),
+                                    G12=self.G12,
+                                    G13=self.G12,
+                                    G23=self.G23,
+                                    ).stiffness
         self._check_positive_definiteness()
+
+        if principal_axis is None:
+            self.principal_axis = self._default_principal_axis
+        else:
+            self.principal_axis = np.array(principal_axis)
+            self.stiffness = self._rotate_stiffness_into_principal_axis()
 
     def _get_names_aliases(self, ):
         names_aliases = {
@@ -817,19 +835,25 @@ class TransversalIsotropic(AbstractMaterial, AbstractMaterialCompliance):
     def _nu23(self, ):
         return self.E2 / (2. * self.G23) - 1.
 
-    @property
-    def compliance_voigt(self, ):
-        return Orthotropic(
-                E1=self.E1,
-                E2=self.E2,
-                E3=self.E2,
-                nu12=self.nu12,
-                nu13=self.nu12,
-                nu23=self._nu23(),
-                G12=self.G12,
-                G13=self.G12,
-                G23=self.G23,
-                ).compliance_voigt
+    def _get_rotation_matrix(self, start_vector, end_vector):
+        '''Thanks to https://math.stackexchange.com/a/2672702/694025'''
+
+        a = start_vector
+        b = end_vector
+
+        # Reshape to get Matlab-like operations and normalize
+        a = a.reshape(3, 1) / np.linalg.norm(a)
+        b = b.reshape(3, 1) / np.linalg.norm(b)
+
+        c = a + b
+        return 2.0 * (c @ c.T) / (c.T @ c) - np.eye(3)
+
+    def _rotate_stiffness_into_principal_axis(self, ):
+        R = self._get_rotation_matrix(
+                        start_vector=self._default_principal_axis,
+                        end_vector=self.principal_axis,
+                        )
+        return np.einsum('ij, kl, mn, op, jlnp->ikmo', R, R, R, R, self.stiffness)
 
 
 if __name__ == '__main__':
