@@ -776,13 +776,13 @@ class TransversalIsotropic(AbstractMaterial):
         used in the reverse sequence.)
         '''
         names_aliases = {
-            'E1':   ['e1', 'el', 'e_l'],
-            'E2':   ['e2', 'e3', 'et', 'e_t'],
-            'G12':  ['g12', 'g13', 'glt', 'g_lt'],
-            'G23':  ['g23', 'gtt', 'g_tt'],
-            'nu12': ['nu12', 'nu13', 'nult', 'nu_lt'],
-            'nu21': ['nu21', 'nu31', 'nutl', 'nu_tl'],
-            'nu23': ['nu23', 'nu32', 'nutt', 'nu_tt'],
+            'E1':   ['e1', 'el'],
+            'E2':   ['e2', 'e3', 'et'],
+            'G12':  ['g12', 'g13', 'glt'],
+            'G23':  ['g23', 'gtt'],
+            'nu12': ['nu12', 'nu13', 'nult'],
+            'nu21': ['nu21', 'nu31', 'nutl'],
+            'nu23': ['nu23', 'nu32', 'nutt'],
             }
         return names_aliases
 
