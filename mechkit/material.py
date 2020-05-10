@@ -57,12 +57,13 @@ class AbstractMaterial(object):
         if len(self._useful_kwargs) != self._nbr_useful_kwargs:
             raise Ex(
                 ('Number of input parameters has to be {nbr}.\n'
-                 'Note: Isotropic material is defined by {nbr} parameters.\n'
+                 'Note: {mat} is defined by {nbr} parameters.\n'
                  'Given arguments are:{kwargs}\n'
                  'Identified primary input parameters are:{useful}\n').format(
                                                     kwargs=kwargs,
                                                     useful=self._useful_kwargs,
-                                                    nbr=self._nbr_useful_kwargs
+                                                    nbr=self._nbr_useful_kwargs,
+                                                    mat=type(self)
                                                     )
                 )
 
