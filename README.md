@@ -23,7 +23,7 @@ Basic continuum mechanics toolkit.
 
     - Change version-variable in `setup.py`
 
-            source activate mechkit
+            conda activate mechkit
             cd mechkit
             python3 setup.py sdist bdist_wheel
             python3 -m twine upload dist/*
