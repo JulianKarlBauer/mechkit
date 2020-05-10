@@ -11,7 +11,7 @@ system=$(basename $tmp)
 root_dir=$(dirname $tmp)
 
 
-for py_version in '3.5' '3.6' '3.7' '3.8'
+for py_version in '3.7' '3.8' '3.5' '3.6'
 do
   package_name=$(basename $(conda-build --python ${py_version} --output .))
   package_path="${root_dir}/${py_version}/${system}/${package_name}"
@@ -19,7 +19,7 @@ do
   conda-build --no-anaconda-upload \
               --python ${py_version} \
               --output-folder "${root_dir}/${py_version}" .
-  for platform in 'osx-64' 'linux-32' 'linux-64' 'win-32' 'win-64'
+  for platform in 'linux-64' 'linux-32' 'win-32' 'win-64' 'osx-64'
   do
     conda-convert -p ${platform} -o "${root_dir}/${py_version}" ${package_path}
     anaconda upload "${root_dir}/${py_version}/${platform}/${package_name}"
