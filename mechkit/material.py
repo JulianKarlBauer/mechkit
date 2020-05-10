@@ -439,7 +439,7 @@ class Isotropic(AbstractMaterial):
                      'c44_voigt', 'c55_voigt', 'c66_voigt',
                      'c2323', 'c1313', 'c1212'],
             'E':    ['e', 'youngs_modulus', 'elastic_modulus', ],
-            'nu':   ['nu', 'poisson', 'poisson_ratio', ],
+            'nu':   ['nu', 'poisson', 'poisson_ratio', 'v'],
             'la':   ['la', 'lambd', 'first_lame', 'lame_1',
                      'c23_voigt', 'c13_voigt', 'c12_voigt',
                      'c32_voigt', 'c31_voigt', 'c21_voigt',
