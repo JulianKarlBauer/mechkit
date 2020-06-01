@@ -3,7 +3,7 @@ stages:
 
 test_3.6:
     stage: test
-    image: python:3.6
+    image: "python:3.6"
     script:
         - python setup.py install
         - pip install pytest
@@ -11,7 +11,7 @@ test_3.6:
 
 test_2.7:
     stage: test
-    image: python:2.7
+    image: "python:2.7"
     script:
         - python setup.py install
         - pip install pytest
