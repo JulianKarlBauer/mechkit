@@ -4,6 +4,7 @@ stages:
 .test:
     script:
         - python setup.py install
+        - pip install pytest
         - python -m pytest
 
 verify-3.6:
