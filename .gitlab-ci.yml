@@ -3,7 +3,7 @@ stages:
 
 .test:
     script:
-        - python setup.py
+        - python setup.py install
         - python -m pytest
 
 verify-3.6:
