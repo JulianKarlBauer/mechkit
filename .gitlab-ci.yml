@@ -12,6 +12,8 @@ test_3.6:
 test_2.7:
     stage: test
     image: "python:2.7"
+    # Pip is buggy in installing numpy.
+    # Installing numpy explicitly solves an issue in installing numpy from setup.py
     script:
         - pip install numpy
         - python setup.py install
