@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''Material'''
 
@@ -401,7 +401,8 @@ class Isotropic(AbstractMaterial):
 
     '''
     def __init__(self, auxetic=False, **kwargs):
-        super().__init__()
+        super(type(self), self).__init__()
+
         self._tensors = mechkit.tensors.Basic()
         self._nbr_useful_kwargs = 2
         self.auxetic = auxetic
@@ -807,7 +808,8 @@ class TransversalIsotropic(AbstractMaterial):
     '''
 
     def __init__(self, principal_axis=[1, 0, 0], **kwargs):
-        super().__init__()
+        super(type(self), self).__init__()
+
         self.principal_axis = principal_axis
         self._nbr_useful_kwargs = 5
         self._default_principal_axis = [1, 0, 0]
@@ -933,7 +935,7 @@ class TransversalIsotropic(AbstractMaterial):
         b = b.reshape(3, 1) / np.linalg.norm(b)
 
         c = a + b
-        return 2.0 * (c @ c.T) / (c.T @ c) - np.eye(3)
+        return 2.0 * np.matmul(c, c.T) / np.matmul(c.T, c) - np.eye(3)
 
     def _rotate_stiffness_into_principal_axis(self, ):
         R = self._get_rotation_matrix(

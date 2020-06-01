@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''Notation'''
 
@@ -774,7 +774,7 @@ class VoigtConverter(Converter):
                         ],
                 }
 
-        super().__init__()
+        super(type(self), self).__init__()
 
     def mandel6_to_voigt(self, inp, voigt_type):
         '''Transform Mandel to Voigt depending on voigt_type.

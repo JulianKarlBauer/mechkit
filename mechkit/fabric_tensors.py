@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''fabric tensors in Mandel6 notation
 '''
@@ -101,7 +101,7 @@ class Basic(object):
         con = mechkit.notation.Converter()
         I2 = con.to_mandel6(mechkit.tensors.Basic().I2)
 
-        self.N2 = {direction: val @ I2 for direction, val in self.N4.items()}
+        self.N2 = {direction: np.matmul(val, I2) for direction, val in self.N4.items()}
 
     def __getitem__(self, key):
         '''Make attributes accessible dict-like.'''
@@ -128,13 +128,38 @@ def first_kind_discrete(orientations, order=4):
         6:  'ij, ik, il, im, in, ip -> jklmnp',
         }
 
-    if order > 6:
+    ori = orientations
+    if order == 1:
+        N = 1./len(orientations) * np.einsum(
+                                        einsumStrings[order],
+                                        ori,
+                                        )
+    elif order == 2:
+        N = 1./len(orientations) * np.einsum(
+                                        einsumStrings[order],
+                                        ori, ori
+                                        )
+    elif order == 3:
+        N = 1./len(orientations) * np.einsum(
+                                        einsumStrings[order],
+                                        ori, ori, ori
+                                        )
+    elif order == 4:
+        N = 1./len(orientations) * np.einsum(
+                                        einsumStrings[order],
+                                        ori, ori, ori, ori
+                                        )
+    elif order == 5:
+        N = 1./len(orientations) * np.einsum(
+                                        einsumStrings[order],
+                                        ori, ori, ori, ori, ori
+                                        )
+    elif order == 6:
+        N = 1./len(orientations) * np.einsum(
+                                        einsumStrings[order],
+                                        ori, ori, ori, ori, ori, ori
+                                        )
+    else:
         raise Exception('Not implemented')
 
-    einsumArgs = [orientations for i in range(order)]
-
-    N = 1./len(orientations) * np.einsum(
-                                    einsumStrings[order],
-                                    *einsumArgs,
-                                    )
     return N
