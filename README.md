@@ -1,6 +1,9 @@
 [![Documentation Status](https://readthedocs.org/projects/mechkit/badge/?version=latest)][rtdocs]
 [![Anaconda-Server Badge](https://anaconda.org/anaconda/markdown/badges/installer/conda.svg)][conda]
 [![PyPI version](https://badge.fury.io/py/mechkit.svg)][pypi]
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3898703.svg)](https://doi.org/10.5281/zenodo.3898703)
+
+
 
 # mechkit
 
