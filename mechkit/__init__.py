@@ -1,5 +1,6 @@
 import sys
-if (sys.version_info > (3, 0)):
+
+if sys.version_info > (3, 0):
     from . import notation
     from . import tensors
     from . import utils

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''Common tensors in tensor notation
-'''
+"""Common tensors in tensor notation
+"""
 import numpy as np
 
 
 class Basic(object):
-    r'''
+    r"""
     Basic tensors in tensor notations
 
     Attributes
@@ -74,7 +74,7 @@ class Basic(object):
 
         .. math::
             \begin{align*}
-                \mathbb{I}^{\text{S}}
+                \mathbb{I}^{\text{A}}
                 &=
                 \frac{1}{2}
                 \left(
@@ -132,34 +132,40 @@ class Basic(object):
                 \mathbb{P}_{\text{1}}
             \end{align*}
 
-    '''
+    """
+
     def __init__(self,):
 
-        self.DTYPE = 'float64'
+        self.DTYPE = "float64"
         self.I2 = np.eye(3, dtype=self.DTYPE)
 
-        self.I4 = np.einsum('ik, lj -> ijkl', self.I2, self.I2)
+        self.I4 = np.einsum("ik, lj -> ijkl", self.I2, self.I2)
 
-        self.I4s = 0.5 * (self.I4 + np.einsum('ijkl -> ijlk', self.I4))
+        self.I4s = 0.5 * (self.I4 + np.einsum("ijkl -> ijlk", self.I4))
 
-        self.I4a = 0.5 * (self.I4 - np.einsum('ijkl -> ijlk', self.I4))
+        self.I4a = 0.5 * (self.I4 - np.einsum("ijkl -> ijlk", self.I4))
 
-        self.P1 = 1./3. * np.einsum('ij, kl -> ijkl', self.I2, self.I2)
+        self.P1 = 1.0 / 3.0 * np.einsum("ij, kl -> ijkl", self.I2, self.I2)
 
         self.P2 = self.I4s - self.P1
 
         self.ricci = self._levi_civita_tensor()
 
         I2 = self.I2
-        self.I6s = 1./8. * (np.einsum('ms, np, qr ->mnpqrs', I2, I2, I2) +
-                            np.einsum('ms, nq, pr ->mnpqrs', I2, I2, I2) +
-                            np.einsum('mr, np, qs ->mnpqrs', I2, I2, I2) +
-                            np.einsum('mr, nq, ps ->mnpqrs', I2, I2, I2) +
-                            np.einsum('mp, nr, qs ->mnpqrs', I2, I2, I2) +
-                            np.einsum('mp, ns, qr ->mnpqrs', I2, I2, I2) +
-                            np.einsum('mq, nr, ps ->mnpqrs', I2, I2, I2) +
-                            np.einsum('mq, ns, pr ->mnpqrs', I2, I2, I2)
-                            )
+        self.I6s = (
+            1.0
+            / 8.0
+            * (
+                np.einsum("ms, np, qr ->mnpqrs", I2, I2, I2)
+                + np.einsum("ms, nq, pr ->mnpqrs", I2, I2, I2)
+                + np.einsum("mr, np, qs ->mnpqrs", I2, I2, I2)
+                + np.einsum("mr, nq, ps ->mnpqrs", I2, I2, I2)
+                + np.einsum("mp, nr, qs ->mnpqrs", I2, I2, I2)
+                + np.einsum("mp, ns, qr ->mnpqrs", I2, I2, I2)
+                + np.einsum("mq, nr, ps ->mnpqrs", I2, I2, I2)
+                + np.einsum("mq, ns, pr ->mnpqrs", I2, I2, I2)
+            )
+        )
 
     def _levi_civita_tensor(self,):
         eijk = np.zeros((3, 3, 3))

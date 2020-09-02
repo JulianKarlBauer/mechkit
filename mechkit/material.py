@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''Material'''
+"""Material"""
 
 import numbers
 import numpy as np
@@ -14,7 +14,7 @@ class AbstractMaterial(object):
         self._con = mechkit.notation.VoigtConverter(silent=True)
 
     def __getitem__(self, key):
-        '''Make attributes accessible dict-like.'''
+        """Make attributes accessible dict-like."""
         return getattr(self, key)
 
     def _get_useful_kwargs_from_kwargs(self, **kwargs):
@@ -28,74 +28,75 @@ class AbstractMaterial(object):
                         useful[name] = val
                     else:
                         raise Ex(
-                            ('Redundant input for primary parameter {name}\n'
-                             'Failed to use \n{key}={val}\nbecause {name} '
-                             'is already assigned the value {useful}\n'
-                             'Given arguments are:{kwargs}\n'
-                             ).format(
+                            (
+                                "Redundant input for primary parameter {name}\n"
+                                "Failed to use \n{key}={val}\nbecause {name} "
+                                "is already assigned the value {useful}\n"
+                                "Given arguments are:{kwargs}\n"
+                            ).format(
                                 name=name,
                                 key=key,
                                 val=val,
                                 useful=useful[name],
                                 kwargs=kwargs,
-                                )
                             )
+                        )
         if len(kwargs) != len(useful):
             raise Ex(
-                    ('Not all keyword arguments are identified as material '
-                     'parameters.\n'
-                     'Identified material parameters: {useful}\n'
-                     'Given kwargs are: {kwargs}'
-                     ).format(
-                        useful=useful,
-                        kwargs=kwargs,
-                        )
+                (
+                    "Not all keyword arguments are identified as material "
+                    "parameters.\n"
+                    "Identified material parameters: {useful}\n"
+                    "Given kwargs are: {kwargs}"
+                ).format(
+                    useful=useful, kwargs=kwargs,
                 )
+            )
         return useful
 
     def _check_nbr_useful_kwargs(self, **kwargs):
         if len(self._useful_kwargs) != self._nbr_useful_kwargs:
             raise Ex(
-                ('Number of input parameters has to be {nbr}.\n'
-                 'Note: {mat} is defined by {nbr} parameters.\n'
-                 'Given arguments are:{kwargs}\n'
-                 'Identified primary input parameters are:{useful}\n').format(
-                                                    kwargs=kwargs,
-                                                    useful=self._useful_kwargs,
-                                                    nbr=self._nbr_useful_kwargs,
-                                                    mat=type(self)
-                                                    )
+                (
+                    "Number of input parameters has to be {nbr}.\n"
+                    "Note: {mat} is defined by {nbr} parameters.\n"
+                    "Given arguments are:{kwargs}\n"
+                    "Identified primary input parameters are:{useful}\n"
+                ).format(
+                    kwargs=kwargs,
+                    useful=self._useful_kwargs,
+                    nbr=self._nbr_useful_kwargs,
+                    mat=type(self),
                 )
+            )
 
     @property
-    def stiffness_mandel6(self, ):
+    def stiffness_mandel6(self,):
         return self._con.to_mandel6(self.stiffness)
 
     @property
-    def stiffness_voigt(self, ):
+    def stiffness_voigt(self,):
         return self._con.mandel6_to_voigt(
-                   self.stiffness_mandel6,
-                   voigt_type='stiffness',
-                   )
+            self.stiffness_mandel6, voigt_type="stiffness",
+        )
 
     @property
-    def compliance_mandel6(self, ):
+    def compliance_mandel6(self,):
         return np.linalg.inv(self.stiffness_mandel6)
 
     @property
-    def compliance(self, ):
+    def compliance(self,):
         return self._con.to_tensor(self.compliance_mandel6)
 
     @property
-    def compliance_voigt(self, ):
+    def compliance_voigt(self,):
         return self._con.mandel6_to_voigt(
-                   self.compliance_mandel6,
-                   voigt_type='compliance',
-                   )
+            self.compliance_mandel6, voigt_type="compliance",
+        )
 
 
 class Isotropic(AbstractMaterial):
-    r'''Representation of homogeneous isotropic material.
+    r"""Representation of homogeneous isotropic material.
 
     Use cases:
 
@@ -399,7 +400,8 @@ class Isotropic(AbstractMaterial):
     .. [wikipedia_conversion_table]
        https://en.wikipedia.org/wiki/Template:Elastic_moduli
 
-    '''
+    """
+
     def __init__(self, auxetic=False, **kwargs):
         super(type(self), self).__init__()
 
@@ -427,192 +429,223 @@ class Isotropic(AbstractMaterial):
             K = other * self.K
             G = other * self.G
         else:
-            raise NotImplementedError('Multiply only with numbers.')
+            raise NotImplementedError("Multiply only with numbers.")
         return Isotropic(K=K, G=G)
 
     def __rmul__(self, other):
         return self.__mul__(other)
 
-    def _get_names_aliases(self, ):
+    def _get_names_aliases(self,):
         names_aliases = {
-            'K':    ['k', 'compression_modulus', ],
-            'G':    ['g', 'mu', 'shear_modulus',
-                     'second_lame', 'lame_2',
-                     'c44_voigt', 'c55_voigt', 'c66_voigt',
-                     'c2323', 'c1313', 'c1212'],
-            'E':    ['e', 'youngs_modulus', 'elastic_modulus', ],
-            'nu':   ['nu', 'poisson', 'poisson_ratio', 'v'],
-            'la':   ['la', 'lambd', 'first_lame', 'lame_1',
-                     'c23_voigt', 'c13_voigt', 'c12_voigt',
-                     'c32_voigt', 'c31_voigt', 'c21_voigt',
-                     'c2233', 'c1133', 'c1122',
-                     'c3322', 'c3311', 'c2211', ],
-            'M':    ['m', 'p_wave_modulus', 'longitudinal_modulus',
-                     'constrained modulus',
-                     'c11_voigt', 'c22_voigt', 'c33_voigt',
-                     'c1111', 'c2222', 'c3333', ],
-            }
+            "K": ["k", "compression_modulus",],
+            "G": [
+                "g",
+                "mu",
+                "shear_modulus",
+                "second_lame",
+                "lame_2",
+                "c44_voigt",
+                "c55_voigt",
+                "c66_voigt",
+                "c2323",
+                "c1313",
+                "c1212",
+            ],
+            "E": ["e", "youngs_modulus", "elastic_modulus",],
+            "nu": ["nu", "poisson", "poisson_ratio", "v"],
+            "la": [
+                "la",
+                "lambd",
+                "first_lame",
+                "lame_1",
+                "c23_voigt",
+                "c13_voigt",
+                "c12_voigt",
+                "c32_voigt",
+                "c31_voigt",
+                "c21_voigt",
+                "c2233",
+                "c1133",
+                "c1122",
+                "c3322",
+                "c3311",
+                "c2211",
+            ],
+            "M": [
+                "m",
+                "p_wave_modulus",
+                "longitudinal_modulus",
+                "constrained modulus",
+                "c11_voigt",
+                "c22_voigt",
+                "c33_voigt",
+                "c1111",
+                "c2222",
+                "c3333",
+            ],
+        }
         return names_aliases
 
     def _func_to_K_G(self, keywords):
         f = frozenset
         funcs_dict = {
-            f(['K',  'E']):     [self._K_by_K,       self._G_by_K_E],
-            f(['K',  'la']):    [self._K_by_K,       self._G_by_K_la],
-            f(['K',  'G']):     [self._K_by_K,       self._G_by_G],
-            f(['K',  'nu']):    [self._K_by_K,       self._G_by_K_nu],
-            f(['K',  'M']):     [self._K_by_K,       self._G_by_K_M],
-            f(['E',  'la']):    [self._K_by_E_la,    self._G_by_E_la],
-            f(['E',  'G']):     [self._K_by_E_G,     self._G_by_G],
-            f(['E',  'nu']):    [self._K_by_E_nu,    self._G_by_E_nu],
-            f(['E',  'M']):     [self._K_by_E_M,     self._G_by_E_M],
-            f(['la', 'G']):     [self._K_by_la_G,    self._G_by_G],
-            f(['la', 'nu']):    [self._K_by_la_nu,   self._G_by_la_nu],
-            f(['la', 'M']):     [self._K_by_la_M,    self._G_by_la_M],
-            f(['G',  'nu']):    [self._K_by_G_nu,    self._G_by_G],
-            f(['G',  'M']):     [self._K_by_G_M,     self._G_by_G],
-            f(['nu',  'M']):    [self._K_by_nu_M,    self._G_by_nu_M],
-            }
+            f(["K", "E"]): [self._K_by_K, self._G_by_K_E],
+            f(["K", "la"]): [self._K_by_K, self._G_by_K_la],
+            f(["K", "G"]): [self._K_by_K, self._G_by_G],
+            f(["K", "nu"]): [self._K_by_K, self._G_by_K_nu],
+            f(["K", "M"]): [self._K_by_K, self._G_by_K_M],
+            f(["E", "la"]): [self._K_by_E_la, self._G_by_E_la],
+            f(["E", "G"]): [self._K_by_E_G, self._G_by_G],
+            f(["E", "nu"]): [self._K_by_E_nu, self._G_by_E_nu],
+            f(["E", "M"]): [self._K_by_E_M, self._G_by_E_M],
+            f(["la", "G"]): [self._K_by_la_G, self._G_by_G],
+            f(["la", "nu"]): [self._K_by_la_nu, self._G_by_la_nu],
+            f(["la", "M"]): [self._K_by_la_M, self._G_by_la_M],
+            f(["G", "nu"]): [self._K_by_G_nu, self._G_by_G],
+            f(["G", "M"]): [self._K_by_G_M, self._G_by_G],
+            f(["nu", "M"]): [self._K_by_nu_M, self._G_by_nu_M],
+        }
         return funcs_dict[frozenset(keywords)]
 
-    def _check_positive_definiteness(self, ):
-        if not ((self.K >= 0.) and (self.G >= 0.)):
+    def _check_positive_definiteness(self,):
+        if not ((self.K >= 0.0) and (self.G >= 0.0)):
             raise Ex(
-                'Negative K or G.\n'
-                'K and G of positiv definit isotropic material '
-                'have to be positive. \nK={} G={}'.format(self.K, self.G)
-                )
+                "Negative K or G.\n"
+                "K and G of positiv definit isotropic material "
+                "have to be positive. \nK={} G={}".format(self.K, self.G)
+            )
 
-    def _get_K_G(self, ):
+    def _get_K_G(self,):
         func_K, func_G = self._func_to_K_G(keywords=self._useful_kwargs.keys())
         self.K = func_K(**self._useful_kwargs)
         self.G = func_G(**self._useful_kwargs)
 
     def _R_by_E_la(self, E, la):
-        return np.sqrt(E*E + 9.*la*la + 2.*E*la)
+        return np.sqrt(E * E + 9.0 * la * la + 2.0 * E * la)
 
     def _S_by_E_M(self, E, M):
         warnings.warn(
             message=(
-             "Using parameters 'E' and 'M' leads to an ambiguity.\n"
-             "Use 'auxetic=False' if you expect a positive poissons ratio.\n"
-             "Use 'auxetic=True' if you expect a negative poissons ratio."),
+                "Using parameters 'E' and 'M' leads to an ambiguity.\n"
+                "Use 'auxetic=False' if you expect a positive poissons ratio.\n"
+                "Use 'auxetic=True' if you expect a negative poissons ratio."
+            ),
             category=UserWarning,
-            )
-        S = np.sqrt(E**2 + 9.*M**2 - 10.*E*M)
+        )
+        S = np.sqrt(E ** 2 + 9.0 * M ** 2 - 10.0 * E * M)
         return S if not self.auxetic else -S
 
     def _K_by_K(self, **kwargs):
-        return kwargs['K']
+        return kwargs["K"]
 
     def _K_by_E_la(self, E, la):
         R = self._R_by_E_la(E, la)
-        return (E + 3.*la + R) / 6.
+        return (E + 3.0 * la + R) / 6.0
 
     def _K_by_E_G(self, E, G):
-        return (E*G) / (3.*(3.*G - E))
+        return (E * G) / (3.0 * (3.0 * G - E))
 
     def _K_by_E_nu(self, E, nu):
-        return E / (3. * (1. - 2.*nu))
+        return E / (3.0 * (1.0 - 2.0 * nu))
 
     def _K_by_E_M(self, E, M):
-        return (3.*M - E + self._S_by_E_M(E=E, M=M)) / 6.
+        return (3.0 * M - E + self._S_by_E_M(E=E, M=M)) / 6.0
 
     def _K_by_la_G(self, la, G):
-        return la + 2./3. * G
+        return la + 2.0 / 3.0 * G
 
     def _K_by_la_nu(self, la, nu):
-        return (la * (1. + nu)) / (3.*nu)
+        return (la * (1.0 + nu)) / (3.0 * nu)
 
     def _K_by_la_M(self, la, M):
-        return (M + 2.*la) / 3.
+        return (M + 2.0 * la) / 3.0
 
     def _K_by_G_nu(self, G, nu):
-        return (2.*G * (1. + nu)) / (3. * (1. - 2.*nu))
+        return (2.0 * G * (1.0 + nu)) / (3.0 * (1.0 - 2.0 * nu))
 
     def _K_by_G_M(self, G, M):
-        return M - (4.*G)/3
+        return M - (4.0 * G) / 3
 
     def _K_by_nu_M(self, nu, M):
-        return (M*(1.+nu)) / (3.*(1-nu))
+        return (M * (1.0 + nu)) / (3.0 * (1 - nu))
 
     def _G_by_G(self, **kwargs):
-        return kwargs['G']
+        return kwargs["G"]
 
     def _G_by_K_E(self, K, E):
-        return (3.*K*E) / (9.*K - E)
+        return (3.0 * K * E) / (9.0 * K - E)
 
     def _G_by_K_la(self, K, la):
-        return (3. * (K - la)) / 2.
+        return (3.0 * (K - la)) / 2.0
 
     def _G_by_K_nu(self, K, nu):
-        return (3.*K * (1. - 2.*nu)) / (2. * (1. + nu))
+        return (3.0 * K * (1.0 - 2.0 * nu)) / (2.0 * (1.0 + nu))
 
     def _G_by_K_M(self, K, M):
-        return 3.*(M - K) / 4.
+        return 3.0 * (M - K) / 4.0
 
     def _G_by_E_la(self, E, la):
         R = self._R_by_E_la(E, la)
-        return (E - 3.*la + R) / (4.)
+        return (E - 3.0 * la + R) / (4.0)
 
     def _G_by_E_nu(self, E, nu):
-        return E / (2. * (1. + nu))
+        return E / (2.0 * (1.0 + nu))
 
     def _G_by_E_M(self, E, M):
-        return (3.*M + E - self._S_by_E_M(E=E, M=M)) / 8.
+        return (3.0 * M + E - self._S_by_E_M(E=E, M=M)) / 8.0
 
     def _G_by_la_nu(self, la, nu):
-        return (la * (1. - 2.*nu)) / (2.*nu)
+        return (la * (1.0 - 2.0 * nu)) / (2.0 * nu)
 
     def _G_by_la_M(self, la, M):
-        return (M - la) / 2.
+        return (M - la) / 2.0
 
     def _G_by_nu_M(self, nu, M):
-        return (M*(1 - 2.*nu)) / (2.*(1 - nu))
+        return (M * (1 - 2.0 * nu)) / (2.0 * (1 - nu))
 
     def _E_by_K_G(self, K, G):
-        return (9.*K*G) / (3.*K + G)
+        return (9.0 * K * G) / (3.0 * K + G)
 
     def _la_by_K_G(self, K, G):
-        return K - 2./3. * G
+        return K - 2.0 / 3.0 * G
 
     def _nu_by_K_G(self, K, G):
-        return (3.*K - 2.*G) / (2. * (3.*K + G))
+        return (3.0 * K - 2.0 * G) / (2.0 * (3.0 * K + G))
 
     def _M_by_K_G(self, K, G):
-        return K + (4.*G)/3.
+        return K + (4.0 * G) / 3.0
 
     @property
-    def mu(self, ):
+    def mu(self,):
         return self.G
 
     @property
-    def E(self, ):
+    def E(self,):
         return self._E_by_K_G(K=self.K, G=self.G)
 
     @property
-    def la(self, ):
+    def la(self,):
         return self._la_by_K_G(K=self.K, G=self.G)
 
     @property
-    def nu(self, ):
+    def nu(self,):
         return self._nu_by_K_G(K=self.K, G=self.G)
 
     @property
-    def M(self, ):
+    def M(self,):
         return self._M_by_K_G(K=self.K, G=self.G)
 
     @property
-    def poisson(self, ):
+    def poisson(self,):
         return self.nu
 
     @property
-    def stiffness(self, ):
-        return 3.*self.K*self._tensors.P1 + 2.*self.G*self._tensors.P2
+    def stiffness(self,):
+        return 3.0 * self.K * self._tensors.P1 + 2.0 * self.G * self._tensors.P2
 
 
-class Orthotropic():
-    r'''Representation of homogeneous orthotropic material.
+class Orthotropic:
+    r"""Representation of homogeneous orthotropic material.
 
     **Nine** independent material parameters uniquely define an orthotropic
     material [Betram2015]_ (chapter 4.1.2), aligned with the coordinate axes.
@@ -657,7 +690,7 @@ class Orthotropic():
                 \end{bmatrix}_{[\text{Voigt}]}
             \end{align*}
 
-    '''
+    """
 
     def __init__(self, E1, E2, E3, nu12, nu13, nu23, G12, G13, G23):
 
@@ -675,48 +708,46 @@ class Orthotropic():
         S13 = -nu13 / E1
         S23 = -nu23 / E2
         self.compliance_voigt = np.array(
-                [
-                    [1./E1, S12,    S13,    0,      0,      0],
-                    [S12,   1./E2,  S23,    0,      0,      0],
-                    [S13,   S23,    1./E3,  0,      0,      0],
-                    [0,     0,      0,      1./G23, 0,      0],
-                    [0,     0,      0,      0,      1./G13, 0],
-                    [0,     0,      0,      0,      0,      1./G12],
-                ],
-                dtype='float64',
-                )
+            [
+                [1.0 / E1, S12, S13, 0, 0, 0],
+                [S12, 1.0 / E2, S23, 0, 0, 0],
+                [S13, S23, 1.0 / E3, 0, 0, 0],
+                [0, 0, 0, 1.0 / G23, 0, 0],
+                [0, 0, 0, 0, 1.0 / G13, 0],
+                [0, 0, 0, 0, 0, 1.0 / G12],
+            ],
+            dtype="float64",
+        )
 
         self._con = mechkit.notation.VoigtConverter(silent=True)
 
     @property
-    def compliance_mandel6(self, ):
+    def compliance_mandel6(self,):
         return self._con.voigt_to_mandel6(
-                   self.compliance_voigt,
-                   voigt_type='compliance',
-                   )
+            self.compliance_voigt, voigt_type="compliance",
+        )
 
     @property
-    def compliance(self, ):
+    def compliance(self,):
         return self._con.to_tensor(self.compliance_mandel6)
 
     @property
-    def stiffness_mandel6(self, ):
+    def stiffness_mandel6(self,):
         return np.linalg.inv(self.compliance_mandel6)
 
     @property
-    def stiffness(self, ):
+    def stiffness(self,):
         return self._con.to_tensor(self.stiffness_mandel6)
 
     @property
-    def stiffness_voigt(self, ):
+    def stiffness_voigt(self,):
         return self._con.mandel6_to_voigt(
-                   self.stiffness_mandel6,
-                   voigt_type='stiffness',
-                   )
+            self.stiffness_mandel6, voigt_type="stiffness",
+        )
 
 
 class TransversalIsotropic(AbstractMaterial):
-    r'''Representation of homogeneous transversal isotropic material.
+    r"""Representation of homogeneous transversal isotropic material.
 
     Quickstart:
 
@@ -805,7 +836,7 @@ class TransversalIsotropic(AbstractMaterial):
      [  0.     0.     0.     0.    14.     0.  ]
      [  0.     0.     0.     0.     0.    20.  ]]
 
-    '''
+    """
 
     def __init__(self, principal_axis=[1, 0, 0], **kwargs):
         super(type(self), self).__init__()
@@ -818,23 +849,23 @@ class TransversalIsotropic(AbstractMaterial):
         self._check_nbr_useful_kwargs(**kwargs)
         self._get_primary_parameters()
         self.stiffness = Orthotropic(
-                                    E1=self.E_l,
-                                    E2=self.E_t,
-                                    E3=self.E_t,
-                                    nu12=self.nu_lt,
-                                    nu13=self.nu_lt,
-                                    nu23=self._nu_tt(),
-                                    G12=self.G_lt,
-                                    G13=self.G_lt,
-                                    G23=self.G_tt,
-                                    ).stiffness
+            E1=self.E_l,
+            E2=self.E_t,
+            E3=self.E_t,
+            nu12=self.nu_lt,
+            nu13=self.nu_lt,
+            nu23=self._nu_tt(),
+            G12=self.G_lt,
+            G13=self.G_lt,
+            G23=self.G_tt,
+        ).stiffness
         self._check_positive_definiteness()
 
         if self.principal_axis != self._default_principal_axis:
             self.stiffness = self._rotate_stiffness_into_principal_axis()
 
-    def _get_names_aliases(self, ):
-        '''Note: There are different definitions of poissons ratio.
+    def _get_names_aliases(self,):
+        """Note: There are different definitions of poissons ratio.
         (VDI 2014 Blatt 3 page 14)
         In case of the Poisson’s ratios there are different ways
         for the indexing in international practice. In the
@@ -846,71 +877,65 @@ class TransversalIsotropic(AbstractMaterial):
         the smaller one. (In the English literature the two indices related to the
         contraction and acting stress are
         used in the reverse sequence.)
-        '''
+        """
         names_aliases = {
-            'E_l':   ['e_l', 'el'],
-            'E_t':   ['e_t', 'et'],
-            'G_lt':  ['g_lt', 'glt'],
-            'G_tt':  ['g_tt', 'gtt'],
-            'nu_lt': ['nu_lt', 'nult', 'v_lt', 'vlt'],
-            'nu_tl': ['nu_tl', 'nutl', 'v_tl', 'vtl'],
-            'nu_tt': ['nu_tt', 'nutt', 'v_tt', 'vtt'],
-            }
+            "E_l": ["e_l", "el"],
+            "E_t": ["e_t", "et"],
+            "G_lt": ["g_lt", "glt"],
+            "G_tt": ["g_tt", "gtt"],
+            "nu_lt": ["nu_lt", "nult", "v_lt", "vlt"],
+            "nu_tl": ["nu_tl", "nutl", "v_tl", "vtl"],
+            "nu_tt": ["nu_tt", "nutt", "v_tt", "vtt"],
+        }
         return names_aliases
 
     def _raise_required(self, key):
         raise Ex(
-                    (
-                        'Parameter {key} is required.\n'
-                        'Aliases are {aliases}.'
-                    ).format(
-                        key=key,
-                        aliases=self._get_names_aliases[key],
-                        )
-                )
+            ("Parameter {key} is required.\n" "Aliases are {aliases}.").format(
+                key=key, aliases=self._get_names_aliases[key],
+            )
+        )
 
     def _raise_required_either_or(self, keys):
         raise Ex(
-                    (
-                        'Either {key0} or {key1} is required.\n'
-                        'Aliases of {key0} are {aliases0}\n'
-                        'Aliases of {key1} are {aliases1}\n'
-                    ).format(
-                        key0=keys[0],
-                        key1=keys[1],
-                        aliases0=self._get_names_aliases[keys[0]],
-                        aliases1=self._get_names_aliases[keys[1]],
-                        )
-                )
+            (
+                "Either {key0} or {key1} is required.\n"
+                "Aliases of {key0} are {aliases0}\n"
+                "Aliases of {key1} are {aliases1}\n"
+            ).format(
+                key0=keys[0],
+                key1=keys[1],
+                aliases0=self._get_names_aliases[keys[0]],
+                aliases1=self._get_names_aliases[keys[1]],
+            )
+        )
 
-    def _get_primary_parameters(self, ):
+    def _get_primary_parameters(self,):
         useful = self._useful_kwargs
 
-        for key in ['E_l', 'E_t', 'G_lt']:
+        for key in ["E_l", "E_t", "G_lt"]:
             if key in useful:
                 setattr(self, key, useful[key])
             else:
                 self._raise_required(key=key)
 
-        if 'nu_lt' in useful:
-            self.nu_lt = useful['nu_lt']
-        elif 'nu_tl' in useful:
-            self.nu_lt = self._nu_lt(nu_tl=useful['nu_tl'])
+        if "nu_lt" in useful:
+            self.nu_lt = useful["nu_lt"]
+        elif "nu_tl" in useful:
+            self.nu_lt = self._nu_lt(nu_tl=useful["nu_tl"])
         else:
-            self._raise_required_either_or(keys=['nu_lt', 'nu_tl'])
+            self._raise_required_either_or(keys=["nu_lt", "nu_tl"])
 
-        if 'G_tt' in useful:
-            self.G_tt = useful['G_tt']
-        elif 'nu_tt' in useful:
-            self.G_tt = self._G_tt(nu_tt=useful['nu_tt'])
+        if "G_tt" in useful:
+            self.G_tt = useful["G_tt"]
+        elif "nu_tt" in useful:
+            self.G_tt = self._G_tt(nu_tt=useful["nu_tt"])
         else:
-            self._raise_required_either_or(keys=['G_tt', 'nu_tt'])
+            self._raise_required_either_or(keys=["G_tt", "nu_tt"])
 
-    def _check_positive_definiteness(self, ):
+    def _check_positive_definiteness(self,):
         if not (0.0 < min(np.linalg.eigh(self.stiffness_mandel6)[0])):
-            raise Ex(
-                'Stiffness Mandel6 is not positive definite'
-                )
+            raise Ex("Stiffness Mandel6 is not positive definite")
 
     def _nu_lt(self, nu_tl):
         return nu_tl * self.E_l / self.E_t
@@ -919,13 +944,13 @@ class TransversalIsotropic(AbstractMaterial):
         return nu_lt * self.E_t / self.E_l
 
     def _G_tt(self, nu_tt):
-        return self.E_t / (2. * (1. + nu_tt))
+        return self.E_t / (2.0 * (1.0 + nu_tt))
 
-    def _nu_tt(self, ):
-        return self.E_t / (2. * self.G_tt) - 1.
+    def _nu_tt(self,):
+        return self.E_t / (2.0 * self.G_tt) - 1.0
 
     def _get_rotation_matrix(self, start_vector, end_vector):
-        '''Thanks to https://math.stackexchange.com/a/2672702/694025'''
+        """Thanks to https://math.stackexchange.com/a/2672702/694025"""
 
         a = np.array(start_vector, dtype=np.float64)
         b = np.array(end_vector, dtype=np.float64)
@@ -937,29 +962,28 @@ class TransversalIsotropic(AbstractMaterial):
         c = a + b
         return 2.0 * np.matmul(c, c.T) / np.matmul(c.T, c) - np.eye(3)
 
-    def _rotate_stiffness_into_principal_axis(self, ):
+    def _rotate_stiffness_into_principal_axis(self,):
         R = self._get_rotation_matrix(
-                        start_vector=self._default_principal_axis,
-                        end_vector=self.principal_axis,
-                        )
-        return np.einsum('ij, kl, mn, op, jlnp->ikmo', R, R, R, R, self.stiffness)
+            start_vector=self._default_principal_axis, end_vector=self.principal_axis,
+        )
+        return np.einsum("ij, kl, mn, op, jlnp->ikmo", R, R, R, R, self.stiffness)
 
     @property
-    def nu_tl(self, ):
+    def nu_tl(self,):
         return self._nu_tl(nu_lt=self.nu_lt)
 
     @property
-    def nu_tt(self, ):
+    def nu_tt(self,):
         return self._nu_tt()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     np.set_printoptions(
-            linewidth=140,
-            precision=3,
-            # suppress=False,
-            )
+        linewidth=140,
+        precision=3,
+        # suppress=False,
+    )
 
     mat = mechkit.material.Isotropic(E=2e6, nu=0.3)
     mat = mechkit.material.Isotropic(E=2e6, K=1e6)
@@ -967,35 +991,26 @@ if __name__ == '__main__':
     mat2 = mechkit.material.Isotropic(C11_voigt=20, C44_voigt=5)
 
     printQueue = [
-            "mat.G",
-            "mat['E']",
-            "mat1['stiffness_voigt']",
-            "mat2['stiffness_voigt']",
-            "(0.5*mat1 + 0.5*mat2)['stiffness_voigt']",
-            "mat1['stiffness_mandel6']",
-            "mat1['compliance_mandel6']",
-            ]
+        "mat.G",
+        "mat['E']",
+        "mat1['stiffness_voigt']",
+        "mat2['stiffness_voigt']",
+        "(0.5*mat1 + 0.5*mat2)['stiffness_voigt']",
+        "mat1['stiffness_mandel6']",
+        "mat1['compliance_mandel6']",
+    ]
     for val in printQueue:
         print(val)
-        print(eval(val), '\n')
+        print(eval(val), "\n")
 
     mat = mechkit.material.TransversalIsotropic(
         E_l=100.0, E_t=20.0, nu_lt=0.3, G_lt=10.0, G_tt=7.0, principal_axis=[0, 1, 0]
     )
 
     printQueue = [
-            "mat.compliance_voigt",
-            "mat.stiffness_mandel6",
-            ]
+        "mat.compliance_voigt",
+        "mat.stiffness_mandel6",
+    ]
     for val in printQueue:
         print(val)
-        print(eval(val), '\n')
-
-
-
-
-
-
-
-
-
+        print(eval(val), "\n")
