@@ -74,7 +74,7 @@ class Basic(object):
 
         .. math::
             \begin{align*}
-                \mathbb{I}^{\text{S}}
+                \mathbb{I}^{\text{A}}
                 &=
                 \frac{1}{2}
                 \left(
