@@ -28,7 +28,7 @@ R = 2.0 * (c @ c.T) / (c.T @ c) - np.eye(3)
 # Thanks to https://math.stackexchange.com/a/2672702/694025
 
 assert np.allclose(R @ a, b)
-assert np.allclose(np.linalg.det(R), 1.)
+assert np.allclose(np.linalg.det(R), 1.0)
 
 
 # First try

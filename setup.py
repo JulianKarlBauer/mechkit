@@ -5,7 +5,7 @@ import setuptools
 
 setuptools.setup(
     name="mechkit",
-    version="0.2.2",
+    version="0.2.6",
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
     description="Basic continuum mechanics toolkit",
@@ -14,11 +14,9 @@ setuptools.setup(
     # long_description_content_type="text/markdown",
     url="https://github.com/JulianKarlBauer/mechkit",
     packages=setuptools.find_packages(),
-    install_requires=[
-          'numpy',
-          ],
+    install_requires=["numpy",],
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],

@@ -1,13 +1,13 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''Notation'''
+"""Notation"""
 
 import numpy as np
 from mechkit.utils import Ex
 
 
 class Converter(object):
-    r'''
+    r"""
     Convert numerical tensors from one notation to another.
 
     Supported notations and shapes:
@@ -126,12 +126,12 @@ class Converter(object):
      [0. 0. 0. 0. 0. 0. 0. 1. 0.]
      [0. 0. 0. 0. 0. 0. 0. 0. 1.]]
 
-    '''
+    """
 
-    def __init__(self, dtype='float64'):
+    def __init__(self, dtype="float64"):
 
         self.dtype = dtype
-        self.factor = np.sqrt(2.) / 2.
+        self.factor = np.sqrt(2.0) / 2.0
 
         self.DIM = 3
         self.DIM_MANDEL6 = 6
@@ -141,7 +141,7 @@ class Converter(object):
         self.BASE9 = self.get_mandel_base_skw()
 
     def get_mandel_base_sym(self,):
-        r'''Get orthonormal basis of Mandel6 representation introduced by
+        r"""Get orthonormal basis of Mandel6 representation introduced by
         [Mandel1965]_, [Fedorov1968]_, [Mehrabadi1990]_  and
         discussed by [Cowin1992]_.
 
@@ -294,23 +294,20 @@ class Converter(object):
         -------
         np.array with shape (6, 3, 3)
                 B(i, :, :) is the i-th dyade of the base.
-        '''
+        """
 
-        B = np.zeros(
-                (self.DIM_MANDEL6, self.DIM, self.DIM),
-                dtype=self.dtype,
-                )
+        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype,)
 
-        B[0, 0, 0] = 1.
-        B[1, 1, 1] = 1.
-        B[2, 2, 2] = 1.
+        B[0, 0, 0] = 1.0
+        B[1, 1, 1] = 1.0
+        B[2, 2, 2] = 1.0
         B[3, 1, 2] = B[3, 2, 1] = self.factor
         B[4, 0, 2] = B[4, 2, 0] = self.factor
         B[5, 0, 1] = B[5, 1, 0] = self.factor
         return B
 
     def get_mandel_base_skw(self,):
-        r'''
+        r"""
         Get orthonormal basis of Mandel9 representation [csmbrannonMandel]_,
         [Brannon2018]_. The basis of Mandel6 representation is extended by
 
@@ -375,12 +372,9 @@ class Converter(object):
         -------
         np.array with shape (9, 3, 3)
                 B(i, :, :) is the i-th dyade of the base.
-        '''
+        """
 
-        B = np.zeros(
-                (self.DIM_MANDEL9, self.DIM, self.DIM),
-                dtype=self.dtype,
-                )
+        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype,)
         B[0:6, :, :] = self.get_mandel_base_sym()
 
         B[6, 1, 2] = -self.factor
@@ -392,7 +386,7 @@ class Converter(object):
         return B
 
     def to_mandel6(self, inp, verbose=False):
-        '''Convert to Mandel6 notation
+        """Convert to Mandel6 notation
 
         Parameters
         ----------
@@ -403,16 +397,16 @@ class Converter(object):
         -------
         np.array
             Input in Mandel6 notation
-        '''
+        """
 
         if verbose:
-            print('Skew parts are lost!')
+            print("Skew parts are lost!")
 
         f = self._get_to_mandel6_func(inp=inp)
         return f(inp=inp)
 
     def to_mandel9(self, inp):
-        '''Convert to Mandel9 notation
+        """Convert to Mandel9 notation
 
         Parameters
         ----------
@@ -423,13 +417,13 @@ class Converter(object):
         -------
         np.array
             Input in Mandel9 notation
-        '''
+        """
 
         f = self._get_to_mandel9_func(inp=inp)
         return f(inp=inp)
 
     def to_tensor(self, inp):
-        '''Convert to tensor notation
+        """Convert to tensor notation
 
         Parameters
         ----------
@@ -440,13 +434,13 @@ class Converter(object):
         -------
         np.array
             Input in tensor notation
-        '''
+        """
 
         f = self._get_to_tensor_func(inp=inp)
         return f(inp=inp)
 
     def to_like(self, inp, like):
-        '''Convert input to notation of like
+        """Convert input to notation of like
 
         Parameters
         ----------
@@ -460,153 +454,89 @@ class Converter(object):
         -------
         np.array
             Input in notation of like
-        '''
+        """
 
         type_like = self._get_type_by_shape(like)
 
         functions = {
-                't_':           self.to_tensor,
-                'm6':           self.to_mandel6,
-                'm9':           self.to_mandel9,
-                }
+            "t_": self.to_tensor,
+            "m6": self.to_mandel6,
+            "m9": self.to_mandel9,
+        }
 
         return functions[type_like[0:2]](inp)
 
     def _get_type_by_shape(self, inp):
-        '''Identify type depending on inp.shape
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Representation of tensor/mandel6/mandel9
-
-        Returns
-        -------
-        string
-            Descriptor of type
-        '''
-
         dim = (self.DIM,)
         dim_mandel6 = (self.DIM_MANDEL6,)
         dim_mandel9 = (self.DIM_MANDEL9,)
 
         types = {
-                2*dim:           't_2',
-                4*dim:           't_4',
-                1*dim_mandel6:   'm6_2',
-                2*dim_mandel6:   'm6_4',
-                1*dim_mandel9:   'm9_2',
-                2*dim_mandel9:   'm9_4',
-                }
-
-        # assert(inp.shape in types), 'Tensor shape not supported'    \
-        #                             '\n Supported shapes: {}'.format(types)
+            2 * dim: "t_2",
+            4 * dim: "t_4",
+            1 * dim_mandel6: "m6_2",
+            2 * dim_mandel6: "m6_4",
+            1 * dim_mandel9: "m9_2",
+            2 * dim_mandel9: "m9_4",
+        }
 
         try:
             type_ = types[inp.shape]
         except KeyError:
-            raise Ex('Tensor shape not supported.'
-                     '\n Supported shapes: {}'.format(types)
-                     )
+            raise Ex(
+                "Tensor shape not supported." "\n Supported shapes: {}".format(types)
+            )
         return type_
 
     def _get_to_mandel6_func(self, inp):
-        '''Select transformation function by type
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        function handler
-            Function transforming input to Mandel6
-        '''
-
         type_ = self._get_type_by_shape(inp)
 
         functions = {
-                't_2':      self._tensor2_to_mandel6,
-                't_4':      self._tensor4_to_mandel6,
-                'm6_2':     self._pass_through,
-                'm6_4':     self._pass_through,
-                'm9_2':     self._mandel9_2_to_mandel6,
-                'm9_4':     self._mandel9_4_to_mandel6,
-                }
+            "t_2": self._tensor2_to_mandel6,
+            "t_4": self._tensor4_to_mandel6,
+            "m6_2": self._pass_through,
+            "m6_4": self._pass_through,
+            "m9_2": self._mandel9_2_to_mandel6,
+            "m9_4": self._mandel9_4_to_mandel6,
+        }
         return functions[type_]
 
     def _get_to_mandel9_func(self, inp):
-        '''Select transformation function by type
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        function handler
-            Function transforming input to Mandel9
-        '''
-
         type_ = self._get_type_by_shape(inp)
 
         functions = {
-                't_2':      self._tensor2_to_mandel9,
-                't_4':      self._tensor4_to_mandel9,
-                'm6_2':     self._mandel6_2_to_mandel9,
-                'm6_4':     self._mandel6_4_to_mandel9,
-                'm9_2':     self._pass_through,
-                'm9_4':     self._pass_through,
-                }
+            "t_2": self._tensor2_to_mandel9,
+            "t_4": self._tensor4_to_mandel9,
+            "m6_2": self._mandel6_2_to_mandel9,
+            "m6_4": self._mandel6_4_to_mandel9,
+            "m9_2": self._pass_through,
+            "m9_4": self._pass_through,
+        }
         return functions[type_]
 
     def _get_to_tensor_func(self, inp):
-        '''Select transformation function by type
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        function handler
-            Function transforming input to tensor
-        '''
-
         type_ = self._get_type_by_shape(inp)
 
         functions = {
-                't_2':      self._pass_through,
-                't_4':      self._pass_through,
-                'm6_2':     self._mandel6_2_to_tensor,
-                'm6_4':     self._mandel6_4_to_tensor,
-                'm9_2':     self._mandel9_2_to_tensor,
-                'm9_4':     self._mandel9_4_to_tensor,
-                }
+            "t_2": self._pass_through,
+            "t_4": self._pass_through,
+            "m6_2": self._mandel6_2_to_tensor,
+            "m6_4": self._mandel6_4_to_tensor,
+            "m9_2": self._mandel9_2_to_tensor,
+            "m9_4": self._mandel9_4_to_tensor,
+        }
         return functions[type_]
 
     def _pass_through(self, inp):
-        '''Do nothing, return argument'''
+        """Do nothing, return argument"""
         return inp
 
     def _tensor2_to_mandel(self, inp, base):
-        out = np.einsum(
-                    'aij, ij ->a',
-                    base,
-                    inp,
-                    )
+        out = np.einsum("aij, ij ->a", base, inp,)
         return out
 
     def _tensor4_to_mandel(self, inp, base):
-        out = np.einsum(
-                    'aij, ijkl, bkl ->ab',
-                    base,
-                    inp,
-                    base,
-                    )
+        out = np.einsum("aij, ijkl, bkl ->ab", base, inp, base,)
         return out
 
     def _tensor2_to_mandel6(self, inp):
@@ -622,20 +552,11 @@ class Converter(object):
         return self._tensor4_to_mandel(inp=inp, base=self.BASE9)
 
     def _mandel_2_to_tensor(self, inp, base):
-        out = np.einsum(
-                    'ajk, a->jk',
-                    base,
-                    inp,
-                    )
+        out = np.einsum("ajk, a->jk", base, inp,)
         return out
 
     def _mandel_4_to_tensor(self, inp, base):
-        out = np.einsum(
-                    'ajk, ab, bmn->jkmn',
-                    base,
-                    inp,
-                    base,
-                    )
+        out = np.einsum("ajk, ab, bmn->jkmn", base, inp, base,)
         return out
 
     def _mandel6_2_to_tensor(self, inp):
@@ -651,15 +572,12 @@ class Converter(object):
         return self._mandel_4_to_tensor(inp=inp, base=self.BASE9)
 
     def _mandel6_2_to_mandel9(self, inp):
-        zeros = np.zeros((self.DIM_MANDEL9, ), dtype=self.dtype)
+        zeros = np.zeros((self.DIM_MANDEL9,), dtype=self.dtype)
         zeros[self.SLICE6] = inp
         return zeros
 
     def _mandel6_4_to_mandel9(self, inp):
-        zeros = np.zeros(
-                    (self.DIM_MANDEL9, self.DIM_MANDEL9),
-                    dtype=self.dtype,
-                    )
+        zeros = np.zeros((self.DIM_MANDEL9, self.DIM_MANDEL9), dtype=self.dtype,)
         zeros[self.SLICE6, self.SLICE6] = inp
         return zeros
 
@@ -671,7 +589,7 @@ class Converter(object):
 
 
 class VoigtConverter(Converter):
-    r'''
+    r"""
     Extended converter handling Voigt notation.
 
     Voigt notation for the following physical quantities is supported:
@@ -739,15 +657,18 @@ class VoigtConverter(Converter):
      [2. 2. 2. 4. 4. 4.]
      [2. 2. 2. 4. 4. 4.]]
 
-    '''
+    """
+
     def __init__(self, silent=False):
 
         if not silent:
-            print('\nWarning:\n'
-                  'Use Voigt-representations only in functions involving\n'
-                  '"voigt_" in the function name.\n')
+            print(
+                "\nWarning:\n"
+                "Use Voigt-representations only in functions involving\n"
+                '"voigt_" in the function name.\n'
+            )
 
-        self.type = 'Voigt'
+        self.type = "Voigt"
 
         self.shear = np.s_[3:6]
         self.quadrant1 = np.s_[0:3, 0:3]
@@ -756,28 +677,24 @@ class VoigtConverter(Converter):
         self.quadrant4 = np.s_[3:6, 3:6]
 
         self.factors_mandel_to_voigt = {
-                'stress': [
-                        (self.shear,        1./np.sqrt(2.)),
-                        ],
-                'strain': [
-                        (self.shear,        np.sqrt(2.)),
-                        ],
-                'stiffness': [
-                        (self.quadrant2,    1./np.sqrt(2.)),
-                        (self.quadrant3,    1./np.sqrt(2.)),
-                        (self.quadrant4,    1./2.),
-                        ],
-                'compliance': [
-                        (self.quadrant2,    np.sqrt(2.)),
-                        (self.quadrant3,    np.sqrt(2.)),
-                        (self.quadrant4,    2.),
-                        ],
-                }
+            "stress": [(self.shear, 1.0 / np.sqrt(2.0)),],
+            "strain": [(self.shear, np.sqrt(2.0)),],
+            "stiffness": [
+                (self.quadrant2, 1.0 / np.sqrt(2.0)),
+                (self.quadrant3, 1.0 / np.sqrt(2.0)),
+                (self.quadrant4, 1.0 / 2.0),
+            ],
+            "compliance": [
+                (self.quadrant2, np.sqrt(2.0)),
+                (self.quadrant3, np.sqrt(2.0)),
+                (self.quadrant4, 2.0),
+            ],
+        }
 
-        super().__init__()
+        super(type(self), self).__init__()
 
     def mandel6_to_voigt(self, inp, voigt_type):
-        '''Transform Mandel to Voigt depending on voigt_type.
+        """Transform Mandel to Voigt depending on voigt_type.
 
         Parameters
         ----------
@@ -792,7 +709,7 @@ class VoigtConverter(Converter):
         -------
         np.array with same shape as inp
                 Voigt representation
-        '''
+        """
 
         voigt = inp.copy()
         for position, factor in self.factors_mandel_to_voigt[voigt_type]:
@@ -801,7 +718,7 @@ class VoigtConverter(Converter):
         return voigt
 
     def voigt_to_mandel6(self, inp, voigt_type):
-        '''Transform Voigt to Mandel depending on voigt_type.
+        """Transform Voigt to Mandel depending on voigt_type.
 
         Parameters
         ----------
@@ -816,48 +733,50 @@ class VoigtConverter(Converter):
         -------
         np.array with same shape as inp
                 Mandel representation
-        '''
+        """
 
         mandel = inp.copy()
         for position, factor in self.factors_mandel_to_voigt[voigt_type]:
-            mandel[position] = inp[position] * 1./factor
+            mandel[position] = inp[position] * 1.0 / factor
 
         return mandel
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Examples
 
     np.set_printoptions(
-            linewidth=140,
-            precision=2,
-            # suppress=False,
-            )
+        linewidth=140,
+        precision=2,
+        # suppress=False,
+    )
 
     # Converter
 
     import mechkit
+
     con = mechkit.notation.Converter()
     tensors = mechkit.tensors.Basic()
 
     printQueue = [
-            # import mechkit as mk
-            'tensors.I2',
-            'con.to_mandel6(tensors.I2)',
-            'np.arange(9).reshape(3,3)',
-            'con.to_mandel6(np.arange(9).reshape(3,3))',
-            'tensors.I4s',
-            'con.to_mandel6(tensors.I4s)',
-            'con.to_mandel9(tensors.I4s)',
-            'con.to_mandel9(tensors.I4s)',
-            ]
+        # import mechkit as mk
+        "tensors.I2",
+        "con.to_mandel6(tensors.I2)",
+        "np.arange(9).reshape(3,3)",
+        "con.to_mandel6(np.arange(9).reshape(3,3))",
+        "tensors.I4s",
+        "con.to_mandel6(tensors.I4s)",
+        "con.to_mandel9(tensors.I4s)",
+        "con.to_mandel9(tensors.I4s)",
+    ]
     for val in printQueue:
         print(val)
-        print(eval(val), '\n')
+        print(eval(val), "\n")
 
     # VoigtConverter
 
     import mechkit
+
     con = mechkit.notation.VoigtConverter()
 
     ones_2 = np.ones((3, 3),)
@@ -865,14 +784,14 @@ if __name__ == '__main__':
     ones_4_mandel = con.to_mandel6(np.ones((3, 3, 3, 3),))
 
     printQueue = [
-            'ones_2',
-            'ones_2_mandel',
-            "con.mandel6_to_voigt(inp=ones_2_mandel, voigt_type='stress')",
-            "con.mandel6_to_voigt(inp=ones_2_mandel, voigt_type='strain')",
-            'ones_4_mandel',
-            "con.mandel6_to_voigt(inp=ones_4_mandel, voigt_type='stiffness')",
-            "con.mandel6_to_voigt(inp=ones_4_mandel, voigt_type='compliance')",
-            ]
+        "ones_2",
+        "ones_2_mandel",
+        "con.mandel6_to_voigt(inp=ones_2_mandel, voigt_type='stress')",
+        "con.mandel6_to_voigt(inp=ones_2_mandel, voigt_type='strain')",
+        "ones_4_mandel",
+        "con.mandel6_to_voigt(inp=ones_4_mandel, voigt_type='stiffness')",
+        "con.mandel6_to_voigt(inp=ones_4_mandel, voigt_type='compliance')",
+    ]
     for val in printQueue:
         print(val)
-        print(eval(val), '\n')
+        print(eval(val), "\n")
