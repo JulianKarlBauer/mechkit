@@ -22,5 +22,5 @@ contain_E1_E2_G12_imply_G23_nu12 = [
 
 possible_input = contain_E1_E2_G12_imply_G23_nu12
 
-print('Possible input combinations are')
+print("Possible input combinations are")
 pprint(possible_input)

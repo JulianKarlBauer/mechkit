@@ -14,9 +14,7 @@ setuptools.setup(
     # long_description_content_type="text/markdown",
     url="https://github.com/JulianKarlBauer/mechkit",
     packages=setuptools.find_packages(),
-    install_requires=[
-          'numpy',
-          ],
+    install_requires=["numpy",],
     classifiers=[
         "Programming Language :: Python",
         "License :: OSI Approved :: MIT License",
