@@ -467,19 +467,6 @@ class Converter(object):
         return functions[type_like[0:2]](inp)
 
     def _get_type_by_shape(self, inp):
-        """Identify type depending on inp.shape
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Representation of tensor/mandel6/mandel9
-
-        Returns
-        -------
-        string
-            Descriptor of type
-        """
-
         dim = (self.DIM,)
         dim_mandel6 = (self.DIM_MANDEL6,)
         dim_mandel9 = (self.DIM_MANDEL9,)
@@ -493,9 +480,6 @@ class Converter(object):
             2 * dim_mandel9: "m9_4",
         }
 
-        # assert(inp.shape in types), 'Tensor shape not supported'    \
-        #                             '\n Supported shapes: {}'.format(types)
-
         try:
             type_ = types[inp.shape]
         except KeyError:
@@ -505,19 +489,6 @@ class Converter(object):
         return type_
 
     def _get_to_mandel6_func(self, inp):
-        """Select transformation function by type
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        function handler
-            Function transforming input to Mandel6
-        """
-
         type_ = self._get_type_by_shape(inp)
 
         functions = {
@@ -531,19 +502,6 @@ class Converter(object):
         return functions[type_]
 
     def _get_to_mandel9_func(self, inp):
-        """Select transformation function by type
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        function handler
-            Function transforming input to Mandel9
-        """
-
         type_ = self._get_type_by_shape(inp)
 
         functions = {
@@ -557,19 +515,6 @@ class Converter(object):
         return functions[type_]
 
     def _get_to_tensor_func(self, inp):
-        """Select transformation function by type
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        function handler
-            Function transforming input to tensor
-        """
-
         type_ = self._get_type_by_shape(inp)
 
         functions = {
