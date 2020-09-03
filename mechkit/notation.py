@@ -769,6 +769,91 @@ class VoigtConverter(Converter):
         return mandel
 
 
+class AbaqusConverter(VoigtConverter):
+    r"""
+    Extended converter handling Voigt-type notations of Abaqus UMATs and VUMATs.
+
+    The following physical quantities is supported:
+
+    - stress
+    - strain
+    - stiffness
+    - compliance
+
+     Component order is defined as
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{\sigma}^{\text{UMAT}}
+            =
+            \begin{bmatrix}
+                \sigma_{\text{11}}  \\
+                \sigma_{\text{22}}  \\
+                \sigma_{\text{33}}  \\
+                \sigma_{\text{12}}  \\
+                \sigma_{\text{13}}  \\
+                \sigma_{\text{23}}  \\
+            \end{bmatrix}
+            &\quad
+           \boldsymbol{\varepsilon}^{\text{UMAT}}
+           =
+           \begin{bmatrix}
+                \varepsilon_{\text{11}}  \\
+                \varepsilon_{\text{22}}  \\
+                \varepsilon_{\text{33}}  \\
+                2\varepsilon_{\text{12}}  \\
+                2\varepsilon_{\text{13}}  \\
+                2\varepsilon_{\text{23}}  \\
+           \end{bmatrix}.
+        \end{align*}
+
+    """
+
+    def mandel6_to_umat(self, inp, voigt_type):
+        """Transform Mandel to special Voigt-type used in Abaqus UMATs depending on voigt_type.
+
+        Parameters
+        ----------
+        mandel : np.array with shape (6,) or (6, 6) consistent with voigt_type
+                Mandel representation
+
+        voigt_type : string
+                Defines conversion as types are converted differently.
+                Supported types are
+                ['stress', 'strain', 'stiffness', 'compliance'].
+        Returns
+        -------
+        np.array with same shape as inp
+                Abaqus UMAT representation
+        """
+
+        tmp = self.mandel6_to_voigt(inp=inp, voigt_type=voigt_type)
+
+        if (voigt_type == "stress") or (voigt_type == "strain"):
+            tmp[3], tmp[5] = tmp[5], tmp[3]
+        elif (voigt_type == "stiffness") or (voigt_type == "compliance"):
+            tmp[[3, 5], :] = tmp[[5, 3], :]
+            tmp[:, [3, 5]] = tmp[:, [5, 3]]
+        else:
+            raise Ex("Unsupported Voigt_type: {}\n".format(voigt_type))
+        return tmp
+
+    def umat_to_mandel6(self, inp, voigt_type):
+
+        tmp = inp.copy()
+
+        if (voigt_type == "stress") or (voigt_type == "strain"):
+            tmp[3], tmp[5] = tmp[5], tmp[3]
+        elif (voigt_type == "stiffness") or (voigt_type == "compliance"):
+            tmp[[3, 5], :] = tmp[[5, 3], :]
+            tmp[:, [3, 5]] = tmp[:, [5, 3]]
+        else:
+            raise Ex("Unsupported Voigt_type: {}\n".format(voigt_type))
+
+        mandel = self.voigt_to_mandel6(inp=tmp, voigt_type=voigt_type)
+        return mandel
+
+
 if __name__ == "__main__":
     # Examples
 
