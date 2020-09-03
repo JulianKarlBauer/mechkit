@@ -698,7 +698,7 @@ class VoigtConverter(Converter):
 
         Parameters
         ----------
-        mandel : np.array with shape (6,) or (6, 6) consistent with voigt_type
+        inp : np.array with shape (6,) or (6, 6) consistent with voigt_type
                 Mandel representation
 
         voigt_type : string
@@ -722,7 +722,7 @@ class VoigtConverter(Converter):
 
         Parameters
         ----------
-        voigt : np.array with shape (6,) or (6, 6) consistent with voigt_type
+        inp : np.array with shape (6,) or (6, 6) consistent with voigt_type
                 Voigt representation
 
         voigt_type : string
