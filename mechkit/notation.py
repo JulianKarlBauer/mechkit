@@ -611,6 +611,33 @@ class VoigtConverter(Converter):
         treated as representations in Mandel6 notation, when passed
         to methods not including "voigt" in the method name.
 
+    Component order is defined as
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{\sigma}^{\text{Voigt}}
+            =
+            \begin{bmatrix}
+                \sigma_{\text{11}}  \\
+                \sigma_{\text{22}}  \\
+                \sigma_{\text{33}}  \\
+                \sigma_{\text{23}}  \\
+                \sigma_{\text{13}}  \\
+                \sigma_{\text{12}}  \\
+            \end{bmatrix}
+            &\quad
+           \boldsymbol{\varepsilon}^{\text{Voigt}}
+           =
+           \begin{bmatrix}
+                \varepsilon_{\text{11}}  \\
+                \varepsilon_{\text{22}}  \\
+                \varepsilon_{\text{33}}  \\
+                2\varepsilon_{\text{23}}  \\
+                2\varepsilon_{\text{13}}  \\
+                2\varepsilon_{\text{12}}  \\
+           \end{bmatrix}.
+        \end{align*}
+
     Methods
     -------
     mandel6_to_voigt(inp, voigt_type)
