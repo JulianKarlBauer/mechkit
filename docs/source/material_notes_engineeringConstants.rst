@@ -14,6 +14,7 @@ Engineering Constants
 with :math:`i, j \in [1, 2, 3]`.
 
 **Implications:**
+
 - :math:`G_{ij} = G_{ji}` due to the symmetry of :math:`\boldsymbol{\sigma}` and :math:`\boldsymbol{\varepsilon}`
 
 
