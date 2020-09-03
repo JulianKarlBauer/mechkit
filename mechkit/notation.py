@@ -236,7 +236,7 @@ class Converter(object):
                         \sigma_{\text{31}}
                     \right)             \\
                     \frac{\sqrt{2}}{2}\left(
-                        \sigma_{\text{23}}
+                        \sigma_{\text{21}}
                         +
                         \sigma_{\text{12}}
                     \right)
@@ -259,7 +259,7 @@ class Converter(object):
                        \varepsilon_{\text{31}}
                    \right)             \\
                    \frac{\sqrt{2}}{2}\left(
-                       \varepsilon_{\text{23}}
+                       \varepsilon_{\text{21}}
                        +
                        \varepsilon_{\text{12}}
                    \right)
