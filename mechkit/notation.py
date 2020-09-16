@@ -868,11 +868,11 @@ class ExplicitConverter(object):
         self.BASE6 = self.get_mandel_base_sym()
         self.BASE9 = self.get_mandel_base_skw()
 
-        self.shear = np.s_[3:6]
-        self.quadrant1 = np.s_[0:3, 0:3]
-        self.quadrant2 = np.s_[0:3, 3:6]
-        self.quadrant3 = np.s_[3:6, 0:3]
-        self.quadrant4 = np.s_[3:6, 3:6]
+        self.shear = np.s_[..., 3:6]
+        self.quadrant1 = np.s_[..., 0:3, 0:3]
+        self.quadrant2 = np.s_[..., 0:3, 3:6]
+        self.quadrant3 = np.s_[..., 3:6, 0:3]
+        self.quadrant4 = np.s_[..., 3:6, 3:6]
 
         self.factors_mandel_to_voigt = {
             "stress": [(self.shear, 1.0 / np.sqrt(2.0)),],

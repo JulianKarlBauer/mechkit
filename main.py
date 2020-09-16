@@ -28,6 +28,7 @@ stiff_tensor = TensorComponents(
     notation="tensor",
 )
 stiff_mandel6 = stiff_tensor.to_mandel6()
+stiff_voigt = stiff_tensor.to_voigt()
 
 
 # mandel = np.array([1., 2, 3, 4, 5, 6])
