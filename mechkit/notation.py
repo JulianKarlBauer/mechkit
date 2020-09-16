@@ -867,6 +867,27 @@ class ExplicitConverter(object):
         self.BASE6 = self.get_mandel_base_sym()
         self.BASE9 = self.get_mandel_base_skw()
 
+        self.shear = np.s_[3:6]
+        self.quadrant1 = np.s_[0:3, 0:3]
+        self.quadrant2 = np.s_[0:3, 3:6]
+        self.quadrant3 = np.s_[3:6, 0:3]
+        self.quadrant4 = np.s_[3:6, 3:6]
+
+        self.factors_mandel_to_voigt = {
+            "stress": [(self.shear, 1.0 / np.sqrt(2.0)),],
+            "strain": [(self.shear, np.sqrt(2.0)),],
+            "stiffness": [
+                (self.quadrant2, 1.0 / np.sqrt(2.0)),
+                (self.quadrant3, 1.0 / np.sqrt(2.0)),
+                (self.quadrant4, 1.0 / 2.0),
+            ],
+            "compliance": [
+                (self.quadrant2, np.sqrt(2.0)),
+                (self.quadrant3, np.sqrt(2.0)),
+                (self.quadrant4, 2.0),
+            ],
+        }
+
     def get_mandel_base_sym(self,):
 
         B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype,)
@@ -922,6 +943,14 @@ class ExplicitConverter(object):
         new.notation = "tensor"
         return new
 
+    def to_voigt(self, inp):
+
+        f = self._get_to_voigt_func(inp=inp)
+
+        new = TensorComponents(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "voigt"
+        return new
 
     # def to_like(self, inp, like):
     #
@@ -950,6 +979,10 @@ class ExplicitConverter(object):
             ("mandel9", "strain"): self._mandel9_2_to_mandel6,
             ("mandel9", "stiffness"): self._mandel9_4_to_mandel6,
             ("mandel9", "compliance"): self._mandel9_4_to_mandel6,
+            ("voigt", "stress"): self._voigt_to_mandel6,
+            ("voigt", "strain"): self._voigt_to_mandel6,
+            ("voigt", "stiffness"): self._voigt_to_mandel6,
+            ("voigt", "compliance"): self._voigt_to_mandel6,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -968,6 +1001,10 @@ class ExplicitConverter(object):
             ("mandel9", "strain"): self._pass_through,
             ("mandel9", "stiffness"): self._pass_through,
             ("mandel9", "compliance"): self._pass_through,
+            ("voigt", "stress"): self._via_mandel6_to_mandel9,
+            ("voigt", "strain"): self._via_mandel6_to_mandel9,
+            ("voigt", "stiffness"): self._via_mandel6_to_mandel9,
+            ("voigt", "compliance"): self._via_mandel6_to_mandel9,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -985,9 +1022,45 @@ class ExplicitConverter(object):
             ("mandel9", "strain"): self._mandel9_2_to_tensor,
             ("mandel9", "stiffness"): self._mandel9_4_to_tensor,
             ("mandel9", "compliance"): self._mandel9_4_to_tensor,
+            ("voigt", "stress"): self._via_mandel6_to_tensor,
+            ("voigt", "strain"): self._via_mandel6_to_tensor,
+            ("voigt", "stiffness"): self._via_mandel6_to_tensor,
+            ("voigt", "compliance"): self._via_mandel6_to_tensor,
         }
         return functions[(inp.notation, inp.quantity)]
 
+    def _get_to_voigt_func(self, inp):
+        functions = {
+            ("tensor", "stress"): self._via_mandel6_to_voigt,
+            ("tensor", "strain"): self._via_mandel6_to_voigt,
+            ("tensor", "stiffness"): self._via_mandel6_to_voigt,
+            ("tensor", "compliance"): self._via_mandel6_to_voigt,
+            ("mandel6", "stress"): self._mandel6_to_voigt,
+            ("mandel6", "strain"): self._mandel6_to_voigt,
+            ("mandel6", "stiffness"): self._mandel6_to_voigt,
+            ("mandel6", "compliance"): self._mandel6_to_voigt,
+            ("mandel9", "stress"): self._via_mandel6_to_voigt,
+            ("mandel9", "strain"): self._via_mandel6_to_voigt,
+            ("mandel9", "stiffness"): self._via_mandel6_to_voigt,
+            ("mandel9", "compliance"): self._via_mandel6_to_voigt,
+            ("voigt", "stress"): self._pass_through,
+            ("voigt", "strain"): self._pass_through,
+            ("voigt", "stiffness"): self._pass_through,
+            ("voigt", "compliance"): self._pass_through,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _via_mandel6_to_voigt(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_voigt(inp=mandel6)
+
+    def _via_mandel6_to_tensor(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_tensor(inp=mandel6)
+
+    def _via_mandel6_to_mandel9(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_mandel9(inp=mandel6)
 
     def _pass_through(self, inp):
         return inp
@@ -1050,6 +1123,22 @@ class ExplicitConverter(object):
     def _mandel9_4_to_mandel6(self, inp):
         return inp[..., self.SLICE6, self.SLICE6]
 
+    def _mandel6_to_voigt(self, inp):
+
+        voigt = inp.copy()
+        for position, factor in self.factors_mandel_to_voigt[inp.quantity]:
+            voigt[position] = inp[position] * factor
+
+        return voigt
+
+    def _voigt_to_mandel6(self, inp):
+
+        mandel = inp.copy()
+        for position, factor in self.factors_mandel_to_voigt[inp.quantity]:
+            mandel[position] = inp[position] * 1.0 / factor
+
+        return mandel
+
 
 class TensorComponents(np.ndarray):
 
@@ -1098,6 +1187,8 @@ class TensorComponents(np.ndarray):
     def to_mandel9(self,):
         return self.converter.to_mandel9(inp=self)
 
+    def to_voigt(self,):
+        return self.converter.to_voigt(inp=self)
 
     #
     # def to_aba_umat(self, ):
