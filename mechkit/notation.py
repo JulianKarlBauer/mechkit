@@ -1051,18 +1051,6 @@ class ExplicitConverter(object):
         }
         return functions[(inp.notation, inp.quantity)]
 
-    def _via_mandel6_to_voigt(self, inp):
-        mandel6 = self.to_mandel6(inp=inp)
-        return self.to_voigt(inp=mandel6)
-
-    def _via_mandel6_to_tensor(self, inp):
-        mandel6 = self.to_mandel6(inp=inp)
-        return self.to_tensor(inp=mandel6)
-
-    def _via_mandel6_to_mandel9(self, inp):
-        mandel6 = self.to_mandel6(inp=inp)
-        return self.to_mandel9(inp=mandel6)
-
     def _pass_through(self, inp):
         return inp
 
@@ -1125,20 +1113,28 @@ class ExplicitConverter(object):
         return inp[self.SLICE6BY6]
 
     def _mandel6_to_voigt(self, inp):
-
         voigt = inp.copy()
         for position, factor in self.factors_mandel_to_voigt[inp.quantity]:
             voigt[position] = inp[position] * factor
-
         return voigt
 
     def _voigt_to_mandel6(self, inp):
-
         mandel = inp.copy()
         for position, factor in self.factors_mandel_to_voigt[inp.quantity]:
             mandel[position] = inp[position] * 1.0 / factor
-
         return mandel
+
+    def _via_mandel6_to_voigt(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_voigt(inp=mandel6)
+
+    def _via_mandel6_to_tensor(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_tensor(inp=mandel6)
+
+    def _via_mandel6_to_mandel9(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_mandel9(inp=mandel6)
 
 
 class TensorComponents(np.ndarray):
