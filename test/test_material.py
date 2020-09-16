@@ -4,14 +4,10 @@
     python3 -m pytest
 """
 
-import sys
-import os
 import numpy as np
 import itertools
 import copy
 import pytest
-
-sys.path.append(os.path.join(".."))
 import mechkit
 
 np.set_printoptions(
