@@ -854,6 +854,243 @@ class AbaqusConverter(VoigtConverter):
         return mandel
 
 
+class ExplicitConverter(object):
+    def __init__(self, dtype="float64"):
+
+        self.dtype = dtype
+        self.factor = np.sqrt(2.0) / 2.0
+
+        self.DIM = 3
+        self.DIM_MANDEL6 = 6
+        self.DIM_MANDEL9 = 9
+        self.SLICE6 = np.s_[0:6]
+        self.BASE6 = self.get_mandel_base_sym()
+        self.BASE9 = self.get_mandel_base_skw()
+
+    def get_mandel_base_sym(self,):
+
+        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype,)
+
+        B[0, 0, 0] = 1.0
+        B[1, 1, 1] = 1.0
+        B[2, 2, 2] = 1.0
+        B[3, 1, 2] = B[3, 2, 1] = self.factor
+        B[4, 0, 2] = B[4, 2, 0] = self.factor
+        B[5, 0, 1] = B[5, 1, 0] = self.factor
+        return B
+
+    def get_mandel_base_skw(self,):
+
+        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype,)
+        B[0:6, :, :] = self.get_mandel_base_sym()
+
+        B[6, 1, 2] = -self.factor
+        B[6, 2, 1] = self.factor
+        B[7, 0, 2] = self.factor
+        B[7, 2, 0] = -self.factor
+        B[8, 0, 1] = -self.factor
+        B[8, 1, 0] = self.factor
+        return B
+
+    def to_mandel6(self, inp, verbose=False):
+
+        if verbose:
+            print("Skew parts are lost!")
+
+        f = self._get_to_mandel6_func(inp=inp)
+        return f(inp=inp)
+
+    def to_mandel9(self, inp):
+
+        f = self._get_to_mandel9_func(inp=inp)
+        return f(inp=inp)
+
+    def to_tensor(self, inp):
+
+        f = self._get_to_tensor_func(inp=inp)
+        return f(inp=inp)
+
+
+    # def to_like(self, inp, like):
+    #
+    #     type_like = self._get_type_by_shape(like)
+    #
+    #     functions = {
+    #         "t_": self.to_tensor,
+    #         "m6": self.to_mandel6,
+    #         "m9": self.to_mandel9,
+    #     }
+    #
+    #     return functions[type_like[0:2]](inp)
+
+    def _get_to_mandel6_func(self, inp):
+
+        functions = {
+            ("tensor", "stress"): self._tensor2_to_mandel6,
+            ("tensor", "strain"): self._tensor2_to_mandel6,
+            ("tensor", "stiffness"): self._tensor4_to_mandel6,
+            ("tensor", "compliance"): self._tensor4_to_mandel6,
+            ("mandel6", "stress"): self._pass_through,
+            ("mandel6", "strain"): self._pass_through,
+            ("mandel6", "stiffness"): self._pass_through,
+            ("mandel6", "compliance"): self._pass_through,
+            ("mandel9", "stress"): self._mandel9_2_to_mandel6,
+            ("mandel9", "strain"): self._mandel9_2_to_mandel6,
+            ("mandel9", "stiffness"): self._mandel9_4_to_mandel6,
+            ("mandel9", "compliance"): self._mandel9_4_to_mandel6,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_mandel9_func(self, inp):
+
+        functions = {
+            ("tensor", "stress"): self._tensor2_to_mandel9,
+            ("tensor", "strain"): self._tensor2_to_mandel9,
+            ("tensor", "stiffness"): self._tensor4_to_mandel9,
+            ("tensor", "compliance"): self._tensor4_to_mandel9,
+            ("mandel6", "stress"): self._mandel6_2_to_mandel9,
+            ("mandel6", "strain"): self._mandel6_2_to_mandel9,
+            ("mandel6", "stiffness"): self._mandel6_4_to_mandel9,
+            ("mandel6", "compliance"): self._mandel6_4_to_mandel9,
+            ("mandel9", "stress"): self._pass_through,
+            ("mandel9", "strain"): self._pass_through,
+            ("mandel9", "stiffness"): self._pass_through,
+            ("mandel9", "compliance"): self._pass_through,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_tensor_func(self, inp):
+        functions = {
+            ("tensor", "stress"): self._pass_through,
+            ("tensor", "strain"): self._pass_through,
+            ("tensor", "stiffness"): self._pass_through,
+            ("tensor", "compliance"): self._pass_through,
+            ("mandel6", "stress"): self._mandel6_2_to_tensor,
+            ("mandel6", "strain"): self._mandel6_2_to_tensor,
+            ("mandel6", "stiffness"): self._mandel6_4_to_tensor,
+            ("mandel6", "compliance"): self._mandel6_4_to_tensor,
+            ("mandel9", "stress"): self._mandel9_2_to_tensor,
+            ("mandel9", "strain"): self._mandel9_2_to_tensor,
+            ("mandel9", "stiffness"): self._mandel9_4_to_tensor,
+            ("mandel9", "compliance"): self._mandel9_4_to_tensor,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+
+    def _pass_through(self, inp):
+        return inp
+
+    def _tensor2_to_mandel(self, inp, base):
+        out = np.einsum("aij, ...ij ->...a", base, inp,)
+        return out
+
+    def _tensor4_to_mandel(self, inp, base):
+        out = np.einsum("aij, ...ijkl, bkl ->...ab", base, inp, base,)
+        return out
+
+    def _tensor2_to_mandel6(self, inp):
+        return self._tensor2_to_mandel(inp=inp, base=self.BASE6)
+
+    def _tensor2_to_mandel9(self, inp):
+        return self._tensor2_to_mandel(inp=inp, base=self.BASE9)
+
+    def _tensor4_to_mandel6(self, inp):
+        return self._tensor4_to_mandel(inp=inp, base=self.BASE6)
+
+    def _tensor4_to_mandel9(self, inp):
+        return self._tensor4_to_mandel(inp=inp, base=self.BASE9)
+
+    def _mandel_2_to_tensor(self, inp, base):
+        out = np.einsum("ajk, ...a->...jk", base, inp,)
+        return out
+
+    def _mandel_4_to_tensor(self, inp, base):
+        out = np.einsum("ajk, ...ab, bmn->...jkmn", base, inp, base,)
+        return out
+
+    def _mandel6_2_to_tensor(self, inp):
+        return self._mandel_2_to_tensor(inp=inp, base=self.BASE6)
+
+    def _mandel6_4_to_tensor(self, inp):
+        return self._mandel_4_to_tensor(inp=inp, base=self.BASE6)
+
+    def _mandel9_2_to_tensor(self, inp):
+        return self._mandel_2_to_tensor(inp=inp, base=self.BASE9)
+
+    def _mandel9_4_to_tensor(self, inp):
+        return self._mandel_4_to_tensor(inp=inp, base=self.BASE9)
+
+    def _mandel6_2_to_mandel9(self, inp):
+        shape = inp.shape[:-1] + (self.DIM_MANDEL9,)
+        zeros = np.zeros(shape, dtype=self.dtype)
+        zeros[..., self.SLICE6] = inp
+        return zeros
+
+    def _mandel6_4_to_mandel9(self, inp):
+        shape = inp.shape[:-2] + (self.DIM_MANDEL9, self.DIM_MANDEL9)
+        zeros = np.zeros(shape, dtype=self.dtype,)
+        zeros[..., self.SLICE6, self.SLICE6] = inp
+        return zeros
+
+    def _mandel9_2_to_mandel6(self, inp):
+        return inp[..., self.SLICE6]
+
+    def _mandel9_4_to_mandel6(self, inp):
+        return inp[..., self.SLICE6, self.SLICE6]
+
+
+class TensorComponents(np.ndarray):
+
+    valid_quantities = [None, "stress", "strain", "stiffness", "compliance"]
+    valid_notations = [
+        None,
+        "tensor",
+        "mandel6",
+        "mandel9",
+        # "voigt",
+        # "aba_umat",
+        # "aba_vumat",
+    ]
+    stored_information = ["notation", "quantity"]
+
+    converter = ExplicitConverter()
+
+    def __new__(cls, input_array, notation=None, quantity=None):
+        # Input array is an already formed ndarray instance
+        # We first cast to be our class type
+        obj = np.asarray(input_array).view(cls)
+        # add the new attribute to the created instance
+        obj.notation = notation
+        obj.quantity = quantity
+        # Finally, we must return the newly created object:
+        return obj
+
+    def __array_finalize__(self, obj):
+        # see InfoArray.__array_finalize__ for comments
+        if obj is None:
+            return
+        else:
+            for info in self.stored_information:
+                setattr(self, info, getattr(obj, info, None))
+
+    def to_tensor(self,):
+        return self.converter.to_tensor(inp=self)
+
+    def to_mandel6(self,):
+        return self.converter.to_mandel6(inp=self)
+
+    def to_mandel9(self,):
+        return self.converter.to_mandel9(inp=self)
+
+
+    #
+    # def to_aba_umat(self, ):
+    #     return self.Converter.to_aba_umat(inp=self)
+    #
+    # def to_aba_vumat(self, ):
+    #     return self.Converter.to_aba_vumat(inp=self)
+
+
 if __name__ == "__main__":
     # Examples
 
