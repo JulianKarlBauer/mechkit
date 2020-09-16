@@ -863,7 +863,8 @@ class ExplicitConverter(object):
         self.DIM = 3
         self.DIM_MANDEL6 = 6
         self.DIM_MANDEL9 = 9
-        self.SLICE6 = np.s_[0:6]
+        self.SLICE6 = np.s_[..., 0:6]
+        self.SLICE6BY6 = np.s_[..., 0:6, 0:6]
         self.BASE6 = self.get_mandel_base_sym()
         self.BASE9 = self.get_mandel_base_skw()
 
@@ -1108,20 +1109,20 @@ class ExplicitConverter(object):
     def _mandel6_2_to_mandel9(self, inp):
         shape = inp.shape[:-1] + (self.DIM_MANDEL9,)
         zeros = np.zeros(shape, dtype=self.dtype)
-        zeros[..., self.SLICE6] = inp
+        zeros[self.SLICE6] = inp
         return zeros
 
     def _mandel6_4_to_mandel9(self, inp):
         shape = inp.shape[:-2] + (self.DIM_MANDEL9, self.DIM_MANDEL9)
         zeros = np.zeros(shape, dtype=self.dtype,)
-        zeros[..., self.SLICE6, self.SLICE6] = inp
+        zeros[self.SLICE6BY6] = inp
         return zeros
 
     def _mandel9_2_to_mandel6(self, inp):
-        return inp[..., self.SLICE6]
+        return inp[self.SLICE6]
 
     def _mandel9_4_to_mandel6(self, inp):
-        return inp[..., self.SLICE6, self.SLICE6]
+        return inp[self.SLICE6BY6]
 
     def _mandel6_to_voigt(self, inp):
 
