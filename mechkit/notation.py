@@ -898,17 +898,29 @@ class ExplicitConverter(object):
             print("Skew parts are lost!")
 
         f = self._get_to_mandel6_func(inp=inp)
-        return f(inp=inp)
+
+        new = TensorComponents(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "mandel6"
+        return new
 
     def to_mandel9(self, inp):
 
         f = self._get_to_mandel9_func(inp=inp)
-        return f(inp=inp)
+
+        new = TensorComponents(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "mandel9"
+        return new
 
     def to_tensor(self, inp):
 
         f = self._get_to_tensor_func(inp=inp)
-        return f(inp=inp)
+
+        new = TensorComponents(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "tensor"
+        return new
 
 
     # def to_like(self, inp, like):
@@ -1051,7 +1063,7 @@ class TensorComponents(np.ndarray):
         # "aba_umat",
         # "aba_vumat",
     ]
-    stored_information = ["notation", "quantity"]
+    stored_meta_data = ["notation", "quantity"]
 
     converter = ExplicitConverter()
 
@@ -1070,8 +1082,12 @@ class TensorComponents(np.ndarray):
         if obj is None:
             return
         else:
-            for info in self.stored_information:
-                setattr(self, info, getattr(obj, info, None))
+            self.copy_meta_info(new=self, old=obj)
+
+    def copy_meta_info(self, new, old):
+        for info in self.stored_meta_data:
+            setattr(new, info, getattr(old, info, None))
+        return new
 
     def to_tensor(self,):
         return self.converter.to_tensor(inp=self)
