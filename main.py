@@ -15,6 +15,17 @@ stress_tensor = Components(
 )
 assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
 
+strain_tensor = Components(
+    np.arange(9, dtype=np.float64).reshape(3, 3), quantity="strain", notation="tensor"
+)
+assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
+
+comp_tensor_bunch = Components(
+    np.arange(324, dtype=np.float64).reshape(4, 3, 3, 3, 3),
+    quantity="compliance",
+    notation="tensor",
+)
+
 stress_voigt_bunch = Components(
     np.arange(1, 1 + 2 * 18, step=2, dtype=np.float64).reshape(3, 6),
     quantity="stress",

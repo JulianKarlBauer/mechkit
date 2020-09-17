@@ -875,8 +875,8 @@ class ExplicitConverter(object):
         self.quadrant4 = np.s_[..., 3:6, 3:6]
 
         self.factors_mandel_to_voigt = {
-            "stress": [(self.shear, 1.0 / np.sqrt(2.0)),],
-            "strain": [(self.shear, np.sqrt(2.0)),],
+            "stress": [(self.shear, 1.0 / np.sqrt(2.0))],
+            "strain": [(self.shear, np.sqrt(2.0))],
             "stiffness": [
                 (self.quadrant2, 1.0 / np.sqrt(2.0)),
                 (self.quadrant3, 1.0 / np.sqrt(2.0)),
@@ -887,6 +887,13 @@ class ExplicitConverter(object):
                 (self.quadrant3, np.sqrt(2.0)),
                 (self.quadrant4, 2.0),
             ],
+        }
+
+        self.factors_voigt_to_reordered_vumat = {
+            "stress": [],
+            "strain": [(self.shear, 1.0 / 2.0)],
+            "stiffness": [(self.quadrant2, 2.0), (self.quadrant4, 2.0)],
+            "compliance": [(self.quadrant3, 1.0 / 2.0), (self.quadrant4, 1.0 / 2.0)],
         }
 
     def get_mandel_base_sym(self,):
@@ -962,17 +969,14 @@ class ExplicitConverter(object):
         new.notation = "umat"
         return new
 
-    # def to_like(self, inp, like):
-    #
-    #     type_like = self._get_type_by_shape(like)
-    #
-    #     functions = {
-    #         "t_": self.to_tensor,
-    #         "m6": self.to_mandel6,
-    #         "m9": self.to_mandel9,
-    #     }
-    #
-    #     return functions[type_like[0:2]](inp)
+    def to_vumat(self, inp):
+
+        f = self._get_to_vumat_func(inp=inp)
+
+        new = Components(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "vumat"
+        return new
 
     def _get_to_mandel6_func(self, inp):
 
@@ -997,6 +1001,10 @@ class ExplicitConverter(object):
             ("umat", "strain"): self._via_voigt_to_mandel6,
             ("umat", "stiffness"): self._via_voigt_to_mandel6,
             ("umat", "compliance"): self._via_voigt_to_mandel6,
+            ("vumat", "stress"): self._via_voigt_to_mandel6,
+            ("vumat", "strain"): self._via_voigt_to_mandel6,
+            ("vumat", "stiffness"): self._via_voigt_to_mandel6,
+            ("vumat", "compliance"): self._via_voigt_to_mandel6,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1023,6 +1031,10 @@ class ExplicitConverter(object):
             ("umat", "strain"): self._via_voigt_to_mandel9,
             ("umat", "stiffness"): self._via_voigt_to_mandel9,
             ("umat", "compliance"): self._via_voigt_to_mandel9,
+            ("vumat", "stress"): self._via_voigt_to_mandel9,
+            ("vumat", "strain"): self._via_voigt_to_mandel9,
+            ("vumat", "stiffness"): self._via_voigt_to_mandel9,
+            ("vumat", "compliance"): self._via_voigt_to_mandel9,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1048,6 +1060,10 @@ class ExplicitConverter(object):
             ("umat", "strain"): self._via_voigt_to_tensor,
             ("umat", "stiffness"): self._via_voigt_to_tensor,
             ("umat", "compliance"): self._via_voigt_to_tensor,
+            ("vumat", "stress"): self._via_voigt_to_tensor,
+            ("vumat", "strain"): self._via_voigt_to_tensor,
+            ("vumat", "stiffness"): self._via_voigt_to_tensor,
+            ("vumat", "compliance"): self._via_voigt_to_tensor,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1073,6 +1089,10 @@ class ExplicitConverter(object):
             ("umat", "strain"): self._voigt_2_umat,
             ("umat", "stiffness"): self._voigt_4_umat,
             ("umat", "compliance"): self._voigt_4_umat,
+            ("vumat", "stress"): self._vumat_2_to_voigt,
+            ("vumat", "strain"): self._vumat_2_to_voigt,
+            ("vumat", "stiffness"): self._vumat_4_to_voigt,
+            ("vumat", "compliance"): self._vumat_4_to_voigt,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1098,6 +1118,39 @@ class ExplicitConverter(object):
             ("umat", "strain"): self._pass_through,
             ("umat", "stiffness"): self._pass_through,
             ("umat", "compliance"): self._pass_through,
+            ("vumat", "stress"): self._via_voigt_to_umat,
+            ("vumat", "strain"): self._via_voigt_to_umat,
+            ("vumat", "stiffness"): self._via_voigt_to_umat,
+            ("vumat", "compliance"): self._via_voigt_to_umat,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_vumat_func(self, inp):
+        functions = {
+            ("tensor", "stress"): self._via_voigt_to_vumat,
+            ("tensor", "strain"): self._via_voigt_to_vumat,
+            ("tensor", "stiffness"): self._via_voigt_to_vumat,
+            ("tensor", "compliance"): self._via_voigt_to_vumat,
+            ("mandel6", "stress"): self._via_voigt_to_vumat,
+            ("mandel6", "strain"): self._via_voigt_to_vumat,
+            ("mandel6", "stiffness"): self._via_voigt_to_vumat,
+            ("mandel6", "compliance"): self._via_voigt_to_vumat,
+            ("mandel9", "stress"): self._via_voigt_to_vumat,
+            ("mandel9", "strain"): self._via_voigt_to_vumat,
+            ("mandel9", "stiffness"): self._via_voigt_to_vumat,
+            ("mandel9", "compliance"): self._via_voigt_to_vumat,
+            ("voigt", "stress"): self._voigt_2_to_vumat,
+            ("voigt", "strain"): self._voigt_2_to_vumat,
+            ("voigt", "stiffness"): self._voigt_4_to_vumat,
+            ("voigt", "compliance"): self._voigt_4_to_vumat,
+            ("umat", "stress"): self._via_voigt_to_vumat,
+            ("umat", "strain"): self._via_voigt_to_vumat,
+            ("umat", "stiffness"): self._via_voigt_to_vumat,
+            ("umat", "compliance"): self._via_voigt_to_vumat,
+            ("vumat", "stress"): self._pass_through,
+            ("vumat", "strain"): self._pass_through,
+            ("vumat", "stiffness"): self._pass_through,
+            ("vumat", "compliance"): self._pass_through,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1213,6 +1266,47 @@ class ExplicitConverter(object):
         voigt = self.to_voigt(inp=inp)
         return self.to_mandel9(inp=voigt)
 
+    def _voigt_2_vumat_reorder(self, inp):
+        inp[..., [3, 4]] = inp[..., [4, 3]]
+        inp[..., [3, 5]] = inp[..., [5, 3]]
+        return inp
+
+    def _voigt_4_vumat_reorder(self, inp):
+        inp[..., [3, 4], :] = inp[..., [4, 3], :]
+        inp[..., :, [3, 4]] = inp[..., :, [4, 3]]
+
+        inp[..., [3, 5], :] = inp[..., [5, 3], :]
+        inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
+        return inp
+
+    def _voigt_2_to_vumat(self, inp):
+        new = inp.copy()
+        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+            new[position] = inp[position] * factor
+        return self._voigt_2_vumat_reorder(new)
+
+    def _voigt_4_to_vumat(self, inp):
+        new = inp.copy()
+        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+            new[position] = inp[position] * factor
+        return self._voigt_4_vumat_reorder(new)
+
+    def _vumat_2_to_voigt(self, inp):
+        new = inp.copy()
+        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+            new[position] = inp[position] * 1.0 / factor
+        return self._voigt_2_vumat_reorder(new)
+
+    def _vumat_4_to_voigt(self, inp):
+        new = inp.copy()
+        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+            new[position] = inp[position] * 1.0 / factor
+        return self._voigt_4_vumat_reorder(new)
+
+    def _via_voigt_to_vumat(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_vumat(inp=voigt)
+
 
 class Components(np.ndarray):
 
@@ -1267,12 +1361,8 @@ class Components(np.ndarray):
     def to_umat(self,):
         return self.converter.to_umat(inp=self)
 
-    #
-    # def to_aba_umat(self, ):
-    #     return self.Converter.to_aba_umat(inp=self)
-    #
-    # def to_aba_vumat(self, ):
-    #     return self.Converter.to_aba_vumat(inp=self)
+    def to_vumat(self,):
+        return self.converter.to_vumat(inp=self)
 
 
 if __name__ == "__main__":
