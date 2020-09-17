@@ -49,6 +49,9 @@ stress_mandel9 = stress_tensor.to_mandel9()
 stress_mandel6_bunch = stress_voigt_bunch.to_mandel6()
 stress_mandel9_bunch = stress_voigt_bunch.to_mandel9()
 
+# Check for order consistency
+stiff_tensor_bunch.to_vumat().to_voigt()[0]
+stiff_tensor_bunch.to_voigt()[0]
 
 # mandel = np.array([1., 2, 3, 4, 5, 6])
 #
