@@ -896,6 +896,11 @@ class ExplicitConverter(object):
             "compliance": [(self.quadrant3, 1.0 / 2.0), (self.quadrant4, 1.0 / 2.0)],
         }
 
+        self.factors_reordered_vumat_to_voigt = {
+            key: [(slic, 1.0 / fac) for slic, fac in val]
+            for key, val in self.factors_voigt_to_reordered_vumat.items()
+        }
+
     def get_mandel_base_sym(self,):
 
         B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype,)
@@ -1225,12 +1230,12 @@ class ExplicitConverter(object):
         voigt = self(inp=inp, to="voigt")
         return self(inp=voigt, to="mandel9")
 
-    def _voigt_2_vumat_reorder(self, inp):
+    def _voigt_2_to_vumat_reorder(self, inp):
         inp[..., [3, 4]] = inp[..., [4, 3]]
         inp[..., [3, 5]] = inp[..., [5, 3]]
         return inp
 
-    def _voigt_4_vumat_reorder(self, inp):
+    def _voigt_4_to_vumat_reorder(self, inp):
         inp[..., [3, 4], :] = inp[..., [4, 3], :]
         inp[..., :, [3, 4]] = inp[..., :, [4, 3]]
 
@@ -1238,29 +1243,48 @@ class ExplicitConverter(object):
         inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
         return inp
 
-    def _voigt_2_to_vumat(self, inp):
+    def _vumat_2_to_voigt_reorder(self, inp):
+        inp[..., [3, 4]] = inp[..., [4, 3]]
+        inp[..., [4, 5]] = inp[..., [5, 4]]
+        return inp
+
+    def _vumat_4_to_voigt_reorder(self, inp):
+        inp[..., [3, 4], :] = inp[..., [4, 3], :]
+        inp[..., :, [3, 4]] = inp[..., :, [4, 3]]
+
+        inp[..., [4, 5], :] = inp[..., [5, 4], :]
+        inp[..., :, [4, 5]] = inp[..., :, [5, 4]]
+        return inp
+
+    def _copy_and_scale(self, inp, factors):
         new = inp.copy()
-        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+        for position, factor in factors:
             new[position] = inp[position] * factor
-        return self._voigt_2_vumat_reorder(new)
+        return new
+
+    def _voigt_2_to_vumat(self, inp):
+        new = self._copy_and_scale(
+            inp=inp, factors=self.factors_voigt_to_reordered_vumat[inp.quantity]
+        )
+        return self._voigt_2_to_vumat_reorder(new)
 
     def _voigt_4_to_vumat(self, inp):
-        new = inp.copy()
-        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
-            new[position] = inp[position] * factor
-        return self._voigt_4_vumat_reorder(new)
+        new = self._copy_and_scale(
+            inp=inp, factors=self.factors_voigt_to_reordered_vumat[inp.quantity]
+        )
+        return self._voigt_4_to_vumat_reorder(new)
 
     def _vumat_2_to_voigt(self, inp):
-        new = inp.copy()
-        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
-            new[position] = inp[position] * 1.0 / factor
-        return self._voigt_2_vumat_reorder(new)
+        new = self._copy_and_scale(
+            inp=inp, factors=self.factors_reordered_vumat_to_voigt[inp.quantity]
+        )
+        return self._vumat_2_to_voigt_reorder(new)
 
     def _vumat_4_to_voigt(self, inp):
-        new = inp.copy()
-        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
-            new[position] = inp[position] * 1.0 / factor
-        return self._voigt_4_vumat_reorder(new)
+        new = self._copy_and_scale(
+            inp=inp, factors=self.factors_reordered_vumat_to_voigt[inp.quantity]
+        )
+        return self._vumat_4_to_voigt_reorder(new)
 
     def _via_voigt_to_vumat(self, inp):
         voigt = self(inp=inp, to="voigt")
