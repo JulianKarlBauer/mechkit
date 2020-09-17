@@ -10,25 +10,33 @@ np.set_printoptions(
 
 con = mechkit.notation.AbaqusConverter(silent=True)
 
-a = Components(np.arange(9).reshape(3, 3))
-
-tensor = Components(
+stress_tensor = Components(
     np.arange(9, dtype=np.float64).reshape(3, 3), quantity="stress", notation="tensor"
 )
+assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
 
-assert np.allclose(tensor, tensor.to_mandel9().to_tensor())
-
-mandel6 = Components(np.arange(6), quantity="stress", notation="mandel6")
-mandel9 = Components(np.arange(9), quantity="stress", notation="mandel9")
+stress_voigt_bunch = Components(
+    np.arange(1, 1 + 2 * 18, step=2, dtype=np.float64).reshape(3, 6),
+    quantity="stress",
+    notation="voigt",
+)
 
 # Vectorized
-stiff_tensor = Components(
+stiff_tensor_bunch = Components(
     np.arange(324, dtype=np.float64).reshape(4, 3, 3, 3, 3),
     quantity="stiffness",
     notation="tensor",
 )
-stiff_mandel6 = stiff_tensor.to_mandel6()
-stiff_voigt = stiff_tensor.to_voigt()
+
+
+stiff_mandel6_bunch = stiff_tensor_bunch.to_mandel6()
+stiff_voigt_bunch = stiff_tensor_bunch.to_voigt()
+
+stress_mandel6 = stress_tensor.to_mandel6()
+stress_mandel9 = stress_tensor.to_mandel9()
+
+stress_mandel6_bunch = stress_voigt_bunch.to_mandel6()
+stress_mandel9_bunch = stress_voigt_bunch.to_mandel9()
 
 
 # mandel = np.array([1., 2, 3, 4, 5, 6])

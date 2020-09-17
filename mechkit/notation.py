@@ -953,6 +953,15 @@ class ExplicitConverter(object):
         new.notation = "voigt"
         return new
 
+    def to_umat(self, inp):
+
+        f = self._get_to_umat_func(inp=inp)
+
+        new = Components(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "umat"
+        return new
+
     # def to_like(self, inp, like):
     #
     #     type_like = self._get_type_by_shape(like)
@@ -984,6 +993,10 @@ class ExplicitConverter(object):
             ("voigt", "strain"): self._voigt_to_mandel6,
             ("voigt", "stiffness"): self._voigt_to_mandel6,
             ("voigt", "compliance"): self._voigt_to_mandel6,
+            ("umat", "stress"): self._via_voigt_to_mandel6,
+            ("umat", "strain"): self._via_voigt_to_mandel6,
+            ("umat", "stiffness"): self._via_voigt_to_mandel6,
+            ("umat", "compliance"): self._via_voigt_to_mandel6,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1006,6 +1019,10 @@ class ExplicitConverter(object):
             ("voigt", "strain"): self._via_mandel6_to_mandel9,
             ("voigt", "stiffness"): self._via_mandel6_to_mandel9,
             ("voigt", "compliance"): self._via_mandel6_to_mandel9,
+            ("umat", "stress"): self._via_voigt_to_mandel9,
+            ("umat", "strain"): self._via_voigt_to_mandel9,
+            ("umat", "stiffness"): self._via_voigt_to_mandel9,
+            ("umat", "compliance"): self._via_voigt_to_mandel9,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1027,6 +1044,10 @@ class ExplicitConverter(object):
             ("voigt", "strain"): self._via_mandel6_to_tensor,
             ("voigt", "stiffness"): self._via_mandel6_to_tensor,
             ("voigt", "compliance"): self._via_mandel6_to_tensor,
+            ("umat", "stress"): self._via_voigt_to_tensor,
+            ("umat", "strain"): self._via_voigt_to_tensor,
+            ("umat", "stiffness"): self._via_voigt_to_tensor,
+            ("umat", "compliance"): self._via_voigt_to_tensor,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1048,6 +1069,35 @@ class ExplicitConverter(object):
             ("voigt", "strain"): self._pass_through,
             ("voigt", "stiffness"): self._pass_through,
             ("voigt", "compliance"): self._pass_through,
+            ("umat", "stress"): self._voigt_2_umat,
+            ("umat", "strain"): self._voigt_2_umat,
+            ("umat", "stiffness"): self._voigt_4_umat,
+            ("umat", "compliance"): self._voigt_4_umat,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_umat_func(self, inp):
+        functions = {
+            ("tensor", "stress"): self._via_voigt_to_umat,
+            ("tensor", "strain"): self._via_voigt_to_umat,
+            ("tensor", "stiffness"): self._via_voigt_to_umat,
+            ("tensor", "compliance"): self._via_voigt_to_umat,
+            ("mandel6", "stress"): self._via_voigt_to_umat,
+            ("mandel6", "strain"): self._via_voigt_to_umat,
+            ("mandel6", "stiffness"): self._via_voigt_to_umat,
+            ("mandel6", "compliance"): self._via_voigt_to_umat,
+            ("mandel9", "stress"): self._via_voigt_to_umat,
+            ("mandel9", "strain"): self._via_voigt_to_umat,
+            ("mandel9", "stiffness"): self._via_voigt_to_umat,
+            ("mandel9", "compliance"): self._via_voigt_to_umat,
+            ("voigt", "stress"): self._voigt_2_umat,
+            ("voigt", "strain"): self._voigt_2_umat,
+            ("voigt", "stiffness"): self._voigt_4_umat,
+            ("voigt", "compliance"): self._voigt_4_umat,
+            ("umat", "stress"): self._pass_through,
+            ("umat", "strain"): self._pass_through,
+            ("umat", "stiffness"): self._pass_through,
+            ("umat", "compliance"): self._pass_through,
         }
         return functions[(inp.notation, inp.quantity)]
 
@@ -1136,6 +1186,32 @@ class ExplicitConverter(object):
         mandel6 = self.to_mandel6(inp=inp)
         return self.to_mandel9(inp=mandel6)
 
+    def _voigt_2_umat(self, inp):
+        # Is explicit copy necessary? Yes!?
+        inp[..., [3, 5]] = inp[..., [5, 3]]
+        return inp
+
+    def _voigt_4_umat(self, inp):
+        # Is explicit copy necessary? Yes!?
+        inp[..., [3, 5], :] = inp[..., [5, 3], :]
+        inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
+        return inp
+
+    def _via_voigt_to_umat(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_umat(inp=voigt)
+
+    def _via_voigt_to_tensor(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_tensor(inp=voigt)
+
+    def _via_voigt_to_mandel6(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_mandel6(inp=voigt)
+
+    def _via_voigt_to_mandel9(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_mandel9(inp=voigt)
 
 
 class Components(np.ndarray):
@@ -1146,8 +1222,8 @@ class Components(np.ndarray):
         "tensor",
         "mandel6",
         "mandel9",
-        # "voigt",
-        # "aba_umat",
+        "voigt",
+        "umat",
         # "aba_vumat",
     ]
     stored_meta_data = ["notation", "quantity"]
@@ -1187,6 +1263,9 @@ class Components(np.ndarray):
 
     def to_voigt(self,):
         return self.converter.to_voigt(inp=self)
+
+    def to_umat(self,):
+        return self.converter.to_umat(inp=self)
 
     #
     # def to_aba_umat(self, ):
