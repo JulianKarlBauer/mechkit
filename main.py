@@ -1,6 +1,6 @@
 import mechkit
 import numpy as np
-from mechkit.notation import TensorComponents
+from mechkit.notation import Components
 
 np.set_printoptions(
     linewidth=140,
@@ -10,19 +10,19 @@ np.set_printoptions(
 
 con = mechkit.notation.AbaqusConverter(silent=True)
 
-a = TensorComponents(np.arange(9).reshape(3, 3))
+a = Components(np.arange(9).reshape(3, 3))
 
-tensor = TensorComponents(
+tensor = Components(
     np.arange(9, dtype=np.float64).reshape(3, 3), quantity="stress", notation="tensor"
 )
 
 assert np.allclose(tensor, tensor.to_mandel9().to_tensor())
 
-mandel6 = TensorComponents(np.arange(6), quantity="stress", notation="mandel6")
-mandel9 = TensorComponents(np.arange(9), quantity="stress", notation="mandel9")
+mandel6 = Components(np.arange(6), quantity="stress", notation="mandel6")
+mandel9 = Components(np.arange(9), quantity="stress", notation="mandel9")
 
 # Vectorized
-stiff_tensor = TensorComponents(
+stiff_tensor = Components(
     np.arange(324, dtype=np.float64).reshape(4, 3, 3, 3, 3),
     quantity="stiffness",
     notation="tensor",

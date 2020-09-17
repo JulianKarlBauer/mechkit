@@ -921,7 +921,7 @@ class ExplicitConverter(object):
 
         f = self._get_to_mandel6_func(inp=inp)
 
-        new = TensorComponents(f(inp=inp))
+        new = Components(f(inp=inp))
         new.copy_meta_info(new=new, old=inp)
         new.notation = "mandel6"
         return new
@@ -930,7 +930,7 @@ class ExplicitConverter(object):
 
         f = self._get_to_mandel9_func(inp=inp)
 
-        new = TensorComponents(f(inp=inp))
+        new = Components(f(inp=inp))
         new.copy_meta_info(new=new, old=inp)
         new.notation = "mandel9"
         return new
@@ -939,7 +939,7 @@ class ExplicitConverter(object):
 
         f = self._get_to_tensor_func(inp=inp)
 
-        new = TensorComponents(f(inp=inp))
+        new = Components(f(inp=inp))
         new.copy_meta_info(new=new, old=inp)
         new.notation = "tensor"
         return new
@@ -948,7 +948,7 @@ class ExplicitConverter(object):
 
         f = self._get_to_voigt_func(inp=inp)
 
-        new = TensorComponents(f(inp=inp))
+        new = Components(f(inp=inp))
         new.copy_meta_info(new=new, old=inp)
         new.notation = "voigt"
         return new
@@ -1137,7 +1137,8 @@ class ExplicitConverter(object):
         return self.to_mandel9(inp=mandel6)
 
 
-class TensorComponents(np.ndarray):
+
+class Components(np.ndarray):
 
     valid_quantities = [None, "stress", "strain", "stiffness", "compliance"]
     valid_notations = [
