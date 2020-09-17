@@ -921,7 +921,7 @@ class ExplicitConverter(object):
         B[8, 1, 0] = self.factor
         return B
 
-    def to(self, to, inp):
+    def __call__(self, inp, to):
         functions = {
             "tensor": self._get_to_tensor_func,
             "mandel6": self._get_to_mandel6_func,
@@ -1187,16 +1187,16 @@ class ExplicitConverter(object):
         return mandel
 
     def _via_mandel6_to_voigt(self, inp):
-        mandel6 = self.to(inp=inp, to="mandel6")
-        return self.to(inp=mandel6, to="voigt")
+        mandel6 = self(inp=inp, to="mandel6")
+        return self(inp=mandel6, to="voigt")
 
     def _via_mandel6_to_tensor(self, inp):
-        mandel6 = self.to(inp=inp, to="mandel6")
-        return self.to(inp=mandel6, to="tensor")
+        mandel6 = self(inp=inp, to="mandel6")
+        return self(inp=mandel6, to="tensor")
 
     def _via_mandel6_to_mandel9(self, inp):
-        mandel6 = self.to(inp=inp, to="mandel6")
-        return self.to(inp=mandel6, to="mandel9")
+        mandel6 = self(inp=inp, to="mandel6")
+        return self(inp=mandel6, to="mandel9")
 
     def _voigt_2_umat(self, inp):
         # Is explicit copy necessary? Yes!?
@@ -1210,20 +1210,20 @@ class ExplicitConverter(object):
         return inp
 
     def _via_voigt_to_umat(self, inp):
-        voigt = self.to(inp=inp, to="voigt")
-        return self.to(inp=voigt, to="umat")
+        voigt = self(inp=inp, to="voigt")
+        return self(inp=voigt, to="umat")
 
     def _via_voigt_to_tensor(self, inp):
-        voigt = self.to(inp=inp, to="voigt")
-        return self.to(inp=voigt, to="tensor")
+        voigt = self(inp=inp, to="voigt")
+        return self(inp=voigt, to="tensor")
 
     def _via_voigt_to_mandel6(self, inp):
-        voigt = self.to(inp=inp, to="voigt")
-        return self.to(inp=voigt, to="mandel6")
+        voigt = self(inp=inp, to="voigt")
+        return self(inp=voigt, to="mandel6")
 
     def _via_voigt_to_mandel9(self, inp):
-        voigt = self.to(inp=inp, to="voigt")
-        return self.to(inp=voigt, to="mandel9")
+        voigt = self(inp=inp, to="voigt")
+        return self(inp=voigt, to="mandel9")
 
     def _voigt_2_vumat_reorder(self, inp):
         inp[..., [3, 4]] = inp[..., [4, 3]]
@@ -1263,8 +1263,8 @@ class ExplicitConverter(object):
         return self._voigt_4_vumat_reorder(new)
 
     def _via_voigt_to_vumat(self, inp):
-        voigt = self.to(inp=inp, to="voigt")
-        return self.to(inp=voigt, to="vumat")
+        voigt = self(inp=inp, to="voigt")
+        return self(inp=voigt, to="vumat")
 
 
 class Components(np.ndarray):
@@ -1306,22 +1306,22 @@ class Components(np.ndarray):
         return new
 
     def to_tensor(self,):
-        return self.converter.to(inp=self, to="tensor")
+        return self.converter(inp=self, to="tensor")
 
     def to_mandel6(self,):
-        return self.converter.to(inp=self, to="mandel6")
+        return self.converter(inp=self, to="mandel6")
 
     def to_mandel9(self,):
-        return self.converter.to(inp=self, to="mandel9")
+        return self.converter(inp=self, to="mandel9")
 
     def to_voigt(self,):
-        return self.converter.to(inp=self, to="voigt")
+        return self.converter(inp=self, to="voigt")
 
     def to_umat(self,):
-        return self.converter.to(inp=self, to="umat")
+        return self.converter(inp=self, to="umat")
 
     def to_vumat(self,):
-        return self.converter.to(inp=self, to="vumat")
+        return self.converter(inp=self, to="vumat")
 
 
 if __name__ == "__main__":
