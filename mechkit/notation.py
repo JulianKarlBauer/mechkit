@@ -1265,15 +1265,20 @@ class Components(np.ndarray):
 
     def wrapped(self, func):
         @functools.wraps(func)
-        def wrapper_wrap_converter(*args, **kwargs):
+        def wrapper_wrap_converter(target):
             new = func(
-                *args,
-                **kwargs,
-                **dict(inp=self, source=self.notation, quantity=self.quantity),
+                inp=self,
+                source=self.notation,
+                quantity=self.quantity,
+                # To support Python 2.7 without extended unpacking
+                # https://stackoverflow.com/q/10792970/8935243
+                target=target,
+                # *args,
+                # **kwargs,
             )
             new = Components(new)
             new.copy_meta_info(new=new, old=self)
-            new.notation = kwargs["target"]
+            new.notation = target
             return new
 
         return wrapper_wrap_converter
