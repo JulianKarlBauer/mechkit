@@ -991,7 +991,7 @@ class ExplicitConverter(object):
         B[8, 1, 0] = self.factor
         return B
 
-    def __call__(self, inp, target, source, quantity):
+    def convert(self, inp, target, source, quantity):
 
         graph = self.graphs_dict[quantity]
 
@@ -999,17 +999,17 @@ class ExplicitConverter(object):
 
         steps = list(nx.utils.pairwise(path))
 
-        print(f"############\nConvert {quantity} from {source} to {target}")
-        print(inp)
-        print()
+        # print(f"############\nConvert {quantity} from {source} to {target}")
+        # print(inp)
+        # print()
 
-        new = inp
+        new = inp.copy()
         for step_start, step_end in steps:
             func = graph.edges[step_start, step_end]["func"]
             new = func(new)
 
-            print(func.__name__)
-            print(new)
+            # print(func.__name__)
+            # print(new)
 
         return new
 
@@ -1256,22 +1256,22 @@ class Components(np.ndarray):
         return wrapper_wrap_converter
 
     def to_tensor(self,):
-        return self.wrapped(self.converter)(target="tensor")
+        return self.wrapped(self.converter.convert)(target="tensor")
 
     def to_mandel6(self,):
-        return self.wrapped(self.converter)(target="mandel6")
+        return self.wrapped(self.converter.convert)(target="mandel6")
 
     def to_mandel9(self,):
-        return self.wrapped(self.converter)(target="mandel9")
+        return self.wrapped(self.converter.convert)(target="mandel9")
 
     def to_voigt(self,):
-        return self.wrapped(self.converter)(target="voigt")
+        return self.wrapped(self.converter.convert)(target="voigt")
 
     def to_umat(self,):
-        return self.wrapped(self.converter)(target="umat")
+        return self.wrapped(self.converter.convert)(target="umat")
 
     def to_vumat(self,):
-        return self.wrapped(self.converter)(target="vumat")
+        return self.wrapped(self.converter.convert)(target="vumat")
 
 
 if __name__ == "__main__":
