@@ -903,6 +903,30 @@ class ExplicitConverter(object):
             for key, val in self.factors_voigt_to_reordered_vumat.items()
         }
 
+        self.map_voigt_to_abaqusMaterialElasticAnisotropic = [
+            (0, 0),
+            (0, 1),
+            (1, 1),
+            (0, 2),
+            (1, 2),
+            (2, 2),
+            (0, 5),
+            (1, 5),
+            (2, 5),
+            (5, 5),
+            (0, 4),
+            (1, 4),
+            (2, 4),
+            (5, 4),
+            (4, 4),
+            (0, 3),
+            (1, 3),
+            (2, 3),
+            (5, 3),
+            (4, 3),
+            (3, 3),
+        ]
+
         self.edges_dict = {
             "stress": [
                 ("tensor", "mandel6", dict(func=self._tensor_to_mandel6_2)),
@@ -945,6 +969,11 @@ class ExplicitConverter(object):
                 ("voigt", "vumat", dict(func=self._voigt_to_vumat_stiffness)),
                 ("umat", "voigt", dict(func=self._voigt_umat_4)),
                 ("vumat", "voigt", dict(func=self._vumat_to_voigt_stiffness)),
+                (
+                    "voigt",
+                    "abaqusMaterialAnisotropic",
+                    dict(func=self.voigt_to_abaqusMaterialElasticAnisotropic),
+                ),
             ],
             "compliance": [
                 ("tensor", "mandel6", dict(func=self._tensor_to_mandel6_4)),
@@ -1198,34 +1227,12 @@ class ExplicitConverter(object):
     def _vumat_to_voigt_compliance(self, inp):
         return self._vumat_to_voigt_4(inp=inp, quantity="compliance")
 
-    def voigt_to_abaqusMaterialElasticAnisotropic(inp):
+    def voigt_to_abaqusMaterialElasticAnisotropic(self, inp):
         """Abaqus2019 scripting reference Material.Elastic """
-        map = [
-            (0, 0),
-            (0, 1),
-            (1, 1),
-            (0, 2),
-            (1, 2),
-            (2, 2),
-            (0, 5),
-            (1, 5),
-            (2, 5),
-            (5, 5),
-            (0, 4),
-            (1, 4),
-            (2, 4),
-            (5, 4),
-            (4, 4),
-            (0, 3),
-            (1, 3),
-            (2, 3),
-            (5, 3),
-            (4, 3),
-            (3, 3),
-        ]
-        out = np.zeros((21), dtype=np.float64)
-        for i, row in enumerate(map):
-            out[i] = inp[row]
+        shape = inp.shape[:-2] + (21,)
+        out = np.zeros(shape, dtype=np.float64)
+        for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
+            out[..., i] = inp[:, row[0], row[1]]
         return out
 
 
@@ -1288,6 +1295,9 @@ class Components(np.ndarray):
 
     def to_vumat(self,):
         return self.wrapped(self.converter.convert)(target="vumat")
+
+    def to_abaqusMaterialAnisotropic(self,):
+        return self.wrapped(self.converter.convert)(target="abaqusMaterialAnisotropic")
 
 
 if __name__ == "__main__":
