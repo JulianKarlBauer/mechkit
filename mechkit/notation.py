@@ -1198,6 +1198,36 @@ class ExplicitConverter(object):
     def _vumat_to_voigt_compliance(self, inp):
         return self._vumat_to_voigt_4(inp=inp, quantity="compliance")
 
+    def voigt_to_abaqusMaterialElasticAnisotropic(inp):
+        """Abaqus2019 scripting reference Material.Elastic """
+        map = [
+            (0, 0),
+            (0, 1),
+            (1, 1),
+            (0, 2),
+            (1, 2),
+            (2, 2),
+            (0, 5),
+            (1, 5),
+            (2, 5),
+            (5, 5),
+            (0, 4),
+            (1, 4),
+            (2, 4),
+            (5, 4),
+            (4, 4),
+            (0, 3),
+            (1, 3),
+            (2, 3),
+            (5, 3),
+            (4, 3),
+            (3, 3),
+        ]
+        out = np.zeros((21), dtype=np.float64)
+        for i, row in enumerate(map):
+            out[i] = inp[row]
+        return out
+
 
 class Components(np.ndarray):
 
