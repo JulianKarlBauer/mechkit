@@ -1201,16 +1201,6 @@ class ExplicitConverter(object):
 
 class Components(np.ndarray):
 
-    valid_quantities = [None, "stress", "strain", "stiffness", "compliance"]
-    valid_notations = [
-        None,
-        "tensor",
-        "mandel6",
-        "mandel9",
-        "voigt",
-        "umat",
-        # "aba_vumat",
-    ]
     stored_meta_data = ["notation", "quantity"]
 
     converter = ExplicitConverter()
@@ -1235,9 +1225,6 @@ class Components(np.ndarray):
         for info in self.stored_meta_data:
             setattr(new, info, getattr(old, info, None))
         return new
-
-    def _get_kwargs(self, inp):
-        return dict(inp=self, source=self.notation, quantity=self.quantity)
 
     def wrapped(self, func):
         @functools.wraps(func)
