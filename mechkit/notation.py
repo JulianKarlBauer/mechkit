@@ -905,59 +905,59 @@ class ExplicitConverter(object):
 
         self.edges_dict = {
             "stress": [
-                ("tensor", "mandel6", dict(func=self._tensor_2_to_mandel6)),
-                ("tensor", "mandel9", dict(func=self._tensor_2_to_mandel9)),
-                ("mandel9", "tensor", dict(func=self._mandel9_2_to_tensor)),
-                ("mandel9", "mandel6", dict(func=self._mandel9_2_to_mandel6)),
-                ("mandel6", "tensor", dict(func=self._mandel6_2_to_tensor)),
-                ("mandel6", "mandel9", dict(func=self._mandel6_2_to_mandel9)),
+                ("tensor", "mandel6", dict(func=self._tensor_to_mandel6_2)),
+                ("tensor", "mandel9", dict(func=self._tensor_to_mandel9_2)),
+                ("mandel9", "tensor", dict(func=self._mandel9_to_tensor_2)),
+                ("mandel9", "mandel6", dict(func=self._mandel9_to_mandel6_2)),
+                ("mandel6", "tensor", dict(func=self._mandel6_to_tensor_2)),
+                ("mandel6", "mandel9", dict(func=self._mandel6_to_mandel9_2)),
                 ("mandel6", "voigt", dict(func=self._mandel6_to_voigt_stress)),
                 ("voigt", "mandel6", dict(func=self._voigt_to_mandel6_stress)),
-                ("voigt", "umat", dict(func=self._voigt_2_umat)),
+                ("voigt", "umat", dict(func=self._voigt_umat_2)),
                 ("voigt", "vumat", dict(func=self._voigt_to_vumat_stress)),
-                ("umat", "voigt", dict(func=self._voigt_2_umat)),
+                ("umat", "voigt", dict(func=self._voigt_umat_2)),
                 ("vumat", "voigt", dict(func=self._vumat_to_voigt_stress)),
             ],
             "strain": [
-                ("tensor", "mandel6", dict(func=self._tensor_2_to_mandel6)),
-                ("tensor", "mandel9", dict(func=self._tensor_2_to_mandel9)),
-                ("mandel9", "tensor", dict(func=self._mandel9_2_to_tensor)),
-                ("mandel9", "mandel6", dict(func=self._mandel9_2_to_mandel6)),
-                ("mandel6", "tensor", dict(func=self._mandel6_2_to_tensor)),
-                ("mandel6", "mandel9", dict(func=self._mandel6_2_to_mandel9)),
+                ("tensor", "mandel6", dict(func=self._tensor_to_mandel6_2)),
+                ("tensor", "mandel9", dict(func=self._tensor_to_mandel9_2)),
+                ("mandel9", "tensor", dict(func=self._mandel9_to_tensor_2)),
+                ("mandel9", "mandel6", dict(func=self._mandel9_to_mandel6_2)),
+                ("mandel6", "tensor", dict(func=self._mandel6_to_tensor_2)),
+                ("mandel6", "mandel9", dict(func=self._mandel6_to_mandel9_2)),
                 ("mandel6", "voigt", dict(func=self._mandel6_to_voigt_strain)),
                 ("voigt", "mandel6", dict(func=self._voigt_to_mandel6_strain)),
-                ("voigt", "umat", dict(func=self._voigt_2_umat)),
+                ("voigt", "umat", dict(func=self._voigt_umat_2)),
                 ("voigt", "vumat", dict(func=self._voigt_to_vumat_strain)),
-                ("umat", "voigt", dict(func=self._voigt_2_umat)),
+                ("umat", "voigt", dict(func=self._voigt_umat_2)),
                 ("vumat", "voigt", dict(func=self._vumat_to_voigt_strain)),
             ],
             "stiffness": [
-                ("tensor", "mandel6", dict(func=self._tensor_4_to_mandel6)),
-                ("tensor", "mandel9", dict(func=self._tensor_4_to_mandel9)),
-                ("mandel9", "tensor", dict(func=self._mandel9_4_to_tensor)),
-                ("mandel9", "mandel6", dict(func=self._mandel9_4_to_mandel6)),
-                ("mandel6", "tensor", dict(func=self._mandel6_4_to_tensor)),
-                ("mandel6", "mandel9", dict(func=self._mandel6_4_to_mandel9)),
+                ("tensor", "mandel6", dict(func=self._tensor_to_mandel6_4)),
+                ("tensor", "mandel9", dict(func=self._tensor_to_mandel9_4)),
+                ("mandel9", "tensor", dict(func=self._mandel9_to_tensor_4)),
+                ("mandel9", "mandel6", dict(func=self._mandel9_to_mandel6_4)),
+                ("mandel6", "tensor", dict(func=self._mandel6_to_tensor_4)),
+                ("mandel6", "mandel9", dict(func=self._mandel6_to_mandel9_4)),
                 ("mandel6", "voigt", dict(func=self._mandel6_to_voigt_stiffness)),
                 ("voigt", "mandel6", dict(func=self._voigt_to_mandel6_stiffness)),
-                ("voigt", "umat", dict(func=self._voigt_4_umat)),
+                ("voigt", "umat", dict(func=self._voigt_umat_4)),
                 ("voigt", "vumat", dict(func=self._voigt_to_vumat_stiffness)),
-                ("umat", "voigt", dict(func=self._voigt_4_umat)),
+                ("umat", "voigt", dict(func=self._voigt_umat_4)),
                 ("vumat", "voigt", dict(func=self._vumat_to_voigt_stiffness)),
             ],
             "compliance": [
-                ("tensor", "mandel6", dict(func=self._tensor_4_to_mandel6)),
-                ("tensor", "mandel9", dict(func=self._tensor_4_to_mandel9)),
-                ("mandel9", "tensor", dict(func=self._mandel9_4_to_tensor)),
-                ("mandel9", "mandel6", dict(func=self._mandel9_4_to_mandel6)),
-                ("mandel6", "tensor", dict(func=self._mandel6_4_to_tensor)),
-                ("mandel6", "mandel9", dict(func=self._mandel6_4_to_mandel9)),
+                ("tensor", "mandel6", dict(func=self._tensor_to_mandel6_4)),
+                ("tensor", "mandel9", dict(func=self._tensor_to_mandel9_4)),
+                ("mandel9", "tensor", dict(func=self._mandel9_to_tensor_4)),
+                ("mandel9", "mandel6", dict(func=self._mandel9_to_mandel6_4)),
+                ("mandel6", "tensor", dict(func=self._mandel6_to_tensor_4)),
+                ("mandel6", "mandel9", dict(func=self._mandel6_to_mandel9_4)),
                 ("mandel6", "voigt", dict(func=self._mandel6_to_voigt_compliance)),
                 ("voigt", "mandel6", dict(func=self._voigt_to_mandel6_compliance)),
-                ("voigt", "umat", dict(func=self._voigt_4_umat)),
+                ("voigt", "umat", dict(func=self._voigt_umat_4)),
                 ("voigt", "vumat", dict(func=self._voigt_to_vumat_compliance)),
-                ("umat", "voigt", dict(func=self._voigt_4_umat)),
+                ("umat", "voigt", dict(func=self._voigt_umat_4)),
                 ("vumat", "voigt", dict(func=self._vumat_to_voigt_compliance)),
             ],
         }
@@ -1013,62 +1013,62 @@ class ExplicitConverter(object):
 
         return new
 
-    def _tensor_2_to_mandel(self, inp, base):
+    def _tensor_to_mandel_2(self, inp, base):
         out = np.einsum("aij, ...ij ->...a", base, inp,)
         return out
 
-    def _tensor_4_to_mandel(self, inp, base):
+    def _tensor_to_mandel_4(self, inp, base):
         out = np.einsum("aij, ...ijkl, bkl ->...ab", base, inp, base,)
         return out
 
-    def _tensor_2_to_mandel6(self, inp):
-        return self._tensor_2_to_mandel(inp=inp, base=self.BASE6)
+    def _tensor_to_mandel6_2(self, inp):
+        return self._tensor_to_mandel_2(inp=inp, base=self.BASE6)
 
-    def _tensor_2_to_mandel9(self, inp):
-        return self._tensor_2_to_mandel(inp=inp, base=self.BASE9)
+    def _tensor_to_mandel9_2(self, inp):
+        return self._tensor_to_mandel_2(inp=inp, base=self.BASE9)
 
-    def _tensor_4_to_mandel6(self, inp):
-        return self._tensor_4_to_mandel(inp=inp, base=self.BASE6)
+    def _tensor_to_mandel6_4(self, inp):
+        return self._tensor_to_mandel_4(inp=inp, base=self.BASE6)
 
-    def _tensor_4_to_mandel9(self, inp):
-        return self._tensor_4_to_mandel(inp=inp, base=self.BASE9)
+    def _tensor_to_mandel9_4(self, inp):
+        return self._tensor_to_mandel_4(inp=inp, base=self.BASE9)
 
-    def _mandel_2_to_tensor(self, inp, base):
+    def _mandel_to_tensor_2(self, inp, base):
         out = np.einsum("ajk, ...a->...jk", base, inp,)
         return out
 
-    def _mandel_4_to_tensor(self, inp, base):
+    def _mandel_to_tensor_4(self, inp, base):
         out = np.einsum("ajk, ...ab, bmn->...jkmn", base, inp, base,)
         return out
 
-    def _mandel6_2_to_tensor(self, inp):
-        return self._mandel_2_to_tensor(inp=inp, base=self.BASE6)
+    def _mandel6_to_tensor_2(self, inp):
+        return self._mandel_to_tensor_2(inp=inp, base=self.BASE6)
 
-    def _mandel6_4_to_tensor(self, inp):
-        return self._mandel_4_to_tensor(inp=inp, base=self.BASE6)
+    def _mandel6_to_tensor_4(self, inp):
+        return self._mandel_to_tensor_4(inp=inp, base=self.BASE6)
 
-    def _mandel9_2_to_tensor(self, inp):
-        return self._mandel_2_to_tensor(inp=inp, base=self.BASE9)
+    def _mandel9_to_tensor_2(self, inp):
+        return self._mandel_to_tensor_2(inp=inp, base=self.BASE9)
 
-    def _mandel9_4_to_tensor(self, inp):
-        return self._mandel_4_to_tensor(inp=inp, base=self.BASE9)
+    def _mandel9_to_tensor_4(self, inp):
+        return self._mandel_to_tensor_4(inp=inp, base=self.BASE9)
 
-    def _mandel6_2_to_mandel9(self, inp):
+    def _mandel6_to_mandel9_2(self, inp):
         shape = inp.shape[:-1] + (self.DIM_MANDEL9,)
         zeros = np.zeros(shape, dtype=self.dtype)
         zeros[self.SLICE6] = inp
         return zeros
 
-    def _mandel6_4_to_mandel9(self, inp):
+    def _mandel6_to_mandel9_4(self, inp):
         shape = inp.shape[:-2] + (self.DIM_MANDEL9, self.DIM_MANDEL9)
         zeros = np.zeros(shape, dtype=self.dtype,)
         zeros[self.SLICE6BY6] = inp
         return zeros
 
-    def _mandel9_2_to_mandel6(self, inp):
+    def _mandel9_to_mandel6_2(self, inp):
         return inp[self.SLICE6]
 
-    def _mandel9_4_to_mandel6(self, inp):
+    def _mandel9_to_mandel6_4(self, inp):
         return inp[self.SLICE6BY6]
 
     def _mandel6_to_voigt(self, inp, quantity):
@@ -1107,23 +1107,23 @@ class ExplicitConverter(object):
     def _voigt_to_mandel6_compliance(self, inp):
         return self._voigt_to_mandel6(inp=inp, quantity="compliance")
 
-    def _voigt_2_umat(self, inp):
+    def _voigt_umat_2(self, inp):
         # Is explicit copy necessary? Yes!?
         inp[..., [3, 5]] = inp[..., [5, 3]]
         return inp
 
-    def _voigt_4_umat(self, inp):
+    def _voigt_umat_4(self, inp):
         # Is explicit copy necessary? Yes!?
         inp[..., [3, 5], :] = inp[..., [5, 3], :]
         inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
         return inp
 
-    def _voigt_2_to_vumat_reorder(self, inp):
+    def _voigt_to_vumat_reorder_2(self, inp):
         inp[..., [3, 4]] = inp[..., [4, 3]]
         inp[..., [3, 5]] = inp[..., [5, 3]]
         return inp
 
-    def _voigt_4_to_vumat_reorder(self, inp):
+    def _voigt_to_vumat_reorder_4(self, inp):
         inp[..., [3, 4], :] = inp[..., [4, 3], :]
         inp[..., :, [3, 4]] = inp[..., :, [4, 3]]
 
@@ -1131,12 +1131,12 @@ class ExplicitConverter(object):
         inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
         return inp
 
-    def _vumat_2_to_voigt_reorder(self, inp):
+    def _vumat_to_voigt_reorder_2(self, inp):
         inp[..., [3, 4]] = inp[..., [4, 3]]
         inp[..., [4, 5]] = inp[..., [5, 4]]
         return inp
 
-    def _vumat_4_to_voigt_reorder(self, inp):
+    def _vumat_to_voigt_reorder_4(self, inp):
         inp[..., [3, 4], :] = inp[..., [4, 3], :]
         inp[..., :, [3, 4]] = inp[..., :, [4, 3]]
 
@@ -1150,53 +1150,53 @@ class ExplicitConverter(object):
             new[position] = inp[position] * factor
         return new
 
-    def _voigt_2_to_vumat(self, inp, quantity):
+    def _voigt_to_vumat_2(self, inp, quantity):
         new = self._copy_and_scale(
             inp=inp, factors=self.factors_voigt_to_reordered_vumat[quantity]
         )
-        return self._voigt_2_to_vumat_reorder(new)
+        return self._voigt_to_vumat_reorder_2(new)
 
-    def _voigt_4_to_vumat(self, inp, quantity):
+    def _voigt_to_vumat_4(self, inp, quantity):
         new = self._copy_and_scale(
             inp=inp, factors=self.factors_voigt_to_reordered_vumat[quantity]
         )
-        return self._voigt_4_to_vumat_reorder(new)
+        return self._voigt_to_vumat_reorder_4(new)
 
     def _voigt_to_vumat_stress(self, inp):
-        return self._voigt_2_to_vumat(inp=inp, quantity="stress")
+        return self._voigt_to_vumat_2(inp=inp, quantity="stress")
 
     def _voigt_to_vumat_strain(self, inp):
-        return self._voigt_2_to_vumat(inp=inp, quantity="strain")
+        return self._voigt_to_vumat_2(inp=inp, quantity="strain")
 
     def _voigt_to_vumat_stiffness(self, inp):
-        return self._voigt_4_to_vumat(inp=inp, quantity="stiffness")
+        return self._voigt_to_vumat_4(inp=inp, quantity="stiffness")
 
     def _voigt_to_vumat_compliance(self, inp):
-        return self._voigt_4_to_vumat(inp=inp, quantity="compliance")
+        return self._voigt_to_vumat_4(inp=inp, quantity="compliance")
 
-    def _vumat_2_to_voigt(self, inp, quantity):
+    def _vumat_to_voigt_2(self, inp, quantity):
         new = self._copy_and_scale(
             inp=inp, factors=self.factors_reordered_vumat_to_voigt[quantity]
         )
-        return self._vumat_2_to_voigt_reorder(new)
+        return self._vumat_to_voigt_reorder_2(new)
 
-    def _vumat_4_to_voigt(self, inp, quantity):
+    def _vumat_to_voigt_4(self, inp, quantity):
         new = self._copy_and_scale(
             inp=inp, factors=self.factors_reordered_vumat_to_voigt[quantity]
         )
-        return self._vumat_4_to_voigt_reorder(new)
+        return self._vumat_to_voigt_reorder_4(new)
 
     def _vumat_to_voigt_stress(self, inp):
-        return self._vumat_2_to_voigt(inp=inp, quantity="stress")
+        return self._vumat_to_voigt_2(inp=inp, quantity="stress")
 
     def _vumat_to_voigt_strain(self, inp):
-        return self._vumat_2_to_voigt(inp=inp, quantity="strain")
+        return self._vumat_to_voigt_2(inp=inp, quantity="strain")
 
     def _vumat_to_voigt_stiffness(self, inp):
-        return self._vumat_4_to_voigt(inp=inp, quantity="stiffness")
+        return self._vumat_to_voigt_4(inp=inp, quantity="stiffness")
 
     def _vumat_to_voigt_compliance(self, inp):
-        return self._vumat_4_to_voigt(inp=inp, quantity="compliance")
+        return self._vumat_to_voigt_4(inp=inp, quantity="compliance")
 
 
 class Components(np.ndarray):
