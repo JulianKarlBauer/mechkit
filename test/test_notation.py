@@ -4,12 +4,8 @@
     python3 -m pytest
 """
 
-import os
-import sys
 import numpy as np
 import pytest
-
-sys.path.append(os.path.join(".."))
 import mechkit
 
 ##################################

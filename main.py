@@ -1,6 +1,6 @@
 import mechkit
 import numpy as np
-import copy
+from mechkit.notation import Components
 
 np.set_printoptions(
     linewidth=140,
@@ -10,14 +10,52 @@ np.set_printoptions(
 
 con = mechkit.notation.AbaqusConverter(silent=True)
 
-mandel = np.array([1., 2, 3, 4, 5, 6])
+stress_tensor = Components(
+    np.arange(9, dtype=np.float64).reshape(3, 3), quantity="stress", notation="tensor"
+)
+assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
 
-voigt = con.mandel6_to_voigt(inp=mandel, voigt_type="stress")
-print("Voigt")
-print(voigt)
+strain_tensor = Components(
+    np.arange(9, dtype=np.float64).reshape(3, 3), quantity="strain", notation="tensor"
+)
+assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
 
-umat = con.mandel6_to_umat(inp=mandel, voigt_type="stress")
-print("Umat")
-print(umat)
+comp_tensor_bunch = Components(
+    np.arange(324, dtype=np.float64).reshape(4, 3, 3, 3, 3),
+    quantity="compliance",
+    notation="tensor",
+)
+
+stress_voigt_bunch = Components(
+    np.arange(1, 1 + 2 * 18, step=2, dtype=np.float64).reshape(3, 6),
+    quantity="stress",
+    notation="voigt",
+)
+
+# Vectorized
+stiff_tensor_bunch = Components(
+    np.arange(324, dtype=np.float64).reshape(4, 3, 3, 3, 3),
+    quantity="stiffness",
+    notation="tensor",
+)
 
 
+stiff_mandel6_bunch = stiff_tensor_bunch.to_mandel6()
+stiff_voigt_bunch = stiff_tensor_bunch.to_voigt()
+
+stress_mandel6 = stress_tensor.to_mandel6()
+stress_mandel9 = stress_tensor.to_mandel9()
+
+stress_mandel6_bunch = stress_voigt_bunch.to_mandel6()
+stress_mandel9_bunch = stress_voigt_bunch.to_mandel9()
+
+
+# mandel = np.array([1., 2, 3, 4, 5, 6])
+#
+# voigt = con.mandel6_to_voigt(inp=mandel, voigt_type="stress")
+# print("Voigt")
+# print(voigt)
+#
+# umat = con.mandel6_to_umat(inp=mandel, voigt_type="stress")
+# print("Umat")
+# print(umat)

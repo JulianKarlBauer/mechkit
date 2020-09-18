@@ -854,6 +854,517 @@ class AbaqusConverter(VoigtConverter):
         return mandel
 
 
+class ExplicitConverter(object):
+    def __init__(self, dtype="float64"):
+
+        self.dtype = dtype
+        self.factor = np.sqrt(2.0) / 2.0
+
+        self.DIM = 3
+        self.DIM_MANDEL6 = 6
+        self.DIM_MANDEL9 = 9
+        self.SLICE6 = np.s_[..., 0:6]
+        self.SLICE6BY6 = np.s_[..., 0:6, 0:6]
+        self.BASE6 = self.get_mandel_base_sym()
+        self.BASE9 = self.get_mandel_base_skw()
+
+        self.shear = np.s_[..., 3:6]
+        self.quadrant1 = np.s_[..., 0:3, 0:3]
+        self.quadrant2 = np.s_[..., 0:3, 3:6]
+        self.quadrant3 = np.s_[..., 3:6, 0:3]
+        self.quadrant4 = np.s_[..., 3:6, 3:6]
+
+        self.factors_mandel_to_voigt = {
+            "stress": [(self.shear, 1.0 / np.sqrt(2.0))],
+            "strain": [(self.shear, np.sqrt(2.0))],
+            "stiffness": [
+                (self.quadrant2, 1.0 / np.sqrt(2.0)),
+                (self.quadrant3, 1.0 / np.sqrt(2.0)),
+                (self.quadrant4, 1.0 / 2.0),
+            ],
+            "compliance": [
+                (self.quadrant2, np.sqrt(2.0)),
+                (self.quadrant3, np.sqrt(2.0)),
+                (self.quadrant4, 2.0),
+            ],
+        }
+
+        self.factors_voigt_to_reordered_vumat = {
+            "stress": [],
+            "strain": [(self.shear, 1.0 / 2.0)],
+            "stiffness": [(self.quadrant2, 2.0), (self.quadrant4, 2.0)],
+            "compliance": [(self.quadrant3, 1.0 / 2.0), (self.quadrant4, 1.0 / 2.0)],
+        }
+
+    def get_mandel_base_sym(self,):
+
+        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype,)
+
+        B[0, 0, 0] = 1.0
+        B[1, 1, 1] = 1.0
+        B[2, 2, 2] = 1.0
+        B[3, 1, 2] = B[3, 2, 1] = self.factor
+        B[4, 0, 2] = B[4, 2, 0] = self.factor
+        B[5, 0, 1] = B[5, 1, 0] = self.factor
+        return B
+
+    def get_mandel_base_skw(self,):
+
+        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype,)
+        B[0:6, :, :] = self.get_mandel_base_sym()
+
+        B[6, 1, 2] = -self.factor
+        B[6, 2, 1] = self.factor
+        B[7, 0, 2] = self.factor
+        B[7, 2, 0] = -self.factor
+        B[8, 0, 1] = -self.factor
+        B[8, 1, 0] = self.factor
+        return B
+
+    def to_mandel6(self, inp, verbose=False):
+
+        if verbose:
+            print("Skew parts are lost!")
+
+        f = self._get_to_mandel6_func(inp=inp)
+
+        new = Components(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "mandel6"
+        return new
+
+    def to_mandel9(self, inp):
+
+        f = self._get_to_mandel9_func(inp=inp)
+
+        new = Components(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "mandel9"
+        return new
+
+    def to_tensor(self, inp):
+
+        f = self._get_to_tensor_func(inp=inp)
+
+        new = Components(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "tensor"
+        return new
+
+    def to_voigt(self, inp):
+
+        f = self._get_to_voigt_func(inp=inp)
+
+        new = Components(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "voigt"
+        return new
+
+    def to_umat(self, inp):
+
+        f = self._get_to_umat_func(inp=inp)
+
+        new = Components(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "umat"
+        return new
+
+    def to_vumat(self, inp):
+
+        f = self._get_to_vumat_func(inp=inp)
+
+        new = Components(f(inp=inp))
+        new.copy_meta_info(new=new, old=inp)
+        new.notation = "vumat"
+        return new
+
+    def _get_to_mandel6_func(self, inp):
+
+        functions = {
+            ("tensor", "stress"): self._tensor2_to_mandel6,
+            ("tensor", "strain"): self._tensor2_to_mandel6,
+            ("tensor", "stiffness"): self._tensor4_to_mandel6,
+            ("tensor", "compliance"): self._tensor4_to_mandel6,
+            ("mandel6", "stress"): self._pass_through,
+            ("mandel6", "strain"): self._pass_through,
+            ("mandel6", "stiffness"): self._pass_through,
+            ("mandel6", "compliance"): self._pass_through,
+            ("mandel9", "stress"): self._mandel9_2_to_mandel6,
+            ("mandel9", "strain"): self._mandel9_2_to_mandel6,
+            ("mandel9", "stiffness"): self._mandel9_4_to_mandel6,
+            ("mandel9", "compliance"): self._mandel9_4_to_mandel6,
+            ("voigt", "stress"): self._voigt_to_mandel6,
+            ("voigt", "strain"): self._voigt_to_mandel6,
+            ("voigt", "stiffness"): self._voigt_to_mandel6,
+            ("voigt", "compliance"): self._voigt_to_mandel6,
+            ("umat", "stress"): self._via_voigt_to_mandel6,
+            ("umat", "strain"): self._via_voigt_to_mandel6,
+            ("umat", "stiffness"): self._via_voigt_to_mandel6,
+            ("umat", "compliance"): self._via_voigt_to_mandel6,
+            ("vumat", "stress"): self._via_voigt_to_mandel6,
+            ("vumat", "strain"): self._via_voigt_to_mandel6,
+            ("vumat", "stiffness"): self._via_voigt_to_mandel6,
+            ("vumat", "compliance"): self._via_voigt_to_mandel6,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_mandel9_func(self, inp):
+
+        functions = {
+            ("tensor", "stress"): self._tensor2_to_mandel9,
+            ("tensor", "strain"): self._tensor2_to_mandel9,
+            ("tensor", "stiffness"): self._tensor4_to_mandel9,
+            ("tensor", "compliance"): self._tensor4_to_mandel9,
+            ("mandel6", "stress"): self._mandel6_2_to_mandel9,
+            ("mandel6", "strain"): self._mandel6_2_to_mandel9,
+            ("mandel6", "stiffness"): self._mandel6_4_to_mandel9,
+            ("mandel6", "compliance"): self._mandel6_4_to_mandel9,
+            ("mandel9", "stress"): self._pass_through,
+            ("mandel9", "strain"): self._pass_through,
+            ("mandel9", "stiffness"): self._pass_through,
+            ("mandel9", "compliance"): self._pass_through,
+            ("voigt", "stress"): self._via_mandel6_to_mandel9,
+            ("voigt", "strain"): self._via_mandel6_to_mandel9,
+            ("voigt", "stiffness"): self._via_mandel6_to_mandel9,
+            ("voigt", "compliance"): self._via_mandel6_to_mandel9,
+            ("umat", "stress"): self._via_voigt_to_mandel9,
+            ("umat", "strain"): self._via_voigt_to_mandel9,
+            ("umat", "stiffness"): self._via_voigt_to_mandel9,
+            ("umat", "compliance"): self._via_voigt_to_mandel9,
+            ("vumat", "stress"): self._via_voigt_to_mandel9,
+            ("vumat", "strain"): self._via_voigt_to_mandel9,
+            ("vumat", "stiffness"): self._via_voigt_to_mandel9,
+            ("vumat", "compliance"): self._via_voigt_to_mandel9,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_tensor_func(self, inp):
+        functions = {
+            ("tensor", "stress"): self._pass_through,
+            ("tensor", "strain"): self._pass_through,
+            ("tensor", "stiffness"): self._pass_through,
+            ("tensor", "compliance"): self._pass_through,
+            ("mandel6", "stress"): self._mandel6_2_to_tensor,
+            ("mandel6", "strain"): self._mandel6_2_to_tensor,
+            ("mandel6", "stiffness"): self._mandel6_4_to_tensor,
+            ("mandel6", "compliance"): self._mandel6_4_to_tensor,
+            ("mandel9", "stress"): self._mandel9_2_to_tensor,
+            ("mandel9", "strain"): self._mandel9_2_to_tensor,
+            ("mandel9", "stiffness"): self._mandel9_4_to_tensor,
+            ("mandel9", "compliance"): self._mandel9_4_to_tensor,
+            ("voigt", "stress"): self._via_mandel6_to_tensor,
+            ("voigt", "strain"): self._via_mandel6_to_tensor,
+            ("voigt", "stiffness"): self._via_mandel6_to_tensor,
+            ("voigt", "compliance"): self._via_mandel6_to_tensor,
+            ("umat", "stress"): self._via_voigt_to_tensor,
+            ("umat", "strain"): self._via_voigt_to_tensor,
+            ("umat", "stiffness"): self._via_voigt_to_tensor,
+            ("umat", "compliance"): self._via_voigt_to_tensor,
+            ("vumat", "stress"): self._via_voigt_to_tensor,
+            ("vumat", "strain"): self._via_voigt_to_tensor,
+            ("vumat", "stiffness"): self._via_voigt_to_tensor,
+            ("vumat", "compliance"): self._via_voigt_to_tensor,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_voigt_func(self, inp):
+        functions = {
+            ("tensor", "stress"): self._via_mandel6_to_voigt,
+            ("tensor", "strain"): self._via_mandel6_to_voigt,
+            ("tensor", "stiffness"): self._via_mandel6_to_voigt,
+            ("tensor", "compliance"): self._via_mandel6_to_voigt,
+            ("mandel6", "stress"): self._mandel6_to_voigt,
+            ("mandel6", "strain"): self._mandel6_to_voigt,
+            ("mandel6", "stiffness"): self._mandel6_to_voigt,
+            ("mandel6", "compliance"): self._mandel6_to_voigt,
+            ("mandel9", "stress"): self._via_mandel6_to_voigt,
+            ("mandel9", "strain"): self._via_mandel6_to_voigt,
+            ("mandel9", "stiffness"): self._via_mandel6_to_voigt,
+            ("mandel9", "compliance"): self._via_mandel6_to_voigt,
+            ("voigt", "stress"): self._pass_through,
+            ("voigt", "strain"): self._pass_through,
+            ("voigt", "stiffness"): self._pass_through,
+            ("voigt", "compliance"): self._pass_through,
+            ("umat", "stress"): self._voigt_2_umat,
+            ("umat", "strain"): self._voigt_2_umat,
+            ("umat", "stiffness"): self._voigt_4_umat,
+            ("umat", "compliance"): self._voigt_4_umat,
+            ("vumat", "stress"): self._vumat_2_to_voigt,
+            ("vumat", "strain"): self._vumat_2_to_voigt,
+            ("vumat", "stiffness"): self._vumat_4_to_voigt,
+            ("vumat", "compliance"): self._vumat_4_to_voigt,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_umat_func(self, inp):
+        functions = {
+            ("tensor", "stress"): self._via_voigt_to_umat,
+            ("tensor", "strain"): self._via_voigt_to_umat,
+            ("tensor", "stiffness"): self._via_voigt_to_umat,
+            ("tensor", "compliance"): self._via_voigt_to_umat,
+            ("mandel6", "stress"): self._via_voigt_to_umat,
+            ("mandel6", "strain"): self._via_voigt_to_umat,
+            ("mandel6", "stiffness"): self._via_voigt_to_umat,
+            ("mandel6", "compliance"): self._via_voigt_to_umat,
+            ("mandel9", "stress"): self._via_voigt_to_umat,
+            ("mandel9", "strain"): self._via_voigt_to_umat,
+            ("mandel9", "stiffness"): self._via_voigt_to_umat,
+            ("mandel9", "compliance"): self._via_voigt_to_umat,
+            ("voigt", "stress"): self._voigt_2_umat,
+            ("voigt", "strain"): self._voigt_2_umat,
+            ("voigt", "stiffness"): self._voigt_4_umat,
+            ("voigt", "compliance"): self._voigt_4_umat,
+            ("umat", "stress"): self._pass_through,
+            ("umat", "strain"): self._pass_through,
+            ("umat", "stiffness"): self._pass_through,
+            ("umat", "compliance"): self._pass_through,
+            ("vumat", "stress"): self._via_voigt_to_umat,
+            ("vumat", "strain"): self._via_voigt_to_umat,
+            ("vumat", "stiffness"): self._via_voigt_to_umat,
+            ("vumat", "compliance"): self._via_voigt_to_umat,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _get_to_vumat_func(self, inp):
+        functions = {
+            ("tensor", "stress"): self._via_voigt_to_vumat,
+            ("tensor", "strain"): self._via_voigt_to_vumat,
+            ("tensor", "stiffness"): self._via_voigt_to_vumat,
+            ("tensor", "compliance"): self._via_voigt_to_vumat,
+            ("mandel6", "stress"): self._via_voigt_to_vumat,
+            ("mandel6", "strain"): self._via_voigt_to_vumat,
+            ("mandel6", "stiffness"): self._via_voigt_to_vumat,
+            ("mandel6", "compliance"): self._via_voigt_to_vumat,
+            ("mandel9", "stress"): self._via_voigt_to_vumat,
+            ("mandel9", "strain"): self._via_voigt_to_vumat,
+            ("mandel9", "stiffness"): self._via_voigt_to_vumat,
+            ("mandel9", "compliance"): self._via_voigt_to_vumat,
+            ("voigt", "stress"): self._voigt_2_to_vumat,
+            ("voigt", "strain"): self._voigt_2_to_vumat,
+            ("voigt", "stiffness"): self._voigt_4_to_vumat,
+            ("voigt", "compliance"): self._voigt_4_to_vumat,
+            ("umat", "stress"): self._via_voigt_to_vumat,
+            ("umat", "strain"): self._via_voigt_to_vumat,
+            ("umat", "stiffness"): self._via_voigt_to_vumat,
+            ("umat", "compliance"): self._via_voigt_to_vumat,
+            ("vumat", "stress"): self._pass_through,
+            ("vumat", "strain"): self._pass_through,
+            ("vumat", "stiffness"): self._pass_through,
+            ("vumat", "compliance"): self._pass_through,
+        }
+        return functions[(inp.notation, inp.quantity)]
+
+    def _pass_through(self, inp):
+        return inp
+
+    def _tensor2_to_mandel(self, inp, base):
+        out = np.einsum("aij, ...ij ->...a", base, inp,)
+        return out
+
+    def _tensor4_to_mandel(self, inp, base):
+        out = np.einsum("aij, ...ijkl, bkl ->...ab", base, inp, base,)
+        return out
+
+    def _tensor2_to_mandel6(self, inp):
+        return self._tensor2_to_mandel(inp=inp, base=self.BASE6)
+
+    def _tensor2_to_mandel9(self, inp):
+        return self._tensor2_to_mandel(inp=inp, base=self.BASE9)
+
+    def _tensor4_to_mandel6(self, inp):
+        return self._tensor4_to_mandel(inp=inp, base=self.BASE6)
+
+    def _tensor4_to_mandel9(self, inp):
+        return self._tensor4_to_mandel(inp=inp, base=self.BASE9)
+
+    def _mandel_2_to_tensor(self, inp, base):
+        out = np.einsum("ajk, ...a->...jk", base, inp,)
+        return out
+
+    def _mandel_4_to_tensor(self, inp, base):
+        out = np.einsum("ajk, ...ab, bmn->...jkmn", base, inp, base,)
+        return out
+
+    def _mandel6_2_to_tensor(self, inp):
+        return self._mandel_2_to_tensor(inp=inp, base=self.BASE6)
+
+    def _mandel6_4_to_tensor(self, inp):
+        return self._mandel_4_to_tensor(inp=inp, base=self.BASE6)
+
+    def _mandel9_2_to_tensor(self, inp):
+        return self._mandel_2_to_tensor(inp=inp, base=self.BASE9)
+
+    def _mandel9_4_to_tensor(self, inp):
+        return self._mandel_4_to_tensor(inp=inp, base=self.BASE9)
+
+    def _mandel6_2_to_mandel9(self, inp):
+        shape = inp.shape[:-1] + (self.DIM_MANDEL9,)
+        zeros = np.zeros(shape, dtype=self.dtype)
+        zeros[self.SLICE6] = inp
+        return zeros
+
+    def _mandel6_4_to_mandel9(self, inp):
+        shape = inp.shape[:-2] + (self.DIM_MANDEL9, self.DIM_MANDEL9)
+        zeros = np.zeros(shape, dtype=self.dtype,)
+        zeros[self.SLICE6BY6] = inp
+        return zeros
+
+    def _mandel9_2_to_mandel6(self, inp):
+        return inp[self.SLICE6]
+
+    def _mandel9_4_to_mandel6(self, inp):
+        return inp[self.SLICE6BY6]
+
+    def _mandel6_to_voigt(self, inp):
+        voigt = inp.copy()
+        for position, factor in self.factors_mandel_to_voigt[inp.quantity]:
+            voigt[position] = inp[position] * factor
+        return voigt
+
+    def _voigt_to_mandel6(self, inp):
+        mandel = inp.copy()
+        for position, factor in self.factors_mandel_to_voigt[inp.quantity]:
+            mandel[position] = inp[position] * 1.0 / factor
+        return mandel
+
+    def _via_mandel6_to_voigt(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_voigt(inp=mandel6)
+
+    def _via_mandel6_to_tensor(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_tensor(inp=mandel6)
+
+    def _via_mandel6_to_mandel9(self, inp):
+        mandel6 = self.to_mandel6(inp=inp)
+        return self.to_mandel9(inp=mandel6)
+
+    def _voigt_2_umat(self, inp):
+        # Is explicit copy necessary? Yes!?
+        inp[..., [3, 5]] = inp[..., [5, 3]]
+        return inp
+
+    def _voigt_4_umat(self, inp):
+        # Is explicit copy necessary? Yes!?
+        inp[..., [3, 5], :] = inp[..., [5, 3], :]
+        inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
+        return inp
+
+    def _via_voigt_to_umat(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_umat(inp=voigt)
+
+    def _via_voigt_to_tensor(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_tensor(inp=voigt)
+
+    def _via_voigt_to_mandel6(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_mandel6(inp=voigt)
+
+    def _via_voigt_to_mandel9(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_mandel9(inp=voigt)
+
+    def _voigt_2_vumat_reorder(self, inp):
+        inp[..., [3, 4]] = inp[..., [4, 3]]
+        inp[..., [3, 5]] = inp[..., [5, 3]]
+        return inp
+
+    def _voigt_4_vumat_reorder(self, inp):
+        inp[..., [3, 4], :] = inp[..., [4, 3], :]
+        inp[..., :, [3, 4]] = inp[..., :, [4, 3]]
+
+        inp[..., [3, 5], :] = inp[..., [5, 3], :]
+        inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
+        return inp
+
+    def _voigt_2_to_vumat(self, inp):
+        new = inp.copy()
+        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+            new[position] = inp[position] * factor
+        return self._voigt_2_vumat_reorder(new)
+
+    def _voigt_4_to_vumat(self, inp):
+        new = inp.copy()
+        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+            new[position] = inp[position] * factor
+        return self._voigt_4_vumat_reorder(new)
+
+    def _vumat_2_to_voigt(self, inp):
+        new = inp.copy()
+        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+            new[position] = inp[position] * 1.0 / factor
+        return self._voigt_2_vumat_reorder(new)
+
+    def _vumat_4_to_voigt(self, inp):
+        new = inp.copy()
+        for position, factor in self.factors_voigt_to_reordered_vumat[inp.quantity]:
+            new[position] = inp[position] * 1.0 / factor
+        return self._voigt_4_vumat_reorder(new)
+
+    def _via_voigt_to_vumat(self, inp):
+        voigt = self.to_voigt(inp=inp)
+        return self.to_vumat(inp=voigt)
+
+
+class Components(np.ndarray):
+
+    valid_quantities = [None, "stress", "strain", "stiffness", "compliance"]
+    valid_notations = [
+        None,
+        "tensor",
+        "mandel6",
+        "mandel9",
+        "voigt",
+        "umat",
+        # "aba_vumat",
+    ]
+    stored_meta_data = ["notation", "quantity"]
+
+    converter = ExplicitConverter()
+
+    def __new__(cls, input_array, notation=None, quantity=None):
+        # Input array is an already formed ndarray instance
+        # We first cast to be our class type
+        obj = np.asarray(input_array).view(cls)
+        # add the new attribute to the created instance
+        obj.notation = notation
+        obj.quantity = quantity
+        # Finally, we must return the newly created object:
+        return obj
+
+    def __array_finalize__(self, obj):
+        # see InfoArray.__array_finalize__ for comments
+        if obj is None:
+            return
+        else:
+            self.copy_meta_info(new=self, old=obj)
+
+    def copy_meta_info(self, new, old):
+        for info in self.stored_meta_data:
+            setattr(new, info, getattr(old, info, None))
+        return new
+
+    def to_tensor(self,):
+        return self.converter.to_tensor(inp=self)
+
+    def to_mandel6(self,):
+        return self.converter.to_mandel6(inp=self)
+
+    def to_mandel9(self,):
+        return self.converter.to_mandel9(inp=self)
+
+    def to_voigt(self,):
+        return self.converter.to_voigt(inp=self)
+
+    def to_umat(self,):
+        return self.converter.to_umat(inp=self)
+
+    def to_vumat(self,):
+        return self.converter.to_vumat(inp=self)
+
+
 if __name__ == "__main__":
     # Examples
 
