@@ -13,11 +13,14 @@ con = mechkit.notation.AbaqusConverter(silent=True)
 stress_tensor = Components(
     np.arange(9, dtype=np.float64).reshape(3, 3), quantity="stress", notation="tensor"
 )
-assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
+# assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
 
 strain_tensor = Components(
     np.arange(9, dtype=np.float64).reshape(3, 3), quantity="strain", notation="tensor"
 )
+
+r = strain_tensor.to_mandel6()
+
 assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
 
 comp_tensor_bunch = Components(
@@ -52,6 +55,7 @@ stress_mandel9_bunch = stress_voigt_bunch.to_mandel9()
 # Check for order consistency
 stiff_tensor_bunch.to_vumat().to_voigt()[0]
 stiff_tensor_bunch.to_voigt()[0]
+
 
 # mandel = np.array([1., 2, 3, 4, 5, 6])
 #
