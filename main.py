@@ -1,33 +1,23 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""Main script developing mechkit
-"""
-
+import mechkit
 import numpy as np
-import importlib
-import mechkit as mk
-
-importlib.reload(mk)
+import copy
 
 np.set_printoptions(
     linewidth=140,
-    precision=2,
+    precision=4,
     # suppress=False,
 )
 
-import mechkit as mk
+con = mechkit.notation.AbaqusConverter(silent=True)
 
-con = mk.notation.Converter()
-tensors = mk.tensors.Basic()
+mandel = np.array([1., 2, 3, 4, 5, 6])
 
-t2 = np.array([[1.0, 6.0, 5.0,], [6.0, 2.0, 4.0,], [5.0, 4.0, 3.0,],])
+voigt = con.mandel6_to_voigt(inp=mandel, voigt_type="stress")
+print("Voigt")
+print(voigt)
 
-# Define what to print
-printQueue = [
-    "con.to_mandel6(t2)",
-    "np.sqrt(2.)",
-]
+umat = con.mandel6_to_umat(inp=mandel, voigt_type="stress")
+print("Umat")
+print(umat)
 
-for val in printQueue:
-    print(val)
-    print(eval(val), "\n")
+

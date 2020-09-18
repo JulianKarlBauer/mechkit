@@ -318,6 +318,56 @@ def test_eigenvalues_of_inverse_of_isotropic_stiffness_mandel6():
     )
 
 
+@pytest.fixture
+def con_aba():
+    return mechkit.notation.AbaqusConverter(silent=True)
+
+
+class Test_UmatConverter:
+    def test_umat_stress(self, con_aba):
+
+        con = con_aba
+
+        mandel = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
+
+        print("Voigt")
+        print(con.mandel6_to_voigt(inp=mandel, voigt_type="stress"))
+
+        umat = con.mandel6_to_umat(inp=mandel, voigt_type="stress")
+        print("Umat")
+        print(umat)
+        fac = 1.0 / np.sqrt(2)
+        assert np.allclose(
+            umat, np.array([1.0, 2.0, 3.0, 6.0 * fac, 5 * fac, 4.0 * fac]),
+        )
+
+    def test_umat_stiffness(self, con_aba):
+
+        con = con_aba
+
+        mandel = con.to_mandel6(np.arange(81).reshape(3, 3, 3, 3))
+
+        print("Voigt")
+        print(con.mandel6_to_voigt(inp=mandel, voigt_type="stiffness"))
+
+        umat = con.mandel6_to_umat(inp=mandel, voigt_type="stiffness")
+        print("Umat")
+        print(umat)
+        assert np.allclose(
+            umat,
+            np.array(
+                [
+                    [0.0, 4.0, 8.0, 2.0, 4.0, 6.0],
+                    [36.0, 40.0, 44.0, 38.0, 40.0, 42.0],
+                    [72.0, 76.0, 80.0, 74.0, 76.0, 78.0],
+                    [18.0, 22.0, 26.0, 20.0, 22.0, 24.0],
+                    [36.0, 40.0, 44.0, 38.0, 40.0, 42.0],
+                    [54.0, 58.0, 62.0, 56.0, 58.0, 60.0],
+                ]
+            ),
+        )
+
+
 if __name__ == "__main__":
     test_ones_tensors_to_mandel6_to_voigt_to_mandel6()
     test_level4_mandel6_tensor()
