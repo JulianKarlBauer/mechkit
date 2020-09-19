@@ -437,6 +437,28 @@ class Test_ExplicitConverter:
                 print(new)
                 assert np.allclose(origin, back)
 
+    def test_loop_inner_sym_stiffness(self, con):
+        voigt = np.random.rand(6, 6)
+        origin = voigt_inner_sym = voigt + voigt.T
+        print(voigt)
+        print(voigt_inner_sym)
+        new = con.convert(
+            inp=origin,
+            source="voigt",
+            target="abaqusMaterialAnisotropic",
+            quantity="stiffness",
+        )
+        back = con.convert(
+            inp=new,
+            source="abaqusMaterialAnisotropic",
+            target="voigt",
+            quantity="stiffness",
+        )
+        print(origin)
+        print(back)
+        print(new)
+        assert np.allclose(origin, back)
+
 
 if __name__ == "__main__":
     pass

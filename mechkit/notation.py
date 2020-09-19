@@ -974,6 +974,11 @@ class ExplicitConverter(object):
                     "abaqusMaterialAnisotropic",
                     dict(func=self.voigt_to_abaqusMaterialElasticAnisotropic),
                 ),
+                (
+                    "abaqusMaterialAnisotropic",
+                    "voigt",
+                    dict(func=self.abaqusMaterialElasticAnisotropic_to_voigt),
+                ),
             ],
             "compliance": [
                 ("tensor", "mandel6", dict(func=self._tensor_to_mandel6_4)),
@@ -1234,6 +1239,14 @@ class ExplicitConverter(object):
         for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
             out[..., i] = inp[..., row[0], row[1]]
         return out
+
+    def abaqusMaterialElasticAnisotropic_to_voigt(self, inp):
+        shape = inp.shape[:-1] + (6, 6)
+        out = np.zeros(shape, dtype=np.float64)
+        for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
+            out[..., row[0], row[1]] = inp[..., i]
+            if row[0] != row[1]:
+                out[..., row[1], row[0]] = inp[..., i]
         return out
 
 
