@@ -350,16 +350,29 @@ class Test_UmatConverter:
         )
 
 
-@pytest.fixture(name="tensor_minsym")
-def minor_sym_tensors(shape_vectorized=(1,)):
+@pytest.fixture(name="tensor_min_sym")
+def create_random_tensors_with_minor_symmetries(shape_vectorized=(1,)):
     shapes_mandel6 = {
         "stress": shape_vectorized + (6,),
-        "strain": (6,),
-        "stiffness": (6, 6),
-        "compliance": (6, 6),
+        "strain": shape_vectorized + (6,),
+        "stiffness": shape_vectorized + (6, 6),
+        "compliance": shape_vectorized + (6, 6),
     }
 
     tensors = {key: np.random.rand(*shape) for key, shape in shapes_mandel6.items()}
+    return tensors
+
+
+@pytest.fixture(name="tensor_no_sym")
+def create_random_tensors_without_symmetry(shape_vectorized=(1,)):
+    shapes = {
+        "stress": shape_vectorized + (3, 3),
+        "strain": shape_vectorized + (3, 3),
+        "stiffness": shape_vectorized + (3, 3, 3, 3),
+        "compliance": shape_vectorized + (3, 3, 3, 3),
+    }
+
+    tensors = {key: np.random.rand(*shape) for key, shape in shapes.items()}
     return tensors
 
 
@@ -369,17 +382,35 @@ def explicit_converter():
 
 
 class Test_ExplicitConverter:
-    def test_loop_minor_sym(self, con, tensor_minsym):
+    def test_loop_minor_sym(self, con, tensor_min_sym):
         for key_quantity, graph in con.graphs_dict.items():
             nodes = graph.nodes
             nodes_without_start = [node for node in nodes if not node == "mandel6"]
             for target in nodes_without_start:
-                origin = tensor_minsym[key_quantity]
+                origin = tensor_min_sym[key_quantity]
                 new = con.convert(
                     inp=origin, source="mandel6", target=target, quantity=key_quantity,
                 )
                 back = con.convert(
-                    inp=new, target="mandel6", source=target, quantity=key_quantity,
+                    inp=new, source=target, target="mandel6", quantity=key_quantity,
+                )
+                assert np.allclose(origin, back)
+                print("\n\n\n {}: {}".format(key_quantity, target))
+                print(origin)
+                print(back)
+                print(new)
+
+    def test_loop_no_sym(self, con, tensor_no_sym):
+        nodes = ["mandel9"]
+
+        for key_quantity, graph in con.graphs_dict.items():
+            for target in nodes:
+                origin = tensor_no_sym[key_quantity]
+                new = con.convert(
+                    inp=origin, source="tensor", target=target, quantity=key_quantity,
+                )
+                back = con.convert(
+                    inp=new, source=target, target="tensor", quantity=key_quantity,
                 )
                 assert np.allclose(origin, back)
                 print("\n\n\n {}: {}".format(key_quantity, target))
