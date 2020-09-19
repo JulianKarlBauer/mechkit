@@ -56,6 +56,11 @@ stress_mandel9_bunch = stress_voigt_bunch.to_mandel9()
 stiff_tensor_bunch.to_vumat().to_voigt()[0]
 stiff_tensor_bunch.to_voigt()[0]
 
+############
+# Add way back
+s = stiff_mandel6_bunch.to_abaqusMaterialAnisotropic()
+s.to_mandel6()
+
 
 # mandel = np.array([1., 2, 3, 4, 5, 6])
 #
