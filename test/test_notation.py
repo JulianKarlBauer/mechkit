@@ -351,6 +351,4 @@ class Test_UmatConverter:
 
 
 if __name__ == "__main__":
-    test_ones_tensors_to_mandel6_to_voigt_to_mandel6()
-    test_level4_mandel6_tensor()
-    test_tensor_to_mandel6_to_tensor()
+    pass
