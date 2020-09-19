@@ -37,7 +37,7 @@ stress_voigt_bunch = Components(
 
 # Vectorized
 stiff_tensor_bunch = Components(
-    np.arange(324, dtype=np.float64).reshape(4, 3, 3, 3, 3),
+    np.arange(2 * 324, dtype=np.float64).reshape(2, 4, 3, 3, 3, 3),
     quantity="stiffness",
     notation="tensor",
 )
@@ -59,7 +59,7 @@ stiff_tensor_bunch.to_voigt()[0]
 ############
 # Add way back
 s = stiff_mandel6_bunch.to_abaqusMaterialAnisotropic()
-s.to_mandel6()
+# s.to_mandel6()
 
 
 # mandel = np.array([1., 2, 3, 4, 5, 6])

@@ -1232,7 +1232,8 @@ class ExplicitConverter(object):
         shape = inp.shape[:-2] + (21,)
         out = np.zeros(shape, dtype=np.float64)
         for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
-            out[..., i] = inp[:, row[0], row[1]]
+            out[..., i] = inp[..., row[0], row[1]]
+        return out
         return out
 
 
