@@ -350,5 +350,43 @@ class Test_UmatConverter:
         )
 
 
+@pytest.fixture(name="tensor_minsym")
+def minor_sym_tensors(shape_vectorized=(1,)):
+    shapes_mandel6 = {
+        "stress": shape_vectorized + (6,),
+        "strain": (6,),
+        "stiffness": (6, 6),
+        "compliance": (6, 6),
+    }
+
+    tensors = {key: np.random.rand(*shape) for key, shape in shapes_mandel6.items()}
+    return tensors
+
+
+@pytest.fixture(name="con")
+def explicit_converter():
+    return mechkit.notation.ExplicitConverter()
+
+
+class Test_ExplicitConverter:
+    def test_loop_minor_sym(self, con, tensor_minsym):
+        for key_quantity, graph in con.graphs_dict.items():
+            nodes = graph.nodes
+            nodes_without_start = [node for node in nodes if not node == "mandel6"]
+            for target in nodes_without_start:
+                origin = tensor_minsym[key_quantity]
+                new = con.convert(
+                    inp=origin, source="mandel6", target=target, quantity=key_quantity,
+                )
+                back = con.convert(
+                    inp=new, target="mandel6", source=target, quantity=key_quantity,
+                )
+                assert np.allclose(origin, back)
+                print("\n\n\n {}: {}".format(key_quantity, target))
+                print(origin)
+                print(back)
+                print(new)
+
+
 if __name__ == "__main__":
     pass
