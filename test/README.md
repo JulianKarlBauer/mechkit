@@ -6,5 +6,13 @@
 # Run tests against local files
 `python -m pytest`  
 
+# Run specific tests
+[source](https://stackoverflow.com/a/62804929/8935243)
+
+Example from within ipython
+```python
+!pytest test/test_notation.py::Test_ExplicitConverter::test_loop_minor_sym --verbose --pdb
+```
+
 
 
