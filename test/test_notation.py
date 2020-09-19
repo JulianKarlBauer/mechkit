@@ -383,40 +383,59 @@ def explicit_converter():
 
 class Test_ExplicitConverter:
     def test_loop_minor_sym(self, con, tensor_min_sym):
+        excluded_notations = ["abaqusMaterialAnisotropic"]
+        start_notation = "mandel6"
         for key_quantity, graph in con.graphs_dict.items():
             nodes = graph.nodes
-            nodes_without_start = [node for node in nodes if not node == "mandel6"]
+            nodes_without_start = [
+                node
+                for node in nodes
+                if ((node != start_notation) and (node not in excluded_notations))
+            ]
             for target in nodes_without_start:
                 origin = tensor_min_sym[key_quantity]
                 new = con.convert(
-                    inp=origin, source="mandel6", target=target, quantity=key_quantity,
+                    inp=origin,
+                    source=start_notation,
+                    target=target,
+                    quantity=key_quantity,
                 )
                 back = con.convert(
-                    inp=new, source=target, target="mandel6", quantity=key_quantity,
+                    inp=new,
+                    source=target,
+                    target=start_notation,
+                    quantity=key_quantity,
                 )
-                assert np.allclose(origin, back)
                 print("\n\n\n {}: {}".format(key_quantity, target))
                 print(origin)
                 print(back)
                 print(new)
+                assert np.allclose(origin, back)
 
     def test_loop_no_sym(self, con, tensor_no_sym):
         nodes = ["mandel9"]
+        start_notation = "tensor"
 
         for key_quantity, graph in con.graphs_dict.items():
             for target in nodes:
                 origin = tensor_no_sym[key_quantity]
                 new = con.convert(
-                    inp=origin, source="tensor", target=target, quantity=key_quantity,
+                    inp=origin,
+                    source=start_notation,
+                    target=target,
+                    quantity=key_quantity,
                 )
                 back = con.convert(
-                    inp=new, source=target, target="tensor", quantity=key_quantity,
+                    inp=new,
+                    source=target,
+                    target=start_notation,
+                    quantity=key_quantity,
                 )
-                assert np.allclose(origin, back)
                 print("\n\n\n {}: {}".format(key_quantity, target))
                 print(origin)
                 print(back)
                 print(new)
+                assert np.allclose(origin, back)
 
 
 if __name__ == "__main__":
