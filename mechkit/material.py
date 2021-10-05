@@ -108,6 +108,7 @@ class Isotropic(AbstractMaterial):
             - do arithemtic on eigenvalues using the operators
               +, -, * with numbers.
 
+
     Quickstart:
 
     .. code-block:: python
@@ -652,17 +653,17 @@ class Orthotropic:
 
     See definitions of :ref:`EngineeringConstants`.
 
-    Attributes:
+    Attributes are:
 
-    - Keyword arguments
+        - **E1**, **E2**, **E3**, **nu12**, **nu13**, **nu23**, **G12**, **G13**, **G23**
 
-    - **stiffness** : Stiffness in tensor notation
-    - **stiffness_mandel6** : Stiffness in Mandel6 notation
-    - **stiffness_voigt** : Stiffness in Voigt notation
+        - **stiffness** : Stiffness in tensor notation
+        - **stiffness_mandel6** : Stiffness in Mandel6 notation
+        - **stiffness_voigt** : Stiffness in Voigt notation
 
-    - **compliance** : Compliance in tensor notation
-    - **compliance_mandel6** : Compliance in Mandel6 notation
-    - **compliance_voigt** : Compliance in Voigt notation
+        - **compliance** : Compliance in tensor notation
+        - **compliance_mandel6** : Compliance in Mandel6 notation
+        - **compliance_voigt** : Compliance in Voigt notation
 
 
     Compliance
@@ -762,7 +763,7 @@ class TransversalIsotropic(AbstractMaterial):
         # Use attributes
         stiffness = mat.stiffness_mandel6
 
-    **Five** independent material parameters uniquely define an isotropic
+    **Five** independent material parameters uniquely define a transversal isotropic
     material [Betram2015]_ (chapter 4.1.2).
     Therefore, exactly five material parameters have to be passed to the
     constructor of this class.
@@ -778,16 +779,15 @@ class TransversalIsotropic(AbstractMaterial):
     **principal_axis**. The default principal axis is the x-axis.
     The vector does not have to be normalized.
 
-    Valid **case-insensitive** keyword arguments and aliases of the constructor are
-    (Format: - **keyword arguments** : Aliases)
+    Valid **keyword arguments** of the constructor are:
 
-        - **E_l** : El
-        - **E_t** : Et
-        - **G_lt** : Glt
-        - **G_tt** : Gtt
-        - **nu_lt** : nult, v_lt, vlt
-        - **nu_tl** : nutl, v_tl, vtl
-        - **nu_tt** : nutt, v_tt, vtt
+        - **E_l**
+        - **E_t**
+        - **G_lt**
+        - **G_tt**
+        - **nu_lt**
+        - **nu_tl**
+        - **nu_tt**
 
     Only four combinations of these arguments are valid:
 
@@ -796,7 +796,7 @@ class TransversalIsotropic(AbstractMaterial):
         - **E_l**, **E_t**, **G_lt**, **nu_lt**, **nu_tt**
         - **E_l**, **E_t**, **G_lt**, **nu_tl**, **nu_tt**
 
-    Attributes: **(** Accessible both as attributes and dict-like **)**
+    Attributes are:
 
         - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_lt**, **nu_tl**, **nu_tt**
 
@@ -807,6 +807,7 @@ class TransversalIsotropic(AbstractMaterial):
         - **compliance** : Compliance in tensor notation
         - **compliance_mandel6** : Compliance in Mandel6 notation
         - **compliance_voigt** : Compliance in Voigt notation
+
 
     Examples
     --------
@@ -845,9 +846,8 @@ class TransversalIsotropic(AbstractMaterial):
         self._nbr_useful_kwargs = 5
         self._default_principal_axis = [1, 0, 0]
 
-        self._useful_kwargs = self._get_useful_kwargs_from_kwargs(**kwargs)
-        self._check_nbr_useful_kwargs(**kwargs)
-        self._get_primary_parameters()
+        # self._check_nbr_useful_kwargs(**kwargs)
+        self._get_primary_parameters(kwargs=kwargs)
         self.stiffness = Orthotropic(
             E1=self.E_l,
             E2=self.E_t,
@@ -864,35 +864,10 @@ class TransversalIsotropic(AbstractMaterial):
         if self.principal_axis != self._default_principal_axis:
             self.stiffness = self._rotate_stiffness_into_principal_axis()
 
-    def _get_names_aliases(self,):
-        """Note: There are different definitions of poissons ratio.
-        (VDI 2014 Blatt 3 page 14)
-        In case of the Poisson’s ratios there are different ways
-        for the indexing in international practice. In the
-        guideline VDI 2014 the required two indices are uti-
-        lized as follows: The 1 st index indicates the direction
-        of the transverse contraction. The 2 nd index denotes
-        the stress, which causes the contraction. As a conse-
-        quence the Poisson’s ratios nu_tl is the larger and nu_lt
-        the smaller one. (In the English literature the two indices related to the
-        contraction and acting stress are
-        used in the reverse sequence.)
-        """
-        names_aliases = {
-            "E_l": ["e_l", "el"],
-            "E_t": ["e_t", "et"],
-            "G_lt": ["g_lt", "glt"],
-            "G_tt": ["g_tt", "gtt"],
-            "nu_lt": ["nu_lt", "nult", "v_lt", "vlt"],
-            "nu_tl": ["nu_tl", "nutl", "v_tl", "vtl"],
-            "nu_tt": ["nu_tt", "nutt", "v_tt", "vtt"],
-        }
-        return names_aliases
-
     def _raise_required(self, key):
         raise Ex(
-            ("Parameter {key} is required.\n" "Aliases are {aliases}.").format(
-                key=key, aliases=self._get_names_aliases[key],
+            ("Parameter {key} is required.").format(
+                key=key,
             )
         )
 
@@ -900,36 +875,31 @@ class TransversalIsotropic(AbstractMaterial):
         raise Ex(
             (
                 "Either {key0} or {key1} is required.\n"
-                "Aliases of {key0} are {aliases0}\n"
-                "Aliases of {key1} are {aliases1}\n"
             ).format(
                 key0=keys[0],
                 key1=keys[1],
-                aliases0=self._get_names_aliases[keys[0]],
-                aliases1=self._get_names_aliases[keys[1]],
             )
         )
 
-    def _get_primary_parameters(self,):
-        useful = self._useful_kwargs
+    def _get_primary_parameters(self, kwargs):
 
         for key in ["E_l", "E_t", "G_lt"]:
-            if key in useful:
-                setattr(self, key, useful[key])
+            if key in kwargs:
+                setattr(self, key, kwargs[key])
             else:
                 self._raise_required(key=key)
 
-        if "nu_lt" in useful:
-            self.nu_lt = useful["nu_lt"]
-        elif "nu_tl" in useful:
-            self.nu_lt = self._nu_lt(nu_tl=useful["nu_tl"])
+        if "nu_lt" in kwargs:
+            self.nu_lt = kwargs["nu_lt"]
+        elif "nu_tl" in kwargs:
+            self.nu_lt = self._nu_lt(nu_tl=kwargs["nu_tl"])
         else:
             self._raise_required_either_or(keys=["nu_lt", "nu_tl"])
 
-        if "G_tt" in useful:
-            self.G_tt = useful["G_tt"]
-        elif "nu_tt" in useful:
-            self.G_tt = self._G_tt(nu_tt=useful["nu_tt"])
+        if "G_tt" in kwargs:
+            self.G_tt = kwargs["G_tt"]
+        elif "nu_tt" in kwargs:
+            self.G_tt = self._G_tt(nu_tt=kwargs["nu_tt"])
         else:
             self._raise_required_either_or(keys=["G_tt", "nu_tt"])
 
