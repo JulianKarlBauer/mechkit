@@ -762,7 +762,7 @@ class TransversalIsotropic(AbstractMaterial):
         # Use attributes
         stiffness = mat.stiffness_mandel6
 
-    **Five** independent material parameters uniquely define an isotropic
+    **Five** independent material parameters uniquely define a transversal isotropic
     material [Betram2015]_ (chapter 4.1.2).
     Therefore, exactly five material parameters have to be passed to the
     constructor of this class.
@@ -778,16 +778,15 @@ class TransversalIsotropic(AbstractMaterial):
     **principal_axis**. The default principal axis is the x-axis.
     The vector does not have to be normalized.
 
-    Valid **case-insensitive** keyword arguments and aliases of the constructor are
-    (Format: - **keyword arguments** : Aliases)
+    Valid case-sensitive **keyword arguments** of the constructor are:
 
-        - **E_l** : El
-        - **E_t** : Et
-        - **G_lt** : Glt
-        - **G_tt** : Gtt
-        - **nu_lt** : nult, v_lt, vlt
-        - **nu_tl** : nutl, v_tl, vtl
-        - **nu_tt** : nutt, v_tt, vtt
+        - **E_l**
+        - **E_t**
+        - **G_lt**
+        - **G_tt**
+        - **nu_lt**
+        - **nu_tl**
+        - **nu_tt**
 
     Only four combinations of these arguments are valid:
 
@@ -796,17 +795,18 @@ class TransversalIsotropic(AbstractMaterial):
         - **E_l**, **E_t**, **G_lt**, **nu_lt**, **nu_tt**
         - **E_l**, **E_t**, **G_lt**, **nu_tl**, **nu_tt**
 
-    Attributes: **(** Accessible both as attributes and dict-like **)**
+    Attributes:
 
-        - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_lt**, **nu_tl**, **nu_tt**
+    - Keyword arguments
 
-        - **stiffness** : Stiffness in tensor notation
-        - **stiffness_mandel6** : Stiffness in Mandel6 notation
-        - **stiffness_voigt** : Stiffness in Voigt notation
+    - **stiffness** : Stiffness in tensor notation
+    - **stiffness_mandel6** : Stiffness in Mandel6 notation
+    - **stiffness_voigt** : Stiffness in Voigt notation
 
-        - **compliance** : Compliance in tensor notation
-        - **compliance_mandel6** : Compliance in Mandel6 notation
-        - **compliance_voigt** : Compliance in Voigt notation
+    - **compliance** : Compliance in tensor notation
+    - **compliance_mandel6** : Compliance in Mandel6 notation
+    - **compliance_voigt** : Compliance in Voigt notation
+
 
     Examples
     --------
