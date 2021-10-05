@@ -108,6 +108,7 @@ class Isotropic(AbstractMaterial):
             - do arithemtic on eigenvalues using the operators
               +, -, * with numbers.
 
+
     Quickstart:
 
     .. code-block:: python
@@ -652,17 +653,17 @@ class Orthotropic:
 
     See definitions of :ref:`EngineeringConstants`.
 
-    Attributes:
+    Attributes are:
 
-    - Keyword arguments
+        - **E1**, **E2**, **E3**, **nu12**, **nu13**, **nu23**, **G12**, **G13**, **G23**
 
-    - **stiffness** : Stiffness in tensor notation
-    - **stiffness_mandel6** : Stiffness in Mandel6 notation
-    - **stiffness_voigt** : Stiffness in Voigt notation
+        - **stiffness** : Stiffness in tensor notation
+        - **stiffness_mandel6** : Stiffness in Mandel6 notation
+        - **stiffness_voigt** : Stiffness in Voigt notation
 
-    - **compliance** : Compliance in tensor notation
-    - **compliance_mandel6** : Compliance in Mandel6 notation
-    - **compliance_voigt** : Compliance in Voigt notation
+        - **compliance** : Compliance in tensor notation
+        - **compliance_mandel6** : Compliance in Mandel6 notation
+        - **compliance_voigt** : Compliance in Voigt notation
 
 
     Compliance
@@ -778,7 +779,7 @@ class TransversalIsotropic(AbstractMaterial):
     **principal_axis**. The default principal axis is the x-axis.
     The vector does not have to be normalized.
 
-    Valid case-sensitive **keyword arguments** of the constructor are:
+    Valid **keyword arguments** of the constructor are:
 
         - **E_l**
         - **E_t**
@@ -795,17 +796,17 @@ class TransversalIsotropic(AbstractMaterial):
         - **E_l**, **E_t**, **G_lt**, **nu_lt**, **nu_tt**
         - **E_l**, **E_t**, **G_lt**, **nu_tl**, **nu_tt**
 
-    Attributes:
+    Attributes are:
 
-    - Keyword arguments
+        - **E_l**, **E_t**, **G_lt**, **G_tt**, **nu_lt**, **nu_tl**, **nu_tt**
 
-    - **stiffness** : Stiffness in tensor notation
-    - **stiffness_mandel6** : Stiffness in Mandel6 notation
-    - **stiffness_voigt** : Stiffness in Voigt notation
+        - **stiffness** : Stiffness in tensor notation
+        - **stiffness_mandel6** : Stiffness in Mandel6 notation
+        - **stiffness_voigt** : Stiffness in Voigt notation
 
-    - **compliance** : Compliance in tensor notation
-    - **compliance_mandel6** : Compliance in Mandel6 notation
-    - **compliance_voigt** : Compliance in Voigt notation
+        - **compliance** : Compliance in tensor notation
+        - **compliance_mandel6** : Compliance in Mandel6 notation
+        - **compliance_voigt** : Compliance in Voigt notation
 
 
     Examples
