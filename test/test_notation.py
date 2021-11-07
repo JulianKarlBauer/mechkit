@@ -12,9 +12,7 @@ import mechkit
 # Helpers
 
 
-def assertException(
-    func, message, args=[], kwargs={}, exception=mechkit.utils.Ex,
-):
+def assertException(func, message, args=[], kwargs={}, exception=mechkit.utils.Ex):
     with pytest.raises(exception) as excinfo:
         func(*args, **kwargs)
     assert str(excinfo.value).startswith(message)
@@ -26,7 +24,7 @@ def assertException(
 
 
 class Test_Converter:
-    def test_unsupported_shape(self,):
+    def test_unsupported_shape(self):
 
         con = mechkit.notation.Converter()
         assertException(
@@ -37,7 +35,7 @@ class Test_Converter:
             exception=mechkit.utils.Ex,
         )
 
-    def test_compare_P1_P2_mandel6_tensor(self,):
+    def test_compare_P1_P2_mandel6_tensor(self):
 
         con = mechkit.notation.Converter()
         t = mechkit.tensors.Basic()
@@ -73,7 +71,7 @@ class Test_Converter:
         assert np.allclose(t.P2, con.to_tensor(P2_mandel6))
         assert np.allclose(t.I4s, con.to_tensor(I4s_mandel6))
 
-    def test_level2_mandel6_tensor(self,):
+    def test_level2_mandel6_tensor(self):
 
         con = mechkit.notation.Converter()
 
@@ -87,7 +85,7 @@ class Test_Converter:
         assert np.allclose(con.to_mandel6(tensor), mandel)
         assert np.allclose(con.to_tensor(mandel), tensor)
 
-    def test_level4_mandel6_tensor(self,):
+    def test_level4_mandel6_tensor(self):
 
         con = mechkit.notation.Converter()
         factor = np.sqrt(2.0)
@@ -108,16 +106,16 @@ class Test_Converter:
         assert np.allclose(con.to_mandel6(tensor), mandel)
         assert np.allclose(con.to_tensor(mandel), tensor)
 
-    def test_pass_throught(self,):
+    def test_pass_throught(self):
 
         con = mechkit.notation.Converter()
 
-        m6_2 = np.random.rand(6,)
-        m6_4 = np.random.rand(6, 6,)
-        m9_2 = np.random.rand(9,)
-        m9_4 = np.random.rand(9, 9,)
-        t2 = np.random.rand(3, 3,)
-        t4 = np.random.rand(3, 3, 3, 3,)
+        m6_2 = np.random.rand(6)
+        m6_4 = np.random.rand(6, 6)
+        m9_2 = np.random.rand(9)
+        m9_4 = np.random.rand(9, 9)
+        t2 = np.random.rand(3, 3)
+        t4 = np.random.rand(3, 3, 3, 3)
 
         assert np.allclose(con.to_mandel6(m6_2), m6_2)
         assert np.allclose(con.to_mandel6(m6_4), m6_4)
@@ -126,13 +124,13 @@ class Test_Converter:
         assert np.allclose(con.to_tensor(t2), t2)
         assert np.allclose(con.to_tensor(t4), t4)
 
-    def test_mandel6_to_tensor_to_mandel6(self,):
+    def test_mandel6_to_tensor_to_mandel6(self):
 
         con = mechkit.notation.Converter()
         matrix = np.random.rand(6, 6)
         assert np.allclose(con.to_mandel6(con.to_tensor(matrix)), matrix)
 
-    def test_tensor_to_mandel6_to_tensor(self,):
+    def test_tensor_to_mandel6_to_tensor(self):
 
         con = mechkit.notation.Converter()
 
@@ -147,19 +145,19 @@ class Test_Converter:
 
         assert np.allclose(con.to_tensor(matrix), tensor_sym_minor)
 
-    def test_mandel9_to_tensor_to_mandel9(self,):
+    def test_mandel9_to_tensor_to_mandel9(self):
 
         con = mechkit.notation.Converter()
         matrix = np.random.rand(9, 9)
         assert np.allclose(con.to_mandel9(con.to_tensor(matrix)), matrix)
 
-    def test_tensor_to_mandel9_to_tensor(self,):
+    def test_tensor_to_mandel9_to_tensor(self):
 
         con = mechkit.notation.Converter()
         tensor = np.random.rand(3, 3, 3, 3)
         assert np.allclose(con.to_tensor(con.to_mandel9(tensor)), tensor)
 
-    def test_ones_tensors_to_mandel6_to_voigt_to_mandel6(self,):
+    def test_ones_tensors_to_mandel6_to_voigt_to_mandel6(self):
         """Define ones tensors and transform to Mandel.
 
         Ones tensors are useful to visualize the conversions.
@@ -169,8 +167,8 @@ class Test_Converter:
 
         converter = mechkit.notation.VoigtConverter()
 
-        ones2_mandel = converter.to_mandel6(np.ones((3, 3),))
-        ones4_mandel = converter.to_mandel6(np.ones((3, 3, 3, 3),))
+        ones2_mandel = converter.to_mandel6(np.ones((3, 3)))
+        ones4_mandel = converter.to_mandel6(np.ones((3, 3, 3, 3)))
 
         voigt_types = {
             "stress": ones2_mandel,
@@ -190,7 +188,7 @@ class Test_Converter:
         voigts = {}
 
         for voigt_type, input_mandel in voigt_types.items():
-            out = converter.mandel6_to_voigt(inp=input_mandel, voigt_type=voigt_type,)
+            out = converter.mandel6_to_voigt(inp=input_mandel, voigt_type=voigt_type)
             print(voigt_type)
             print(out)
 
@@ -201,24 +199,26 @@ class Test_Converter:
         mandels = {}
 
         for voigt_type, voigt in voigts.items():
-            out = converter.voigt_to_mandel6(inp=voigt, voigt_type=voigt_type,)
+            out = converter.voigt_to_mandel6(inp=voigt, voigt_type=voigt_type)
             print(voigt_type)
             print(out)
 
             mandels[voigt_type] = out
 
         for voigt_type, mandel in mandels.items():
-            assert np.allclose(mandel, voigt_types[voigt_type],)
+            assert np.allclose(mandel, voigt_types[voigt_type])
 
-    def test_to_like(self,):
+    def test_to_like(
+        self,
+    ):
         con = mechkit.notation.Converter()
 
-        m6_2 = np.random.rand(6,)
-        m6_4 = np.random.rand(6, 6,)
-        m9_2 = np.random.rand(9,)
-        m9_4 = np.random.rand(9, 9,)
-        t2 = np.random.rand(3, 3,)
-        t4 = np.random.rand(3, 3, 3, 3,)
+        m6_2 = np.random.rand(6)
+        m6_4 = np.random.rand(6, 6)
+        m9_2 = np.random.rand(9)
+        m9_4 = np.random.rand(9, 9)
+        t2 = np.random.rand(3, 3)
+        t4 = np.random.rand(3, 3, 3, 3)
 
         t2_sym = con.to_tensor(con.to_mandel6(t2))
         t4_sym = con.to_tensor(con.to_mandel6(t4))
@@ -270,24 +270,24 @@ class Test_Converter:
         return P1 * EW1 + P2 * EW2
 
     def compare_matrix_eigenvalues_with_list_of_numbers(
-        self, matrix, list_of_numbers, decimals=7,
+        self, matrix, list_of_numbers, decimals=7
     ):
         boolean = set(np.linalg.eig(matrix)[0].round(decimals=decimals)) == set(
-            np.array(list_of_numbers,).round(decimals=decimals)
+            np.array(list_of_numbers).round(decimals=decimals)
         )
         return boolean
 
-    def test_eigenvalues_of_isotropic_stiffness_mandel6(self,):
+    def test_eigenvalues_of_isotropic_stiffness_mandel6(self):
         EW1 = 1500
         EW2 = 700
 
         C = self.isotropic_stiffness_mandel6(EW1, EW2)
 
         assert self.compare_matrix_eigenvalues_with_list_of_numbers(
-            matrix=C, list_of_numbers=[EW1, EW2],
+            matrix=C, list_of_numbers=[EW1, EW2]
         )
 
-    def test_eigenvalues_of_inverse_of_isotropic_stiffness_mandel6(self,):
+    def test_eigenvalues_of_inverse_of_isotropic_stiffness_mandel6(self):
         EW1 = 1500
         EW2 = 700
 
@@ -296,7 +296,7 @@ class Test_Converter:
         C_inv = np.linalg.inv(C)
 
         assert self.compare_matrix_eigenvalues_with_list_of_numbers(
-            matrix=C_inv, list_of_numbers=[1.0 / EW1, 1.0 / EW2],
+            matrix=C_inv, list_of_numbers=[1.0 / EW1, 1.0 / EW2]
         )
 
 
@@ -320,7 +320,7 @@ class Test_UmatConverter:
         print(umat)
         fac = 1.0 / np.sqrt(2)
         assert np.allclose(
-            umat, np.array([1.0, 2.0, 3.0, 6.0 * fac, 5 * fac, 4.0 * fac]),
+            umat, np.array([1.0, 2.0, 3.0, 6.0 * fac, 5 * fac, 4.0 * fac])
         )
 
     def test_umat_stiffness(self, con_aba):
