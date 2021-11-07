@@ -865,16 +865,16 @@ class ExplicitConverter(object):
         self.DIM = 3
         self.DIM_MANDEL6 = 6
         self.DIM_MANDEL9 = 9
-        self.SLICE6 = np.s_[..., 0:6]
-        self.SLICE6BY6 = np.s_[..., 0:6, 0:6]
+        self.SLICE6 = np.s_[0:6, ...]
+        self.SLICE6BY6 = np.s_[0:6, 0:6, ...]
         self.BASE6 = self.get_mandel_base_sym()
         self.BASE9 = self.get_mandel_base_skw()
 
-        self.shear = np.s_[..., 3:6]
-        self.quadrant1 = np.s_[..., 0:3, 0:3]
-        self.quadrant2 = np.s_[..., 0:3, 3:6]
-        self.quadrant3 = np.s_[..., 3:6, 0:3]
-        self.quadrant4 = np.s_[..., 3:6, 3:6]
+        self.shear = np.s_[3:6, ...]
+        self.quadrant1 = np.s_[0:3, 0:3, ...]
+        self.quadrant2 = np.s_[0:3, 3:6, ...]
+        self.quadrant3 = np.s_[3:6, 0:3, ...]
+        self.quadrant4 = np.s_[3:6, 3:6, ...]
 
         self.factors_mandel_to_voigt = {
             "stress": [(self.shear, 1.0 / np.sqrt(2.0))],
@@ -1048,11 +1048,20 @@ class ExplicitConverter(object):
         return new
 
     def _tensor_to_mandel_2(self, inp, base):
-        out = np.einsum("aij, ...ij ->...a", base, inp)
+        out = np.einsum(
+            "aij, ij... ->a...",
+            base,
+            inp,
+        )
         return out
 
     def _tensor_to_mandel_4(self, inp, base):
-        out = np.einsum("aij, ...ijkl, bkl ->...ab", base, inp, base)
+        out = np.einsum(
+            "aij, ijkl..., bkl ->ab...",
+            base,
+            inp,
+            base,
+        )
         return out
 
     def _tensor_to_mandel6_2(self, inp):
@@ -1068,11 +1077,20 @@ class ExplicitConverter(object):
         return self._tensor_to_mandel_4(inp=inp, base=self.BASE9)
 
     def _mandel_to_tensor_2(self, inp, base):
-        out = np.einsum("ajk, ...a->...jk", base, inp)
+        out = np.einsum(
+            "ajk, a...->jk...",
+            base,
+            inp,
+        )
         return out
 
     def _mandel_to_tensor_4(self, inp, base):
-        out = np.einsum("ajk, ...ab, bmn->...jkmn", base, inp, base)
+        out = np.einsum(
+            "ajk, ab..., bmn->jkmn...",
+            base,
+            inp,
+            base,
+        )
         return out
 
     def _mandel6_to_tensor_2(self, inp):
@@ -1088,7 +1106,7 @@ class ExplicitConverter(object):
         return self._mandel_to_tensor_4(inp=inp, base=self.BASE9)
 
     def _mandel6_to_mandel9_2(self, inp):
-        shape = inp.shape[:-1] + (self.DIM_MANDEL9,)
+        shape = (self.DIM_MANDEL9,) + inp.shape[1:]
         zeros = np.zeros(shape, dtype=self.dtype)
         zeros[self.SLICE6] = inp
         return zeros
@@ -1143,39 +1161,39 @@ class ExplicitConverter(object):
 
     def _voigt_umat_2(self, inp):
         # Is explicit copy necessary? Yes!?
-        inp[..., [3, 5]] = inp[..., [5, 3]]
+        inp[[3, 5], ...] = inp[[5, 3], ...]
         return inp
 
     def _voigt_umat_4(self, inp):
         # Is explicit copy necessary? Yes!?
-        inp[..., [3, 5], :] = inp[..., [5, 3], :]
-        inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
+        inp[[3, 5], :, ...] = inp[[5, 3], :, ...]
+        inp[:, [3, 5], ...] = inp[:, [5, 3], ...]
         return inp
 
     def _voigt_to_vumat_reorder_2(self, inp):
-        inp[..., [3, 4]] = inp[..., [4, 3]]
-        inp[..., [3, 5]] = inp[..., [5, 3]]
+        inp[[3, 4], ...] = inp[[4, 3], ...]
+        inp[[3, 5], ...] = inp[[5, 3], ...]
         return inp
 
     def _voigt_to_vumat_reorder_4(self, inp):
-        inp[..., [3, 4], :] = inp[..., [4, 3], :]
-        inp[..., :, [3, 4]] = inp[..., :, [4, 3]]
+        inp[[3, 4], :, ...] = inp[[4, 3], :, ...]
+        inp[:, [3, 4], ...] = inp[:, [4, 3], ...]
 
-        inp[..., [3, 5], :] = inp[..., [5, 3], :]
-        inp[..., :, [3, 5]] = inp[..., :, [5, 3]]
+        inp[[3, 5], :, ...] = inp[[5, 3], :, ...]
+        inp[:, [3, 5], ...] = inp[:, [5, 3], ...]
         return inp
 
     def _vumat_to_voigt_reorder_2(self, inp):
-        inp[..., [3, 4]] = inp[..., [4, 3]]
-        inp[..., [4, 5]] = inp[..., [5, 4]]
+        inp[[3, 4], ...] = inp[[4, 3], ...]
+        inp[[4, 5], ...] = inp[[5, 4], ...]
         return inp
 
     def _vumat_to_voigt_reorder_4(self, inp):
-        inp[..., [3, 4], :] = inp[..., [4, 3], :]
-        inp[..., :, [3, 4]] = inp[..., :, [4, 3]]
+        inp[[3, 4], :, ...] = inp[[4, 3], :, ...]
+        inp[:, [3, 4], ...] = inp[:, [4, 3], ...]
 
-        inp[..., [4, 5], :] = inp[..., [5, 4], :]
-        inp[..., :, [4, 5]] = inp[..., :, [5, 4]]
+        inp[[4, 5], :, ...] = inp[[5, 4], :, ...]
+        inp[:, [4, 5], ...] = inp[:, [5, 4], ...]
         return inp
 
     def _copy_and_scale(self, inp, factors):
@@ -1237,16 +1255,16 @@ class ExplicitConverter(object):
         shape = inp.shape[:-2] + (21,)
         out = np.zeros(shape, dtype=np.float64)
         for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
-            out[..., i] = inp[..., row[0], row[1]]
+            out[i, ...] = inp[row[0], row[1], ...]
         return out
 
     def abaqusMaterialElasticAnisotropic_to_voigt(self, inp):
         shape = inp.shape[:-1] + (6, 6)
         out = np.zeros(shape, dtype=np.float64)
         for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
-            out[..., row[0], row[1]] = inp[..., i]
+            out[row[0], row[1], ...] = inp[i, ...]
             if row[0] != row[1]:
-                out[..., row[1], row[0]] = inp[..., i]
+                out[row[1], row[0], ...] = inp[i, ...]
         return out
 
 
