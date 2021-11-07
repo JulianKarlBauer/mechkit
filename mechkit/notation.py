@@ -142,7 +142,7 @@ class Converter(object):
         self.BASE6 = self.get_mandel_base_sym()
         self.BASE9 = self.get_mandel_base_skw()
 
-    def get_mandel_base_sym(self,):
+    def get_mandel_base_sym(self):
         r"""Get orthonormal basis of Mandel6 representation introduced by
         [Mandel1965]_, [Fedorov1968]_, [Mehrabadi1990]_  and
         discussed by [Cowin1992]_.
@@ -298,7 +298,7 @@ class Converter(object):
                 B(i, :, :) is the i-th dyade of the base.
         """
 
-        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype,)
+        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype)
 
         B[0, 0, 0] = 1.0
         B[1, 1, 1] = 1.0
@@ -308,7 +308,7 @@ class Converter(object):
         B[5, 0, 1] = B[5, 1, 0] = self.factor
         return B
 
-    def get_mandel_base_skw(self,):
+    def get_mandel_base_skw(self):
         r"""
         Get orthonormal basis of Mandel9 representation [csmbrannonMandel]_,
         [Brannon2018]_. The basis of Mandel6 representation is extended by
@@ -376,7 +376,7 @@ class Converter(object):
                 B(i, :, :) is the i-th dyade of the base.
         """
 
-        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype,)
+        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype)
         B[0:6, :, :] = self.get_mandel_base_sym()
 
         B[6, 1, 2] = -self.factor
@@ -534,11 +534,11 @@ class Converter(object):
         return inp
 
     def _tensor2_to_mandel(self, inp, base):
-        out = np.einsum("aij, ij ->a", base, inp,)
+        out = np.einsum("aij, ij ->a", base, inp)
         return out
 
     def _tensor4_to_mandel(self, inp, base):
-        out = np.einsum("aij, ijkl, bkl ->ab", base, inp, base,)
+        out = np.einsum("aij, ijkl, bkl ->ab", base, inp, base)
         return out
 
     def _tensor2_to_mandel6(self, inp):
@@ -554,11 +554,11 @@ class Converter(object):
         return self._tensor4_to_mandel(inp=inp, base=self.BASE9)
 
     def _mandel_2_to_tensor(self, inp, base):
-        out = np.einsum("ajk, a->jk", base, inp,)
+        out = np.einsum("ajk, a->jk", base, inp)
         return out
 
     def _mandel_4_to_tensor(self, inp, base):
-        out = np.einsum("ajk, ab, bmn->jkmn", base, inp, base,)
+        out = np.einsum("ajk, ab, bmn->jkmn", base, inp, base)
         return out
 
     def _mandel6_2_to_tensor(self, inp):
@@ -579,7 +579,7 @@ class Converter(object):
         return zeros
 
     def _mandel6_4_to_mandel9(self, inp):
-        zeros = np.zeros((self.DIM_MANDEL9, self.DIM_MANDEL9), dtype=self.dtype,)
+        zeros = np.zeros((self.DIM_MANDEL9, self.DIM_MANDEL9), dtype=self.dtype)
         zeros[self.SLICE6, self.SLICE6] = inp
         return zeros
 
@@ -706,8 +706,8 @@ class VoigtConverter(Converter):
         self.quadrant4 = np.s_[3:6, 3:6]
 
         self.factors_mandel_to_voigt = {
-            "stress": [(self.shear, 1.0 / np.sqrt(2.0)),],
-            "strain": [(self.shear, np.sqrt(2.0)),],
+            "stress": [(self.shear, 1.0 / np.sqrt(2.0))],
+            "strain": [(self.shear, np.sqrt(2.0))],
             "stiffness": [
                 (self.quadrant2, 1.0 / np.sqrt(2.0)),
                 (self.quadrant3, 1.0 / np.sqrt(2.0)),
@@ -1000,9 +1000,9 @@ class ExplicitConverter(object):
             key: nx.DiGraph(edges) for key, edges in self.edges_dict.items()
         }
 
-    def get_mandel_base_sym(self,):
+    def get_mandel_base_sym(self):
 
-        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype,)
+        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype)
 
         B[0, 0, 0] = 1.0
         B[1, 1, 1] = 1.0
@@ -1012,9 +1012,9 @@ class ExplicitConverter(object):
         B[5, 0, 1] = B[5, 1, 0] = self.factor
         return B
 
-    def get_mandel_base_skw(self,):
+    def get_mandel_base_skw(self):
 
-        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype,)
+        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype)
         B[0:6, :, :] = self.get_mandel_base_sym()
 
         B[6, 1, 2] = -self.factor
@@ -1048,11 +1048,11 @@ class ExplicitConverter(object):
         return new
 
     def _tensor_to_mandel_2(self, inp, base):
-        out = np.einsum("aij, ...ij ->...a", base, inp,)
+        out = np.einsum("aij, ...ij ->...a", base, inp)
         return out
 
     def _tensor_to_mandel_4(self, inp, base):
-        out = np.einsum("aij, ...ijkl, bkl ->...ab", base, inp, base,)
+        out = np.einsum("aij, ...ijkl, bkl ->...ab", base, inp, base)
         return out
 
     def _tensor_to_mandel6_2(self, inp):
@@ -1068,11 +1068,11 @@ class ExplicitConverter(object):
         return self._tensor_to_mandel_4(inp=inp, base=self.BASE9)
 
     def _mandel_to_tensor_2(self, inp, base):
-        out = np.einsum("ajk, ...a->...jk", base, inp,)
+        out = np.einsum("ajk, ...a->...jk", base, inp)
         return out
 
     def _mandel_to_tensor_4(self, inp, base):
-        out = np.einsum("ajk, ...ab, bmn->...jkmn", base, inp, base,)
+        out = np.einsum("ajk, ...ab, bmn->...jkmn", base, inp, base)
         return out
 
     def _mandel6_to_tensor_2(self, inp):
@@ -1095,7 +1095,7 @@ class ExplicitConverter(object):
 
     def _mandel6_to_mandel9_4(self, inp):
         shape = inp.shape[:-2] + (self.DIM_MANDEL9, self.DIM_MANDEL9)
-        zeros = np.zeros(shape, dtype=self.dtype,)
+        zeros = np.zeros(shape, dtype=self.dtype)
         zeros[self.SLICE6BY6] = inp
         return zeros
 
@@ -1233,7 +1233,7 @@ class ExplicitConverter(object):
         return self._vumat_to_voigt_4(inp=inp, quantity="compliance")
 
     def voigt_to_abaqusMaterialElasticAnisotropic(self, inp):
-        """Abaqus2019 scripting reference Material.Elastic """
+        """Abaqus2019 scripting reference Material.Elastic"""
         shape = inp.shape[:-2] + (21,)
         out = np.zeros(shape, dtype=np.float64)
         for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
@@ -1297,25 +1297,25 @@ class Components(np.ndarray):
 
         return wrapper_wrap_converter
 
-    def to_tensor(self,):
+    def to_tensor(self):
         return self.wrapped(self.converter.convert)(target="tensor")
 
-    def to_mandel6(self,):
+    def to_mandel6(self):
         return self.wrapped(self.converter.convert)(target="mandel6")
 
-    def to_mandel9(self,):
+    def to_mandel9(self):
         return self.wrapped(self.converter.convert)(target="mandel9")
 
-    def to_voigt(self,):
+    def to_voigt(self):
         return self.wrapped(self.converter.convert)(target="voigt")
 
-    def to_umat(self,):
+    def to_umat(self):
         return self.wrapped(self.converter.convert)(target="umat")
 
-    def to_vumat(self,):
+    def to_vumat(self):
         return self.wrapped(self.converter.convert)(target="vumat")
 
-    def to_abaqusMaterialAnisotropic(self,):
+    def to_abaqusMaterialAnisotropic(self):
         return self.wrapped(self.converter.convert)(target="abaqusMaterialAnisotropic")
 
 
@@ -1356,9 +1356,9 @@ if __name__ == "__main__":
 
     con = mechkit.notation.VoigtConverter()
 
-    ones_2 = np.ones((3, 3),)
+    ones_2 = np.ones((3, 3))
     ones_2_mandel = con.to_mandel6(ones_2)
-    ones_4_mandel = con.to_mandel6(np.ones((3, 3, 3, 3),))
+    ones_4_mandel = con.to_mandel6(np.ones((3, 3, 3, 3)))
 
     printQueue = [
         "ones_2",
