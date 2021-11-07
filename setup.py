@@ -17,6 +17,7 @@ setuptools.setup(
     install_requires=[
         "numpy",
         "networkx; python_version > '2.7'",
+        "decorator == 4.3.0; python_version <= '2.7'",
         "networkx == 2.2; python_version <= '2.7'",
     ],
     classifiers=[
