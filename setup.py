@@ -11,7 +11,6 @@ setuptools.setup(
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
     description="Basic continuum mechanics toolkit",
-    long_description="Basic continuum mechanics toolkit",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/JulianKarlBauer/mechkit",
