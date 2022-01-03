@@ -4,12 +4,8 @@
     python3 -m pytest
 """
 
-import os
-import sys
 import numpy as np
 from pprint import pprint
-
-sys.path.append(os.path.join(".."))
 import mechkit
 
 basic = mechkit.tensors.Basic()

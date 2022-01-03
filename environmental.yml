@@ -1,5 +1,6 @@
 name: mechkit
 channels:
+  - anaconda
   - defaults
 dependencies:
   - _libgcc_mutex=0.1=main
@@ -62,6 +63,7 @@ dependencies:
   - mypy_extensions=0.4.3=py37_0
   - nbformat=5.0.6=py_0
   - ncurses=6.2=he6710b0_1
+  - networkx=2.5=py_0
   - numpy=1.18.1=py37h4f9e942_0
   - numpy-base=1.18.1=py37hde5b4d6_1
   - openssl=1.1.1g=h7b6447c_0

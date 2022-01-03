@@ -207,7 +207,7 @@ to build the module
 
 
 # Helpful things
-- Remove doc-strings using Find&Replace in Atom
-	- Regex: r'''[\s\S]*?'''
-
+- Remove doc-strings using Find&Replace in Atom Regex
+	- r'''[\s\S]*?'''
+    - r"""[\s\S]*?"""
 
