@@ -3,7 +3,7 @@
 Definition of Stiffness Components
 ----------------------------------
 
-Tensor components: (See [Betram2015]_ page 99 for details.)
+Tensor components: (See :cite:p:`Bertram2015` page 99 for details.)
 
 .. math::
     \begin{align*}

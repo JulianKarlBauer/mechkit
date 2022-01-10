@@ -122,7 +122,7 @@ class Isotropic(AbstractMaterial):
 
 
     **Two** independent material parameters uniquely define an isotropic
-    material [Betram2015]_ (chapter 4.1.2).
+    material :cite:p:`Bertram2015` (chapter 4.1.2).
     Therefore, exactly two material parameters have to be passed to the
     constructor of this class.
 
@@ -395,9 +395,6 @@ class Isotropic(AbstractMaterial):
 
     .. rubric:: References
 
-    .. [Betram2015] Bertram, A., & Glüge, R. (2015).
-        Solid mechanics. Springer Int. Publ.
-
     .. [wikipedia_conversion_table]
        https://en.wikipedia.org/wiki/Template:Elastic_moduli
 
@@ -649,7 +646,7 @@ class Orthotropic:
     r"""Representation of homogeneous orthotropic material.
 
     **Nine** independent material parameters uniquely define an orthotropic
-    material [Betram2015]_ (chapter 4.1.2), aligned with the coordinate axes.
+    material :cite:p:`Bertram2015` (chapter 4.1.2), aligned with the coordinate axes.
 
     See definitions of :ref:`EngineeringConstants`.
 
@@ -764,7 +761,7 @@ class TransversalIsotropic(AbstractMaterial):
         stiffness = mat.stiffness_mandel6
 
     **Five** independent material parameters uniquely define a transversal isotropic
-    material [Betram2015]_ (chapter 4.1.2).
+    material :cite:p:`Bertram2015` (chapter 4.1.2).
     Therefore, exactly five material parameters have to be passed to the
     constructor of this class.
 
