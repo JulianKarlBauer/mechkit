@@ -14,7 +14,6 @@ else:
     import material
     import fabric_tensors
     import visualization
-    import _version
 
 import pkg_resources
 __version__ = pkg_resources.get_distribution('pip').version
