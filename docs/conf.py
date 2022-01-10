@@ -71,8 +71,13 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
+import datetime
+
+year = datetime.datetime.now().year
+
+
 project = "mechkit"
-copyright = "2022, Julian Karl Bauer"
+copyright = f"{year}, Julian Karl Bauer"
 author = "Julian Karl Bauer"
 
 # The version info for the project you're documenting, acts as replacement for
