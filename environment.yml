@@ -131,4 +131,10 @@ dependencies:
   - zipp=3.1.0=py_0
   - zlib=1.2.11=h7b6447c_3
   - zstd=1.4.4=h0b5b093_3
+  - pip:
+    - latexcodec==2.0.1
+    - numpydoc==1.1.0
+    - pybtex==0.24.0
+    - pybtex-docutils==1.0.1
+    - sphinxcontrib-bibtex==2.4.1
 prefix: /home/julian/miniconda3/envs/mechkit
