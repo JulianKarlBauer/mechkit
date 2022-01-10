@@ -1,7 +1,8 @@
 import setuptools
 from os import path
 import sys
-from mechkit._version import __version__
+from mechkit import _version
+__version__ = _version.__version__
 
 if sys.version_info > (3, 0):
     this_directory = path.abspath(path.dirname(__file__))
