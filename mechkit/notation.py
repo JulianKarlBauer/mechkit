@@ -1035,17 +1035,10 @@ class ExplicitConverter(object):
 
         steps = list(nx.utils.pairwise(path))
 
-        # print(f"############\nConvert {quantity} from {source} to {target}")
-        # print(inp)
-        # print()
-
         new = inp.copy()
         for step_start, step_end in steps:
             func = graph.edges[step_start, step_end]["func"]
             new = func(new)
-
-            # print(func.__name__)
-            # print(new)
 
         return new
 
