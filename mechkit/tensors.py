@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Common tensors in tensor notation
 """
+Basic tensors
+"""
+
 import numpy as np
 
 
@@ -134,7 +136,7 @@ class Basic(object):
 
     """
 
-    def __init__(self,):
+    def __init__(self):
 
         self.DTYPE = "float64"
         self.I2 = np.eye(3, dtype=self.DTYPE)
@@ -167,7 +169,7 @@ class Basic(object):
             )
         )
 
-    def _levi_civita_tensor(self,):
+    def _levi_civita_tensor(self):
         eijk = np.zeros((3, 3, 3))
         eijk[0, 1, 2] = eijk[1, 2, 0] = eijk[2, 0, 1] = 1
         eijk[0, 2, 1] = eijk[2, 1, 0] = eijk[1, 0, 2] = -1

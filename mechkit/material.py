@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Material"""
+"""
+Material objects representing elastic stiffnesses with material symmetries.
+"""
 
 import numbers
 import numpy as np
@@ -48,9 +50,7 @@ class AbstractMaterial(object):
                     "parameters.\n"
                     "Identified material parameters: {useful}\n"
                     "Given kwargs are: {kwargs}"
-                ).format(
-                    useful=useful, kwargs=kwargs,
-                )
+                ).format(useful=useful, kwargs=kwargs)
             )
         return useful
 
@@ -71,27 +71,27 @@ class AbstractMaterial(object):
             )
 
     @property
-    def stiffness_mandel6(self,):
+    def stiffness_mandel6(self):
         return self._con.to_mandel6(self.stiffness)
 
     @property
-    def stiffness_voigt(self,):
+    def stiffness_voigt(self):
         return self._con.mandel6_to_voigt(
-            self.stiffness_mandel6, voigt_type="stiffness",
+            self.stiffness_mandel6, voigt_type="stiffness"
         )
 
     @property
-    def compliance_mandel6(self,):
+    def compliance_mandel6(self):
         return np.linalg.inv(self.stiffness_mandel6)
 
     @property
-    def compliance(self,):
+    def compliance(self):
         return self._con.to_tensor(self.compliance_mandel6)
 
     @property
-    def compliance_voigt(self,):
+    def compliance_voigt(self):
         return self._con.mandel6_to_voigt(
-            self.compliance_mandel6, voigt_type="compliance",
+            self.compliance_mandel6, voigt_type="compliance"
         )
 
 
@@ -436,9 +436,9 @@ class Isotropic(AbstractMaterial):
     def __rmul__(self, other):
         return self.__mul__(other)
 
-    def _get_names_aliases(self,):
+    def _get_names_aliases(self):
         names_aliases = {
-            "K": ["k", "compression_modulus",],
+            "K": ["k", "compression_modulus"],
             "G": [
                 "g",
                 "mu",
@@ -452,7 +452,7 @@ class Isotropic(AbstractMaterial):
                 "c1313",
                 "c1212",
             ],
-            "E": ["e", "youngs_modulus", "elastic_modulus",],
+            "E": ["e", "youngs_modulus", "elastic_modulus"],
             "nu": ["nu", "poisson", "poisson_ratio", "v"],
             "la": [
                 "la",
@@ -508,7 +508,7 @@ class Isotropic(AbstractMaterial):
         }
         return funcs_dict[frozenset(keywords)]
 
-    def _check_positive_definiteness(self,):
+    def _check_positive_definiteness(self):
         if not ((self.K >= 0.0) and (self.G >= 0.0)):
             raise Ex(
                 "Negative K or G.\n"
@@ -516,7 +516,7 @@ class Isotropic(AbstractMaterial):
                 "have to be positive. \nK={} G={}".format(self.K, self.G)
             )
 
-    def _get_K_G(self,):
+    def _get_K_G(self):
         func_K, func_G = self._func_to_K_G(keywords=self._useful_kwargs.keys())
         self.K = func_K(**self._useful_kwargs)
         self.G = func_G(**self._useful_kwargs)
@@ -617,31 +617,31 @@ class Isotropic(AbstractMaterial):
         return K + (4.0 * G) / 3.0
 
     @property
-    def mu(self,):
+    def mu(self):
         return self.G
 
     @property
-    def E(self,):
+    def E(self):
         return self._E_by_K_G(K=self.K, G=self.G)
 
     @property
-    def la(self,):
+    def la(self):
         return self._la_by_K_G(K=self.K, G=self.G)
 
     @property
-    def nu(self,):
+    def nu(self):
         return self._nu_by_K_G(K=self.K, G=self.G)
 
     @property
-    def M(self,):
+    def M(self):
         return self._M_by_K_G(K=self.K, G=self.G)
 
     @property
-    def poisson(self,):
+    def poisson(self):
         return self.nu
 
     @property
-    def stiffness(self,):
+    def stiffness(self):
         return 3.0 * self.K * self._tensors.P1 + 2.0 * self.G * self._tensors.P2
 
 
@@ -723,27 +723,27 @@ class Orthotropic:
         self._con = mechkit.notation.VoigtConverter(silent=True)
 
     @property
-    def compliance_mandel6(self,):
+    def compliance_mandel6(self):
         return self._con.voigt_to_mandel6(
-            self.compliance_voigt, voigt_type="compliance",
+            self.compliance_voigt, voigt_type="compliance"
         )
 
     @property
-    def compliance(self,):
+    def compliance(self):
         return self._con.to_tensor(self.compliance_mandel6)
 
     @property
-    def stiffness_mandel6(self,):
+    def stiffness_mandel6(self):
         return np.linalg.inv(self.compliance_mandel6)
 
     @property
-    def stiffness(self,):
+    def stiffness(self):
         return self._con.to_tensor(self.stiffness_mandel6)
 
     @property
-    def stiffness_voigt(self,):
+    def stiffness_voigt(self):
         return self._con.mandel6_to_voigt(
-            self.stiffness_mandel6, voigt_type="stiffness",
+            self.stiffness_mandel6, voigt_type="stiffness"
         )
 
 
@@ -873,11 +873,8 @@ class TransversalIsotropic(AbstractMaterial):
 
     def _raise_required_either_or(self, keys):
         raise Ex(
-            (
-                "Either {key0} or {key1} is required.\n"
-            ).format(
-                key0=keys[0],
-                key1=keys[1],
+            ("Either {key0} or {key1} is required.\n").format(
+                key0=keys[0], key1=keys[1]
             )
         )
 
@@ -903,7 +900,7 @@ class TransversalIsotropic(AbstractMaterial):
         else:
             self._raise_required_either_or(keys=["G_tt", "nu_tt"])
 
-    def _check_positive_definiteness(self,):
+    def _check_positive_definiteness(self):
         if not (0.0 < min(np.linalg.eigh(self.stiffness_mandel6)[0])):
             raise Ex("Stiffness Mandel6 is not positive definite")
 
@@ -916,7 +913,7 @@ class TransversalIsotropic(AbstractMaterial):
     def _G_tt(self, nu_tt):
         return self.E_t / (2.0 * (1.0 + nu_tt))
 
-    def _nu_tt(self,):
+    def _nu_tt(self):
         return self.E_t / (2.0 * self.G_tt) - 1.0
 
     def _get_rotation_matrix(self, start_vector, end_vector):
@@ -932,18 +929,19 @@ class TransversalIsotropic(AbstractMaterial):
         c = a + b
         return 2.0 * np.matmul(c, c.T) / np.matmul(c.T, c) - np.eye(3)
 
-    def _rotate_stiffness_into_principal_axis(self,):
+    def _rotate_stiffness_into_principal_axis(self):
         R = self._get_rotation_matrix(
-            start_vector=self._default_principal_axis, end_vector=self.principal_axis,
+            start_vector=self._default_principal_axis,
+            end_vector=self.principal_axis,
         )
         return np.einsum("ij, kl, mn, op, jlnp->ikmo", R, R, R, R, self.stiffness)
 
     @property
-    def nu_tl(self,):
+    def nu_tl(self):
         return self._nu_tl(nu_lt=self.nu_lt)
 
     @property
-    def nu_tt(self,):
+    def nu_tt(self):
         return self._nu_tt()
 
 

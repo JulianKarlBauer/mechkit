@@ -1,3 +1,4 @@
 pybtex
 sphinxcontrib-bibtex
 numpydoc
+nbsphinx

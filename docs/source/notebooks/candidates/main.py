@@ -8,8 +8,6 @@ np.set_printoptions(
     # suppress=False,
 )
 
-con = mechkit.notation.AbaqusConverter(silent=True)
-
 stress_tensor = Components(
     np.arange(9, dtype=np.float64).reshape(3, 3), quantity="stress", notation="tensor"
 )
@@ -24,20 +22,20 @@ r = strain_tensor.to_mandel6()
 assert np.allclose(stress_tensor, stress_tensor.to_mandel9().to_tensor())
 
 comp_tensor_bunch = Components(
-    np.arange(324, dtype=np.float64).reshape(4, 3, 3, 3, 3),
+    np.arange(324, dtype=np.float64).reshape(3, 3, 3, 3, 4),
     quantity="compliance",
     notation="tensor",
 )
 
 stress_voigt_bunch = Components(
-    np.arange(1, 1 + 2 * 18, step=2, dtype=np.float64).reshape(3, 6),
+    np.arange(1, 1 + 2 * 18, step=2, dtype=np.float64).reshape(6, 3),
     quantity="stress",
     notation="voigt",
 )
 
 # Vectorized
 stiff_tensor_bunch = Components(
-    np.arange(2 * 324, dtype=np.float64).reshape(2, 4, 3, 3, 3, 3),
+    np.arange(2 * 324, dtype=np.float64).reshape(3, 3, 3, 3, 2, 4),
     quantity="stiffness",
     notation="tensor",
 )
@@ -58,7 +56,7 @@ stiff_tensor_bunch.to_voigt()[0]
 
 ############
 # Add way back
-s = stiff_mandel6_bunch.to_abaqusMaterialAnisotropic()
+# s = stiff_mandel6_bunch.to_abaqusMaterialAnisotropic()
 # s.to_mandel6()
 
 

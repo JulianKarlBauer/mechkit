@@ -11,7 +11,8 @@ import pytest
 import mechkit
 
 np.set_printoptions(
-    linewidth=140, precision=2,
+    linewidth=140,
+    precision=2,
 )
 
 ##############################################################################
@@ -36,7 +37,8 @@ def add_stiffnesses(inp):
     inp["stiffness"] = 3.0 * inp["K"] * tensors.P1 + 2.0 * inp["G"] * tensors.P2
     inp["stiffness_mandel6"] = con.to_mandel6(inp["stiffness"])
     inp["stiffness_voigt"] = con.mandel6_to_voigt(
-        inp["stiffness_mandel6"], voigt_type="stiffness",
+        inp["stiffness_mandel6"],
+        voigt_type="stiffness",
     )
     return inp
 
@@ -47,7 +49,8 @@ def add_compliances(inp):
     inp["compliance_mandel6"] = np.linalg.inv(inp["stiffness_mandel6"])
     inp["compliance"] = con.to_tensor(inp["compliance_mandel6"])
     inp["compliance_voigt"] = con.mandel6_to_voigt(
-        inp["compliance_mandel6"], voigt_type="compliance",
+        inp["compliance_mandel6"],
+        voigt_type="compliance",
     )
 
 
@@ -99,7 +102,7 @@ def test_reference_values():
             print("calculated: ", calculated)
             print("reference: ", reference)
             print()
-            assert np.allclose(calculated, reference, rtol=1e-4, atol=1e-3,)
+            assert np.allclose(calculated, reference, rtol=1e-4, atol=1e-3)
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
@@ -125,7 +128,7 @@ def test_use_aliases():
         for alias0 in aliases[comb[0]]:
             for alias1 in aliases[comb[1]]:
                 mat = mechkit.material.Isotropic(
-                    **{alias0: steel[comb[0]], alias1: steel[comb[1]],}
+                    **{alias0: steel[comb[0]], alias1: steel[comb[1]]}
                 )
                 for key, val in steel_tensor.items():
                     assert np.allclose(getattr(mat, key), val)
@@ -178,7 +181,7 @@ def test_exception_duplicate_parameter():
 
 
 class Test_TransversalIsotropic:
-    def test_compare_with_data(self,):
+    def test_compare_with_data(self):
         """Thanks to Tarkes Dora Pallicity for kindly supplying the data"""
         # 3 is the fiber direction
         self.engineering = {
@@ -218,7 +221,7 @@ class Test_TransversalIsotropic:
         nu12 = self.engineering["V32"]
 
         self.m = mechkit.material.TransversalIsotropic(
-            E_l=E1, E_t=E2, G_lt=G12, G_tt=G23, nu_lt=nu12, principal_axis=[0, 0, 1],
+            E_l=E1, E_t=E2, G_lt=G12, G_tt=G23, nu_lt=nu12, principal_axis=[0, 0, 1]
         )
 
         self.stiffness = stiffness = np.zeros((6, 6), dtype=np.float64)

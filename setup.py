@@ -11,7 +11,7 @@ else:
 
 setuptools.setup(
     name="mechkit",
-    version="0.3.0",
+    version='0.3.0',
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
     description="Basic continuum mechanics toolkit",
@@ -20,6 +20,7 @@ setuptools.setup(
     url="https://github.com/JulianKarlBauer/mechkit",
     packages=setuptools.find_packages(),
     install_requires=[
+        "setuptools",
         "numpy",
         "networkx; python_version > '2.7'",
         "decorator == 4.3.0; python_version <= '2.7'",

@@ -63,12 +63,12 @@ def test_isotropic_discrete_N2():
 
     basic = converter.to_tensor(mechkit.fabric_tensors.Basic().N2["iso"])
     discrete = mechkit.fabric_tensors.first_kind_discrete(
-        order=2, orientations=orientations,
+        order=2, orientations=orientations
     )
     pprint(basic)
     pprint(discrete)
 
-    assert np.allclose(basic, discrete, rtol=1e-6, atol=1e-6,)
+    assert np.allclose(basic, discrete, rtol=1e-6, atol=1e-6)
 
 
 def test_isotropic_discrete_N4():
@@ -76,14 +76,14 @@ def test_isotropic_discrete_N4():
 
     orientations = evenly_distributed_vectors_on_sphere(10000)
 
-    basic = converter.to_tensor(mechkit.fabric_tensors.Basic().N4["iso"],)
+    basic = converter.to_tensor(mechkit.fabric_tensors.Basic().N4["iso"])
     discrete = mechkit.fabric_tensors.first_kind_discrete(
-        order=4, orientations=orientations,
+        order=4, orientations=orientations
     )
     pprint(basic)
     pprint(discrete)
 
-    assert np.allclose(basic, discrete, rtol=1e-6, atol=1e-6,)
+    assert np.allclose(basic, discrete, rtol=1e-6, atol=1e-6)
 
 
 def test_planar_isotropic_discrete_N4():
@@ -91,16 +91,16 @@ def test_planar_isotropic_discrete_N4():
 
     orientations = evenly_distributed_vectors_on_circle_on_zplane(10000)
 
-    basic = converter.to_tensor(mechkit.fabric_tensors.Basic().N4["planar_iso_xy"],)
+    basic = converter.to_tensor(mechkit.fabric_tensors.Basic().N4["planar_iso_xy"])
     discrete = mechkit.fabric_tensors.first_kind_discrete(
-        order=4, orientations=orientations,
+        order=4, orientations=orientations
     )
     pprint("basic")
     pprint(converter.to_mandel6(basic))
     pprint("discrete")
     pprint(converter.to_mandel6(discrete))
 
-    assert np.allclose(basic, discrete, rtol=1e-6, atol=1e-6,)
+    assert np.allclose(basic, discrete, rtol=1e-6, atol=1e-6)
 
 
 def test_fabric_tensor_first_kind_discrete():
@@ -124,9 +124,9 @@ def test_fabric_tensor_first_kind_discrete():
     for order in range(1, 6):
         assert np.allclose(
             mechkit.fabric_tensors.first_kind_discrete(
-                order=order, orientations=orientations,
+                order=order, orientations=orientations
             ),
-            oT_loops(order=order, orientations=orientations,),
+            oT_loops(order=order, orientations=orientations),
         )
 
 
@@ -144,7 +144,7 @@ def test_fabric_tensor_first_kind_discrete_benchmarks():
 
     assert np.allclose(
         converter.to_tensor(mechkit.fabric_tensors.Basic().N2["iso"]),
-        f(order=2, orientations=orientations,),
+        f(order=2, orientations=orientations),
     )
 
 

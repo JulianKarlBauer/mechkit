@@ -1,5 +1,5 @@
-mechkit.utils
--------------
+utils
+-----
 
 .. automodule:: mechkit.utils
     :members:
