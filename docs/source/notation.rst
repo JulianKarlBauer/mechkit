@@ -1,5 +1,5 @@
-mechkit.notation
-----------------
+notation
+--------
 
 .. autoclass:: mechkit.notation.Converter
     :members:

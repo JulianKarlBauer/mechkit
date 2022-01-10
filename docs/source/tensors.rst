@@ -1,5 +1,5 @@
-mechkit.tensors
----------------
+tensors
+-------
 
 .. automodule:: mechkit.tensors
     :members:

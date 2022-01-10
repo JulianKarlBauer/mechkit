@@ -1,5 +1,5 @@
-mechkit.visualization
----------------------
+visualization
+-------------
 
 .. automodule:: mechkit.visualization
     :members:
