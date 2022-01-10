@@ -16,6 +16,13 @@ notation
     :noindex:
     :exclude-members: mandel6_to_voigt, voigt_to_mandel6
 
+
+.. autoclass:: mechkit.notation.ExplicitConverter
+    :members:
+    :undoc-members:
+    :noindex:
+
+
 .. autofunction:: mechkit.notation.get_mandel_base_sym
 
 .. autofunction:: mechkit.notation.get_mandel_base_skw
