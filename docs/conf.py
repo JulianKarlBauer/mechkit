@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath(os.path.join("..",)))
 
 # print('PATH_____________PATH_____________PATH')
 # print(sys.path)
-autodoc_mock_imports = ["numpy", "np"]
+autodoc_mock_imports = ["numpy", "np", "networkx", "nx", "functools"]
 
 # autodoc_default_options = {
 #     'member-order': 'bysource',

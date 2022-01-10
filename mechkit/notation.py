@@ -1272,9 +1272,8 @@ class Components(np.ndarray):
 
     stored_meta_data = ["notation", "quantity"]
 
-    converter = ExplicitConverter()
-
     def __new__(cls, input_array, notation=None, quantity=None):
+        cls.converter = ExplicitConverter()
         # Input array is an already formed ndarray instance
         # Cast to be our class type
         obj = np.asarray(input_array).view(cls)
