@@ -59,7 +59,7 @@ extensions = [
 ]
 
 bibtex_bibfiles = ['source/biblio.bib']
-bibtex_default_style = 'unsrt'
+bibtex_default_style = 'plain'
 
 
 # Add any paths that contain templates here, relative to this directory.
