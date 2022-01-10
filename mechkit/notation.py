@@ -763,6 +763,33 @@ class ExplicitConverter(object):
            \end{bmatrix}.
         \end{align*}
 
+    **VUMAT notation**
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{\sigma}^{\text{VUMAT}}
+            =
+            \begin{bmatrix}
+                \sigma_{\text{11}}  \\
+                \sigma_{\text{22}}  \\
+                \sigma_{\text{33}}  \\
+                \sigma_{\text{12}}  \\
+                \sigma_{\text{23}}  \\
+                \sigma_{\text{13}}  \\
+            \end{bmatrix}
+            &\quad
+           \boldsymbol{\varepsilon}^{\text{VUMAT}}
+           =
+           \begin{bmatrix}
+                \varepsilon_{\text{11}}  \\
+                \varepsilon_{\text{22}}  \\
+                \varepsilon_{\text{33}}  \\
+                \varepsilon_{\text{12}}  \\
+                \varepsilon_{\text{23}}  \\
+                \varepsilon_{\text{13}}  \\
+           \end{bmatrix}.
+        \end{align*}
+
     """
 
     def __init__(self, dtype="float64"):
