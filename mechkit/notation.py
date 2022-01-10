@@ -16,8 +16,8 @@ def get_default_factor():
 
 def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
     r"""Get orthonormal basis of Mandel6 representation introduced by
-    [Mandel1965]_, [Fedorov1968]_, [Mehrabadi1990]_  and
-    discussed by [Cowin1992]_.
+    :cite:p:`Mandel1965`, :cite:p:`Fedorov1968`, :cite:p:`Mehrabadi1990` and
+    discussed by :cite:p:`Cowin1992`.
 
     Base dyads:
 
@@ -145,24 +145,6 @@ def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
         - (Most) unsymmetric parts are discarded during conversion (Exception: Major symmetry of fourth order tensors). Use Mandel9 notation to represent unsymmetric tensors.
         - Components of stiffness matrix in Mandel notation differ from those in Voigt notation. See examples of VoigtConverter below.
 
-    .. rubric:: References
-
-    .. [Mandel1965] Mandel, J., 1965.
-        Généralisation de la théorie de plasticité de WT Koiter.
-        International Journal of Solids and structures, 1(3), pp.273-295.
-
-    .. [Fedorov1968] Fedorov, F.I., 1968.
-        Theory of elastic waves in crystals.
-
-    .. [Mehrabadi1990] Mehrabadi, M.M. and Cowin, S.C., 1990.
-        Eigentensors of linear anisotropic elastic materials.
-        The Quarterly Journal of Mechanics and Applied Mathematics, 43(1),
-        pp.15-41.
-
-    .. [Cowin1992] Cowin, S.C. and Mehrabadi, M.M., 1992.
-        The structure of the linear anisotropic elastic symmetries.
-        Journal of the Mechanics and Physics of Solids, 40(7),
-        pp.1459-1471.
 
     Returns
     -------
@@ -187,7 +169,7 @@ def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
 def get_mandel_base_skw(dtype="float64", one=1.0, factor=None):
     r"""
     Get orthonormal basis of Mandel9 representation [csmbrannonMandel]_,
-    [Brannon2018]_. The basis of Mandel6 representation is extended by
+    :cite:p:`Brannon2018`. The basis of Mandel6 representation is extended by
 
     .. math::
         \begin{align*}
@@ -234,17 +216,6 @@ def get_mandel_base_skw(dtype="float64", one=1.0, factor=None):
             \end{bmatrix}
         \end{align*}
 
-    .. rubric:: References
-
-    .. [csmbrannonMandel] https://csmbrannon.net/tag/mandel-notation/
-
-    .. [Brannon2018] Brannon, R.M., 2018. Rotation, Reflection, and Frame
-       Changes; Orthogonal tensors in computational engineering mechanics.
-       Rotation, Reflection, and Frame Changes; Orthogonal tensors in
-       computational engineering mechanics, by Brannon, RM
-       ISBN: 978-0-7503-1454-1.
-       IOP ebooks. Bristol, UK: IOP Publishing, 2018.
-
 
     Returns
     -------
@@ -278,12 +249,12 @@ class Converter(object):
         - 2. order tensor: (3, 3)
         - 4. order tensor: (3, 3, 3, 3,)
 
-    - mandel6 [Mandel1965]_
+    - mandel6 :cite:p:`Mandel1965`
 
         - 2. order tensor: (6,)      [Symmetry]
         - 4. order tensor: (6, 6)    [Left- and right- minor symmetry]
 
-    - mandel9 [Brannon2018]_
+    - mandel9 :cite:p:`Brannon2018`
 
         - 2. order tensor: (9,)
         - 4. order tensor: (9, 9)
