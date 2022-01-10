@@ -132,4 +132,3 @@ dependencies:
   - zlib=1.2.11=h7b6447c_3
   - zstd=1.4.4=h0b5b093_3
 prefix: /home/julian/miniconda3/envs/mechkit
-
