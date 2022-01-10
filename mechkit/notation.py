@@ -169,7 +169,7 @@ def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
 def get_mandel_base_skw(dtype="float64", one=1.0, factor=None):
     r"""
     Get orthonormal basis of Mandel9 representation [csmbrannonMandel]_,
-    [Brannon2018]_. The basis of Mandel6 representation is extended by
+    :cite:p:`Brannon2018`. The basis of Mandel6 representation is extended by
 
     .. math::
         \begin{align*}
@@ -220,13 +220,6 @@ def get_mandel_base_skw(dtype="float64", one=1.0, factor=None):
 
     .. [csmbrannonMandel] https://csmbrannon.net/tag/mandel-notation/
 
-    .. [Brannon2018] Brannon, R.M., 2018. Rotation, Reflection, and Frame
-       Changes; Orthogonal tensors in computational engineering mechanics.
-       Rotation, Reflection, and Frame Changes; Orthogonal tensors in
-       computational engineering mechanics, by Brannon, RM
-       ISBN: 978-0-7503-1454-1.
-       IOP ebooks. Bristol, UK: IOP Publishing, 2018.
-
 
     Returns
     -------
@@ -265,7 +258,7 @@ class Converter(object):
         - 2. order tensor: (6,)      [Symmetry]
         - 4. order tensor: (6, 6)    [Left- and right- minor symmetry]
 
-    - mandel9 [Brannon2018]_
+    - mandel9 :cite:p:`Brannon2018`
 
         - 2. order tensor: (9,)
         - 4. order tensor: (9, 9)
