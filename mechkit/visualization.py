@@ -36,27 +36,27 @@ class StiffnessAnalyser(object):
         self.stiffness = self.con.to_tensor(stiffness)
 
     @property
-    def E_RI(self,):
+    def E_RI(self):
         return 1.0 / (2.0 / (3.0 * self._h2) + 1.0 / (3.0 * self._h1))
 
     @property
-    def K_RI(self,):
+    def K_RI(self):
         return self._h1 / 3.0
 
     @property
-    def _h1(self,):
+    def _h1(self):
         """norm(P1) = 1"""
         return np.einsum("ijkl, ijkl->", self.stiffness, self.P1)
 
     @property
-    def _h2(self,):
+    def _h2(self):
         return (
             np.einsum("ijkl, ijkl->", self.stiffness, self.P2)
             / np.linalg.norm(self.P2) ** 2
         )
 
     @property
-    def _compliance(self,):
+    def _compliance(self):
         return self.con.to_tensor(np.linalg.inv(self.con.to_mandel6(self.stiffness)))
 
     def E_in_direction(self, direction, normalize=False):
@@ -82,7 +82,7 @@ class StiffnessAnalyser(object):
         d = direction / np.linalg.norm(direction)
         S = self._compliance
         I2 = mechkit.tensors.Basic().I2
-        K = 1.0 / (3.0 * np.einsum("ij, ijkl, k, l -> ", I2, S, d, d,))
+        K = 1.0 / (3.0 * np.einsum("ij, ijkl, k, l -> ", I2, S, d, d))
 
         if normalize:
             K = K / self.K_RI
