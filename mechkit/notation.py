@@ -763,6 +763,8 @@ class ExplicitConverter(object):
            \end{bmatrix}.
         \end{align*}
 
+    todo: add stiffness and compliance
+
     **VUMAT notation**
 
     .. math::
@@ -789,6 +791,11 @@ class ExplicitConverter(object):
                 \varepsilon_{\text{13}}  \\
            \end{bmatrix}.
         \end{align*}
+
+    todo: add stiffness and compliance
+
+    todo: add stiffness abaqusMaterialAnisotropic
+
 
     """
 
