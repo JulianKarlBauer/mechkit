@@ -393,11 +393,6 @@ class Isotropic(AbstractMaterial):
      [ 0.    0.    0.    0.    0.    0.1 ]]
 
 
-    .. rubric:: References
-
-    .. [wikipedia_conversion_table]
-       https://en.wikipedia.org/wiki/Template:Elastic_moduli
-
     """
 
     def __init__(self, auxetic=False, **kwargs):

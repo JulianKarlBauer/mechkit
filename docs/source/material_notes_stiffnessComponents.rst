@@ -56,7 +56,7 @@ with
 - :math:`\boldsymbol{B}_{\alpha}` : Base dyad of Mandel6 notation
   (See :mod:`mechkit.notation`)
 - :math:`\boldsymbol{V}_{\alpha}` : Base dyad of Voigt notation
-  (See :cite:p:`csmbrannonMandel`)
+  (See [csmbrannonMandel]_)
 
 
 
