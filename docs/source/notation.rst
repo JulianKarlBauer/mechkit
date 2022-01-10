@@ -4,6 +4,7 @@ mechkit.notation
 .. autoclass:: mechkit.notation.Converter
     :members:
     :undoc-members:
+    :noindex:
 
     .. :show-inheritance:
 
@@ -11,3 +12,4 @@ mechkit.notation
     :members:
     :undoc-members:
     :show-inheritance:
+    :noindex:
