@@ -10,6 +10,263 @@ import networkx as nx
 import functools
 
 
+def get_default_factor():
+    return np.sqrt(2.0) / 2.0
+
+
+def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
+    r"""Get orthonormal basis of Mandel6 representation introduced by
+    [Mandel1965]_, [Fedorov1968]_, [Mehrabadi1990]_  and
+    discussed by [Cowin1992]_.
+
+    Base dyads:
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{B}_1 &= \boldsymbol{e}_1 \otimes \boldsymbol{e}_1\\
+            \boldsymbol{B}_2 &= \boldsymbol{e}_2 \otimes \boldsymbol{e}_2\\
+            \boldsymbol{B}_3 &= \boldsymbol{e}_3 \otimes \boldsymbol{e}_3\\
+            \boldsymbol{B}_4 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
+                    +
+                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_3
+                    \right)                                              \\
+            \boldsymbol{B}_5 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
+                    +
+                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
+                    \right)                                              \\
+            \boldsymbol{B}_6 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
+                    +
+                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_2
+                    \right)
+        \end{align*}
+
+    with
+
+        - :math:`\otimes` : Dyadic product
+        - :math:`\boldsymbol{e}_\text{i}` : i-th Vector of orthonormal basis
+
+    Orthogonality:
+
+    .. math::
+        \begin{align*}
+                    \boldsymbol{B}_{\alpha} &\cdot \boldsymbol{B}_{\beta}
+                            = \delta_{\alpha\beta}
+        \end{align*}
+
+    Conversions: (Einstein notation applies)
+
+    .. math::
+        \begin{align*}
+            \sigma_{\alpha}^{\text{M}} &=
+                \boldsymbol{\sigma}
+                \cdot
+                \boldsymbol{B}_{\alpha}    \\
+            C_{\alpha\beta}^{\text{M}} &=
+                \boldsymbol{B}_{\alpha}
+                \cdot
+                \mathbb{C} \left[\boldsymbol{B}_{\beta}\right]    \\
+            \boldsymbol{\sigma} &=
+                \sigma_{\alpha}^{\text{M}}
+                \boldsymbol{B}_{\alpha}    \\
+            \mathbb{C} &=
+                C_{\alpha\beta}^{\text{M}}
+                \boldsymbol{B}_{\alpha}
+                \otimes
+                \boldsymbol{B}_{\beta}   \\
+        \end{align*}
+
+    with
+
+        - :math:`\boldsymbol{\sigma}` : Second order tensor
+        - :math:`\mathbb{C}` : Fourth order tensor
+        - :math:`\sigma_{\alpha}^{\text{M}}` : Component in Mandel notation
+        - :math:`C_{\alpha\beta}^{\text{M}}` : Component in Mandel notation
+
+    Implications of the Mandel basis:
+
+        - Stress and strain are converted equally, as well as stiffness and compliance. This is in contrast to non-normalized Voigt notation, where conversion rules depend on the physical type of the tensor entity.
+        - Eigenvalues and eigenvectors of a component matrix in Mandel notation are equal to eigenvalues and eigenvectors of the tensor.
+        - Components of the stress and strain vectors:
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{\sigma}^{\text{M6}}
+            =
+            \begin{bmatrix}
+                \sigma_{\text{11}}  \\
+                \sigma_{\text{22}}  \\
+                \sigma_{\text{33}}  \\
+                \frac{\sqrt{2}}{2}\left(
+                    \sigma_{\text{32}}
+                    +
+                    \sigma_{\text{23}}
+                \right)             \\
+                \frac{\sqrt{2}}{2}\left(
+                    \sigma_{\text{13}}
+                    +
+                    \sigma_{\text{31}}
+                \right)             \\
+                \frac{\sqrt{2}}{2}\left(
+                    \sigma_{\text{21}}
+                    +
+                    \sigma_{\text{12}}
+                \right)
+            \end{bmatrix}
+            &\quad
+           \boldsymbol{\varepsilon}^{\text{M6}}
+           =
+           \begin{bmatrix}
+               \varepsilon_{\text{11}}  \\
+               \varepsilon_{\text{22}}  \\
+               \varepsilon_{\text{33}}  \\
+               \frac{\sqrt{2}}{2}\left(
+                   \varepsilon_{\text{32}}
+                   +
+                   \varepsilon_{\text{23}}
+               \right)             \\
+               \frac{\sqrt{2}}{2}\left(
+                   \varepsilon_{\text{13}}
+                   +
+                   \varepsilon_{\text{31}}
+               \right)             \\
+               \frac{\sqrt{2}}{2}\left(
+                   \varepsilon_{\text{21}}
+                   +
+                   \varepsilon_{\text{12}}
+               \right)
+           \end{bmatrix}
+        \end{align*}
+
+    .. warning::
+
+        - (Most) unsymmetric parts are discarded during conversion (Exception: Major symmetry of fourth order tensors). Use Mandel9 notation to represent unsymmetric tensors.
+        - Components of stiffness matrix in Mandel notation differ from those in Voigt notation. See examples of VoigtConverter below.
+
+    .. rubric:: References
+
+    .. [Mandel1965] Mandel, J., 1965.
+        Généralisation de la théorie de plasticité de WT Koiter.
+        International Journal of Solids and structures, 1(3), pp.273-295.
+
+    .. [Fedorov1968] Fedorov, F.I., 1968.
+        Theory of elastic waves in crystals.
+
+    .. [Mehrabadi1990] Mehrabadi, M.M. and Cowin, S.C., 1990.
+        Eigentensors of linear anisotropic elastic materials.
+        The Quarterly Journal of Mechanics and Applied Mathematics, 43(1),
+        pp.15-41.
+
+    .. [Cowin1992] Cowin, S.C. and Mehrabadi, M.M., 1992.
+        The structure of the linear anisotropic elastic symmetries.
+        Journal of the Mechanics and Physics of Solids, 40(7),
+        pp.1459-1471.
+
+    Returns
+    -------
+    np.array with shape (6, 3, 3)
+            B(i, :, :) is the i-th dyade of the base.
+    """
+
+    if factor is None:
+        factor = get_default_factor()
+
+    B = np.zeros((6, 3, 3), dtype=dtype)
+
+    B[0, 0, 0] = one
+    B[1, 1, 1] = one
+    B[2, 2, 2] = one
+    B[3, 1, 2] = B[3, 2, 1] = factor
+    B[4, 0, 2] = B[4, 2, 0] = factor
+    B[5, 0, 1] = B[5, 1, 0] = factor
+    return B
+
+
+def get_mandel_base_skw(dtype="float64", one=1.0, factor=None):
+    r"""
+    Get orthonormal basis of Mandel9 representation [csmbrannonMandel]_,
+    [Brannon2018]_. The basis of Mandel6 representation is extended by
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{B}_7 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
+                    -
+                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_3
+                    \right)                                              \\
+            \boldsymbol{B}_8 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
+                    -
+                    \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
+                    \right)                                              \\
+            \boldsymbol{B}_9 &= \frac{\sqrt{2}}{2}\left(
+                    \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
+                    -
+                    \boldsymbol{e}_1 \otimes \boldsymbol{e}_2
+                    \right)
+        \end{align*}
+
+    This basis is used to represent skew tensors and implies:
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{\sigma}^{\text{M9}}
+            =
+            \begin{bmatrix}
+                \boldsymbol{\sigma}^{\text{M6}}             \\
+                \frac{\sqrt{2}}{2}\left(
+                    \sigma_{\text{32}}
+                    -
+                    \sigma_{\text{23}}
+                \right)             \\
+                \frac{\sqrt{2}}{2}\left(
+                    \sigma_{\text{13}}
+                    -
+                    \sigma_{\text{31}}
+                \right)             \\
+                \frac{\sqrt{2}}{2}\left(
+                    \sigma_{\text{23}}
+                    -
+                    \sigma_{\text{12}}
+                \right)
+            \end{bmatrix}
+        \end{align*}
+
+    .. rubric:: References
+
+    .. [csmbrannonMandel] https://csmbrannon.net/tag/mandel-notation/
+
+    .. [Brannon2018] Brannon, R.M., 2018. Rotation, Reflection, and Frame
+       Changes; Orthogonal tensors in computational engineering mechanics.
+       Rotation, Reflection, and Frame Changes; Orthogonal tensors in
+       computational engineering mechanics, by Brannon, RM
+       ISBN: 978-0-7503-1454-1.
+       IOP ebooks. Bristol, UK: IOP Publishing, 2018.
+
+
+    Returns
+    -------
+    np.array with shape (9, 3, 3)
+            B(i, :, :) is the i-th dyade of the base.
+    """
+
+    if factor is None:
+        factor = get_default_factor()
+
+    B = np.zeros((9, 3, 3), dtype=dtype)
+    B[0:6, :, :] = get_mandel_base_sym(dtype=dtype, one=one, factor=factor)
+
+    B[6, 1, 2] = -factor
+    B[6, 2, 1] = factor
+    B[7, 0, 2] = factor
+    B[7, 2, 0] = -factor
+    B[8, 0, 1] = -factor
+    B[8, 1, 0] = factor
+    return B
+
+
 class Converter(object):
     r"""
     Convert numerical tensors from one notation to another.
@@ -141,253 +398,8 @@ class Converter(object):
         self.DIM_MANDEL6 = 6
         self.DIM_MANDEL9 = 9
         self.SLICE6 = np.s_[0:6]
-        self.BASE6 = self.get_mandel_base_sym()
-        self.BASE9 = self.get_mandel_base_skw()
-
-    def get_mandel_base_sym(self):
-        r"""Get orthonormal basis of Mandel6 representation introduced by
-        [Mandel1965]_, [Fedorov1968]_, [Mehrabadi1990]_  and
-        discussed by [Cowin1992]_.
-
-        Base dyads:
-
-        .. math::
-            \begin{align*}
-                \boldsymbol{B}_1 &= \boldsymbol{e}_1 \otimes \boldsymbol{e}_1\\
-                \boldsymbol{B}_2 &= \boldsymbol{e}_2 \otimes \boldsymbol{e}_2\\
-                \boldsymbol{B}_3 &= \boldsymbol{e}_3 \otimes \boldsymbol{e}_3\\
-                \boldsymbol{B}_4 &= \frac{\sqrt{2}}{2}\left(
-                        \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
-                        +
-                        \boldsymbol{e}_2 \otimes \boldsymbol{e}_3
-                        \right)                                              \\
-                \boldsymbol{B}_5 &= \frac{\sqrt{2}}{2}\left(
-                        \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
-                        +
-                        \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
-                        \right)                                              \\
-                \boldsymbol{B}_6 &= \frac{\sqrt{2}}{2}\left(
-                        \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
-                        +
-                        \boldsymbol{e}_1 \otimes \boldsymbol{e}_2
-                        \right)
-            \end{align*}
-
-        with
-
-            - :math:`\otimes` : Dyadic product
-            - :math:`\boldsymbol{e}_\text{i}` : i-th Vector of orthonormal basis
-
-        Orthogonality:
-
-        .. math::
-            \begin{align*}
-                        \boldsymbol{B}_{\alpha} &\cdot \boldsymbol{B}_{\beta}
-                                = \delta_{\alpha\beta}
-            \end{align*}
-
-        Conversions: (Einstein notation applies)
-
-        .. math::
-            \begin{align*}
-                \sigma_{\alpha}^{\text{M}} &=
-                    \boldsymbol{\sigma}
-                    \cdot
-                    \boldsymbol{B}_{\alpha}    \\
-                C_{\alpha\beta}^{\text{M}} &=
-                    \boldsymbol{B}_{\alpha}
-                    \cdot
-                    \mathbb{C} \left[\boldsymbol{B}_{\beta}\right]    \\
-                \boldsymbol{\sigma} &=
-                    \sigma_{\alpha}^{\text{M}}
-                    \boldsymbol{B}_{\alpha}    \\
-                \mathbb{C} &=
-                    C_{\alpha\beta}^{\text{M}}
-                    \boldsymbol{B}_{\alpha}
-                    \otimes
-                    \boldsymbol{B}_{\beta}   \\
-            \end{align*}
-
-        with
-
-            - :math:`\boldsymbol{\sigma}` : Second order tensor
-            - :math:`\mathbb{C}` : Fourth order tensor
-            - :math:`\sigma_{\alpha}^{\text{M}}` : Component in Mandel notation
-            - :math:`C_{\alpha\beta}^{\text{M}}` : Component in Mandel notation
-
-        Implications of the Mandel basis:
-
-            - Stress and strain are converted equally, as well as stiffness and compliance. This is in contrast to non-normalized Voigt notation, where conversion rules depend on the physical type of the tensor entity.
-            - Eigenvalues and eigenvectors of a component matrix in Mandel notation are equal to eigenvalues and eigenvectors of the tensor.
-            - Components of the stress and strain vectors:
-
-        .. math::
-            \begin{align*}
-                \boldsymbol{\sigma}^{\text{M6}}
-                =
-                \begin{bmatrix}
-                    \sigma_{\text{11}}  \\
-                    \sigma_{\text{22}}  \\
-                    \sigma_{\text{33}}  \\
-                    \frac{\sqrt{2}}{2}\left(
-                        \sigma_{\text{32}}
-                        +
-                        \sigma_{\text{23}}
-                    \right)             \\
-                    \frac{\sqrt{2}}{2}\left(
-                        \sigma_{\text{13}}
-                        +
-                        \sigma_{\text{31}}
-                    \right)             \\
-                    \frac{\sqrt{2}}{2}\left(
-                        \sigma_{\text{21}}
-                        +
-                        \sigma_{\text{12}}
-                    \right)
-                \end{bmatrix}
-                &\quad
-               \boldsymbol{\varepsilon}^{\text{M6}}
-               =
-               \begin{bmatrix}
-                   \varepsilon_{\text{11}}  \\
-                   \varepsilon_{\text{22}}  \\
-                   \varepsilon_{\text{33}}  \\
-                   \frac{\sqrt{2}}{2}\left(
-                       \varepsilon_{\text{32}}
-                       +
-                       \varepsilon_{\text{23}}
-                   \right)             \\
-                   \frac{\sqrt{2}}{2}\left(
-                       \varepsilon_{\text{13}}
-                       +
-                       \varepsilon_{\text{31}}
-                   \right)             \\
-                   \frac{\sqrt{2}}{2}\left(
-                       \varepsilon_{\text{21}}
-                       +
-                       \varepsilon_{\text{12}}
-                   \right)
-               \end{bmatrix}
-            \end{align*}
-
-        .. warning::
-
-            - (Most) unsymmetric parts are discarded during conversion (Exception: Major symmetry of fourth order tensors). Use Mandel9 notation to represent unsymmetric tensors.
-            - Components of stiffness matrix in Mandel notation differ from those in Voigt notation. See examples of VoigtConverter below.
-
-        .. rubric:: References
-
-        .. [Mandel1965] Mandel, J., 1965.
-            Généralisation de la théorie de plasticité de WT Koiter.
-            International Journal of Solids and structures, 1(3), pp.273-295.
-
-        .. [Fedorov1968] Fedorov, F.I., 1968.
-            Theory of elastic waves in crystals.
-
-        .. [Mehrabadi1990] Mehrabadi, M.M. and Cowin, S.C., 1990.
-            Eigentensors of linear anisotropic elastic materials.
-            The Quarterly Journal of Mechanics and Applied Mathematics, 43(1),
-            pp.15-41.
-
-        .. [Cowin1992] Cowin, S.C. and Mehrabadi, M.M., 1992.
-            The structure of the linear anisotropic elastic symmetries.
-            Journal of the Mechanics and Physics of Solids, 40(7),
-            pp.1459-1471.
-
-        Returns
-        -------
-        np.array with shape (6, 3, 3)
-                B(i, :, :) is the i-th dyade of the base.
-        """
-
-        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype)
-
-        B[0, 0, 0] = 1.0
-        B[1, 1, 1] = 1.0
-        B[2, 2, 2] = 1.0
-        B[3, 1, 2] = B[3, 2, 1] = self.factor
-        B[4, 0, 2] = B[4, 2, 0] = self.factor
-        B[5, 0, 1] = B[5, 1, 0] = self.factor
-        return B
-
-    def get_mandel_base_skw(self):
-        r"""
-        Get orthonormal basis of Mandel9 representation [csmbrannonMandel]_,
-        [Brannon2018]_. The basis of Mandel6 representation is extended by
-
-        .. math::
-            \begin{align*}
-                \boldsymbol{B}_7 &= \frac{\sqrt{2}}{2}\left(
-                        \boldsymbol{e}_3 \otimes \boldsymbol{e}_2
-                        -
-                        \boldsymbol{e}_2 \otimes \boldsymbol{e}_3
-                        \right)                                              \\
-                \boldsymbol{B}_8 &= \frac{\sqrt{2}}{2}\left(
-                        \boldsymbol{e}_1 \otimes \boldsymbol{e}_3
-                        -
-                        \boldsymbol{e}_3 \otimes \boldsymbol{e}_1
-                        \right)                                              \\
-                \boldsymbol{B}_9 &= \frac{\sqrt{2}}{2}\left(
-                        \boldsymbol{e}_2 \otimes \boldsymbol{e}_1
-                        -
-                        \boldsymbol{e}_1 \otimes \boldsymbol{e}_2
-                        \right)
-            \end{align*}
-
-        This basis is used to represent skew tensors and implies:
-
-        .. math::
-            \begin{align*}
-                \boldsymbol{\sigma}^{\text{M9}}
-                =
-                \begin{bmatrix}
-                    \boldsymbol{\sigma}^{\text{M6}}             \\
-                    \frac{\sqrt{2}}{2}\left(
-                        \sigma_{\text{32}}
-                        -
-                        \sigma_{\text{23}}
-                    \right)             \\
-                    \frac{\sqrt{2}}{2}\left(
-                        \sigma_{\text{13}}
-                        -
-                        \sigma_{\text{31}}
-                    \right)             \\
-                    \frac{\sqrt{2}}{2}\left(
-                        \sigma_{\text{23}}
-                        -
-                        \sigma_{\text{12}}
-                    \right)
-                \end{bmatrix}
-            \end{align*}
-
-        .. rubric:: References
-
-        .. [csmbrannonMandel] https://csmbrannon.net/tag/mandel-notation/
-
-        .. [Brannon2018] Brannon, R.M., 2018. Rotation, Reflection, and Frame
-           Changes; Orthogonal tensors in computational engineering mechanics.
-           Rotation, Reflection, and Frame Changes; Orthogonal tensors in
-           computational engineering mechanics, by Brannon, RM
-           ISBN: 978-0-7503-1454-1.
-           IOP ebooks. Bristol, UK: IOP Publishing, 2018.
-
-
-        Returns
-        -------
-        np.array with shape (9, 3, 3)
-                B(i, :, :) is the i-th dyade of the base.
-        """
-
-        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype)
-        B[0:6, :, :] = self.get_mandel_base_sym()
-
-        B[6, 1, 2] = -self.factor
-        B[6, 2, 1] = self.factor
-        B[7, 0, 2] = self.factor
-        B[7, 2, 0] = -self.factor
-        B[8, 0, 1] = -self.factor
-        B[8, 1, 0] = self.factor
-        return B
+        self.BASE6 = get_mandel_base_sym()
+        self.BASE9 = get_mandel_base_skw()
 
     def to_mandel6(self, inp, verbose=False):
 
@@ -818,8 +830,8 @@ class ExplicitConverter(object):
         self.DIM_MANDEL9 = 9
         self.SLICE6 = np.s_[0:6, ...]
         self.SLICE6BY6 = np.s_[0:6, 0:6, ...]
-        self.BASE6 = self.get_mandel_base_sym()
-        self.BASE9 = self.get_mandel_base_skw()
+        self.BASE6 = get_mandel_base_sym()
+        self.BASE9 = get_mandel_base_skw()
 
         self.shear = np.s_[3:6, ...]
         self.quadrant1 = np.s_[0:3, 0:3, ...]
@@ -950,31 +962,6 @@ class ExplicitConverter(object):
         self.graphs_dict = {
             key: nx.DiGraph(edges) for key, edges in self.edges_dict.items()
         }
-
-    def get_mandel_base_sym(self):
-
-        B = np.zeros((self.DIM_MANDEL6, self.DIM, self.DIM), dtype=self.dtype)
-
-        B[0, 0, 0] = 1.0
-        B[1, 1, 1] = 1.0
-        B[2, 2, 2] = 1.0
-        B[3, 1, 2] = B[3, 2, 1] = self.factor
-        B[4, 0, 2] = B[4, 2, 0] = self.factor
-        B[5, 0, 1] = B[5, 1, 0] = self.factor
-        return B
-
-    def get_mandel_base_skw(self):
-
-        B = np.zeros((self.DIM_MANDEL9, self.DIM, self.DIM), dtype=self.dtype)
-        B[0:6, :, :] = self.get_mandel_base_sym()
-
-        B[6, 1, 2] = -self.factor
-        B[6, 2, 1] = self.factor
-        B[7, 0, 2] = self.factor
-        B[7, 2, 0] = -self.factor
-        B[8, 0, 1] = -self.factor
-        B[8, 1, 0] = self.factor
-        return B
 
     def convert(self, inp, target, source, quantity):
 
