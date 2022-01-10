@@ -19,4 +19,9 @@ mechkit
     /source/utils
     /source/visualization
 
+.. toctree::
+    :maxdepth: 1
+
+    /source/bibliography
+
 
