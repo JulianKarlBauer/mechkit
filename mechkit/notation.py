@@ -168,7 +168,7 @@ def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
 
 def get_mandel_base_skw(dtype="float64", one=1.0, factor=None):
     r"""
-    Get orthonormal basis of Mandel9 representation [csmbrannonMandel]_,
+    Get orthonormal basis of Mandel9 representation :cite:p:`csmbrannonMandel`,
     :cite:p:`Brannon2018`. The basis of Mandel6 representation is extended by
 
     .. math::
@@ -215,10 +215,6 @@ def get_mandel_base_skw(dtype="float64", one=1.0, factor=None):
                 \right)
             \end{bmatrix}
         \end{align*}
-
-    .. rubric:: References
-
-    .. [csmbrannonMandel] https://csmbrannon.net/tag/mandel-notation/
 
 
     Returns
