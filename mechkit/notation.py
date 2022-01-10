@@ -686,22 +686,6 @@ class VoigtConverter(Converter):
         super(VoigtConverter, self).__init__()
 
     def mandel6_to_voigt(self, inp, voigt_type):
-        """Transform Mandel to Voigt depending on voigt_type.
-
-        Parameters
-        ----------
-        inp : np.array with shape (6,) or (6, 6) consistent with voigt_type
-                Mandel representation
-
-        voigt_type : string
-                Defines conversion as types are converted differently.
-                Supported types are
-                ['stress', 'strain', 'stiffness', 'compliance'].
-        Returns
-        -------
-        np.array with same shape as inp
-                Voigt representation
-        """
 
         voigt = inp.copy()
         for position, factor in self.factors_mandel_to_voigt[voigt_type]:
@@ -710,22 +694,6 @@ class VoigtConverter(Converter):
         return voigt
 
     def voigt_to_mandel6(self, inp, voigt_type):
-        """Transform Voigt to Mandel depending on voigt_type.
-
-        Parameters
-        ----------
-        inp : np.array with shape (6,) or (6, 6) consistent with voigt_type
-                Voigt representation
-
-        voigt_type : string
-                Defines conversion as types are converted differently.
-                Supported types are
-                ['stress', 'strain', 'stiffness', 'compliance'].
-        Returns
-        -------
-        np.array with same shape as inp
-                Mandel representation
-        """
 
         mandel = inp.copy()
         for position, factor in self.factors_mandel_to_voigt[voigt_type]:
