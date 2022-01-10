@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Common tensors in tensor notation
 """
+Basic tensors
+"""
+
 import numpy as np
 
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Notation"""
+"""
+Notations and converters, converting from one notation to another
+"""
 
 import numpy as np
 from mechkit.utils import Ex

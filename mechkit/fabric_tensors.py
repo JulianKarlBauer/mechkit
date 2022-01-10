@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""fabric tensors in Mandel6 notation
+"""
+Some numeric fiber orientation tensors
 """
 import numpy as np
 import mechkit

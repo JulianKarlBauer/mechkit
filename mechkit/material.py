@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Material"""
+"""
+Material objects representing elastic stiffnesses with material symmetries.
+"""
 
 import numbers
 import numpy as np
