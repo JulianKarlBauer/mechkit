@@ -390,18 +390,6 @@ class Converter(object):
         return B
 
     def to_mandel6(self, inp, verbose=False):
-        """Convert to Mandel6 notation
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        np.array
-            Input in Mandel6 notation
-        """
 
         if verbose:
             print("Skew parts are lost!")
@@ -410,55 +398,16 @@ class Converter(object):
         return f(inp=inp)
 
     def to_mandel9(self, inp):
-        """Convert to Mandel9 notation
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        np.array
-            Input in Mandel9 notation
-        """
 
         f = self._get_to_mandel9_func(inp=inp)
         return f(inp=inp)
 
     def to_tensor(self, inp):
-        """Convert to tensor notation
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        Returns
-        -------
-        np.array
-            Input in tensor notation
-        """
 
         f = self._get_to_tensor_func(inp=inp)
         return f(inp=inp)
 
     def to_like(self, inp, like):
-        """Convert input to notation of like
-
-        Parameters
-        ----------
-        inp : np.array with unknown shape
-            Input
-
-        like : np.array with unknown shape
-            Tensor in desired notation
-
-        Returns
-        -------
-        np.array
-            Input in notation of like
-        """
 
         type_like = self._get_type_by_shape(like)
 
@@ -1246,7 +1195,7 @@ class ExplicitConverter(object):
         return self._vumat_to_voigt_4(inp=inp, quantity="compliance")
 
     def voigt_to_abaqusMaterialElasticAnisotropic(self, inp):
-        """Abaqus2019 scripting reference Material.Elastic"""
+        # Abaqus2019 scripting reference Material.Elastic
         shape = inp.shape[:-2] + (21,)
         out = np.zeros(shape, dtype=np.float64)
         for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
