@@ -5,7 +5,8 @@ mechkit.material
     :maxdepth: 4
 
     /source/material
-    /source/material_notes
+    /source/material_notes_stiffnessComponents
+    /source/material_notes_engineeringConstants
 
 
 
