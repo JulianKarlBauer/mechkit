@@ -9,7 +9,7 @@ import mechkit
 
 class Basic(object):
     r"""
-    Fabric tensors of the first kind :cite:t:`Kanatani1984` for special cases
+    Fabric tensors of the first kind :cite:p:`Kanatani1984` for special cases
 
     - iso
     - planar_iso_xy
