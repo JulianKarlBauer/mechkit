@@ -16,7 +16,7 @@ def get_default_factor():
 
 def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
     r"""Get orthonormal basis of Mandel6 representation introduced by
-    [Mandel1965]_, [Fedorov1968]_, [Mehrabadi1990]_  and
+    :cite:p:`Mandel1965`, [Fedorov1968]_, [Mehrabadi1990]_  and
     discussed by [Cowin1992]_.
 
     Base dyads:
@@ -147,10 +147,6 @@ def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
 
     .. rubric:: References
 
-    .. [Mandel1965] Mandel, J., 1965.
-        Généralisation de la théorie de plasticité de WT Koiter.
-        International Journal of Solids and structures, 1(3), pp.273-295.
-
     .. [Fedorov1968] Fedorov, F.I., 1968.
         Theory of elastic waves in crystals.
 
@@ -278,7 +274,7 @@ class Converter(object):
         - 2. order tensor: (3, 3)
         - 4. order tensor: (3, 3, 3, 3,)
 
-    - mandel6 [Mandel1965]_
+    - mandel6 :cite:p:`Mandel1965`
 
         - 2. order tensor: (6,)      [Symmetry]
         - 4. order tensor: (6, 6)    [Left- and right- minor symmetry]
