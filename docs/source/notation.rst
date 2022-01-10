@@ -21,6 +21,8 @@ notation
     :members:
     :undoc-members:
     :noindex:
+    :exclude-members: convert
+
 
 
 .. autofunction:: mechkit.notation.get_mandel_base_sym

@@ -704,21 +704,39 @@ class VoigtConverter(Converter):
 
 class ExplicitConverter(object):
     r"""
-    Extendable explicit converter which converts from source notation to target notation
+    Vectorized extendable converter.
 
-    newline
+    As the number of necessary convertion rules between a rising number of notations
+    increases fast, a graph/network algorithm is used to identify the shortes
+    convertion path between source and target notation.
+    Notations represent nodes of a graph and convertion rules represent directed
+    edges between nodes.
+
+    Methods
     -------
+    convert(inp, target, source, quantity)
+        The tensorial input argument `inp`
+        is converted from explicitly stated
+        `source` notation to the `target` notation.
+        As some notations depend on the physical meaning of the tensorial quantity,
+        the `quantity` type has to be specified explicitly.
+        Supported quantity types are: Stress, strain, stiffness, compliance
 
-    Voigt-type notations of Abaqus UMATs and VUMATs.
 
-    The following physical quantities is supported:
+    Currently supported notations for all quantity types are:
 
-    - stress
-    - strain
-    - stiffness
-    - compliance
+        - tensor
+        - mandel9
+        - mandel6
+        - voigt
+        - umat
+        - vumat
 
-    Component order is defined as
+    and in addition for quantity type "stiffness":
+
+        - abaqusMaterialAnisotropic
+
+    **UMAT notation**
 
     .. math::
         \begin{align*}
