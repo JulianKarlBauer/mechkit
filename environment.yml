@@ -13,7 +13,6 @@ dependencies:
   - babel=2.8.0=py_0
   - backcall=0.1.0=py37_0
   - beautifulsoup4=4.9.0=py37_0
-  - black=19.10b0=py_0
   - blas=1.0=mkl
   - bleach=3.1.4=py_0
   - bzip2=1.0.8=h7b6447c_0
@@ -70,7 +69,6 @@ dependencies:
   - packaging=20.3=py_0
   - parso=0.7.0=py_0
   - patchelf=0.10=he6710b0_0
-  - pathspec=0.7.0=py_0
   - pexpect=4.8.0=py37_0
   - pickleshare=0.7.5=py37_0
   - pip=20.0.2=py37_3
@@ -120,8 +118,6 @@ dependencies:
   - tqdm=4.46.0=py_0
   - traitlets=4.3.3=py37_0
   - twine=2.0.0=py_0
-  - typed-ast=1.4.1=py37h7b6447c_0
-  - typing_extensions=3.7.4.3=py_0
   - urllib3=1.25.8=py37_0
   - wcwidth=0.1.9=py_0
   - webencodings=0.5.1=py37_1
@@ -132,9 +128,15 @@ dependencies:
   - zlib=1.2.11=h7b6447c_3
   - zstd=1.4.4=h0b5b093_3
   - pip:
+    - black==21.12b0
     - latexcodec==2.0.1
     - numpydoc==1.1.0
+    - pathspec==0.9.0
+    - platformdirs==2.4.1
     - pybtex==0.24.0
     - pybtex-docutils==1.0.1
     - sphinxcontrib-bibtex==2.4.1
+    - tomli==1.2.3
+    - typed-ast==1.5.1
+    - typing-extensions==4.0.1
 prefix: /home/julian/miniconda3/envs/mechkit
