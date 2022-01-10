@@ -6,6 +6,7 @@ mechkit
 
     /source/example_notebooks
 
+----------------------------------------------
 
 .. automodule:: mechkit
 
@@ -18,6 +19,8 @@ mechkit
     /source/tensors
     /source/utils
     /source/visualization
+
+----------------------------------------------
 
 .. toctree::
     :maxdepth: 1
