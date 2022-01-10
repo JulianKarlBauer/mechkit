@@ -9,7 +9,7 @@ import mechkit
 
 class Basic(object):
     r"""
-    Fabric tensors of the first kind ([Kanatani1984]_) for special cases
+    Fabric tensors of the first kind :cite:t:`Kanatani1984` for special cases
 
     - iso
     - planar_iso_xy
@@ -18,12 +18,6 @@ class Basic(object):
     - ud_x
     - ud_y
     - ud_z
-
-    .. rubric:: References
-
-    .. [Kanatani1984] Ken-Ichi, K. (1984).
-        Distribution of directional data and fabric tensors.
-        International Journal of Engineering Science, 22(2), 149-164.
 
     Examples
     --------
