@@ -86,7 +86,9 @@ author = "Julian Karl Bauer"
 # built documents.
 #
 # The short X.Y version.
-from mechkit._version import __version__
+import pkg_resources
+
+__version__ = pkg_resources.get_distribution("pip").version
 
 version = __version__
 # The full version, including alpha/beta/rc tags.

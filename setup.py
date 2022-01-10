@@ -1,8 +1,6 @@
 import setuptools
 from os import path
 import sys
-from mechkit import _version
-__version__ = _version.__version__
 
 if sys.version_info > (3, 0):
     this_directory = path.abspath(path.dirname(__file__))
@@ -13,7 +11,7 @@ else:
 
 setuptools.setup(
     name="mechkit",
-    version=__version__,
+    version='0.3.0',
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
     description="Basic continuum mechanics toolkit",
@@ -22,6 +20,7 @@ setuptools.setup(
     url="https://github.com/JulianKarlBauer/mechkit",
     packages=setuptools.find_packages(),
     install_requires=[
+        "setuptools",
         "numpy",
         "networkx; python_version > '2.7'",
         "decorator == 4.3.0; python_version <= '2.7'",
