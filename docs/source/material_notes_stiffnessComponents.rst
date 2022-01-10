@@ -1,6 +1,6 @@
 .. _DefinitionStiffnessComponents:
 
-Definition of stiffness components
+Definition of Stiffness Components
 ----------------------------------
 
 Tensor components: (See [Betram2015]_ page 99 for details.)
