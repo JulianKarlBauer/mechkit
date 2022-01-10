@@ -72,7 +72,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "mechkit"
-copyright = "2020, Julian Karl Bauer"
+copyright = "2022, Julian Karl Bauer"
 author = "Julian Karl Bauer"
 
 # The version info for the project you're documenting, acts as replacement for
