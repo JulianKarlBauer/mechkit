@@ -862,12 +862,12 @@ class ExplicitConverter(object):
                 (
                     "voigt",
                     "abaqusMaterialAnisotropic",
-                    dict(func=self.voigt_to_abaqusMaterialElasticAnisotropic),
+                    dict(func=self._voigt_to_abaqusMaterialElasticAnisotropic),
                 ),
                 (
                     "abaqusMaterialAnisotropic",
                     "voigt",
-                    dict(func=self.abaqusMaterialElasticAnisotropic_to_voigt),
+                    dict(func=self._abaqusMaterialElasticAnisotropic_to_voigt),
                 ),
             ],
             "compliance": [
@@ -1108,7 +1108,7 @@ class ExplicitConverter(object):
     def _vumat_to_voigt_compliance(self, inp):
         return self._vumat_to_voigt_4(inp=inp, quantity="compliance")
 
-    def voigt_to_abaqusMaterialElasticAnisotropic(self, inp):
+    def _voigt_to_abaqusMaterialElasticAnisotropic(self, inp):
         # Abaqus2019 scripting reference Material.Elastic
         shape = inp.shape[:-2] + (21,)
         out = np.zeros(shape, dtype=np.float64)
@@ -1116,7 +1116,7 @@ class ExplicitConverter(object):
             out[i, ...] = inp[row[0], row[1], ...]
         return out
 
-    def abaqusMaterialElasticAnisotropic_to_voigt(self, inp):
+    def _abaqusMaterialElasticAnisotropic_to_voigt(self, inp):
         shape = inp.shape[:-1] + (6, 6)
         out = np.zeros(shape, dtype=np.float64)
         for i, row in enumerate(self.map_voigt_to_abaqusMaterialElasticAnisotropic):
@@ -1192,6 +1192,3 @@ class Components(np.ndarray):
 
     def to_abaqusMaterialAnisotropic(self):
         return self.wrapped(self.converter.convert)(target="abaqusMaterialAnisotropic")
-
-
-
