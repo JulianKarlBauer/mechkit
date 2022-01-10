@@ -306,16 +306,17 @@ def con_aba():
 
 
 class Test_UmatConverter:
-    def test_umat_stress(self, con_aba):
-
-        con = con_aba
+    def test_umat_stress(self, con):
 
         mandel = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
 
-        print("Voigt")
-        print(con.mandel6_to_voigt(inp=mandel, voigt_type="stress"))
+        umat = con.convert(
+            inp=mandel,
+            source="mandel6",
+            target="umat",
+            quantity="stress",
+        )
 
-        umat = con.mandel6_to_umat(inp=mandel, voigt_type="stress")
         print("Umat")
         print(umat)
         fac = 1.0 / np.sqrt(2)
@@ -323,16 +324,18 @@ class Test_UmatConverter:
             umat, np.array([1.0, 2.0, 3.0, 6.0 * fac, 5 * fac, 4.0 * fac])
         )
 
-    def test_umat_stiffness(self, con_aba):
+    def test_umat_stiffness(self, con):
 
-        con = con_aba
+        tensor = np.arange(81).reshape(3, 3, 3, 3)
+        # Attention: Discard of non-symmetric parts is intended
 
-        mandel = con.to_mandel6(np.arange(81).reshape(3, 3, 3, 3))
+        umat = con.convert(
+            inp=tensor,
+            source="tensor",
+            target="umat",
+            quantity="stiffness",
+        )
 
-        print("Voigt")
-        print(con.mandel6_to_voigt(inp=mandel, voigt_type="stiffness"))
-
-        umat = con.mandel6_to_umat(inp=mandel, voigt_type="stiffness")
         print("Umat")
         print(umat)
         assert np.allclose(
