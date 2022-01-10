@@ -39,7 +39,8 @@ Note: [Develop vs. install](https://stackoverflow.com/a/19048754/8935243)
 
 ## Examples
 
-Both example notebooks and example scripts are given [here](examples/).
+Rendered example notebooks are in [the docs][url_read_the_docs_latext].
+The example notebooks and corresponding scripts can be found [here](docs/source/notebooks).
 
 ## Acknowledgment
 
