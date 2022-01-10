@@ -16,8 +16,8 @@ def get_default_factor():
 
 def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
     r"""Get orthonormal basis of Mandel6 representation introduced by
-    :cite:p:`Mandel1965`, :cite:p:`Fedorov1968`, [:cite:p:`Mehrabadi1990`]_  and
-    discussed by [Cowin1992]_.
+    :cite:p:`Mandel1965`, :cite:p:`Fedorov1968`, :cite:p:`Mehrabadi1990` and
+    discussed by :cite:p:`Cowin1992`.
 
     Base dyads:
 
@@ -145,13 +145,6 @@ def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
         - (Most) unsymmetric parts are discarded during conversion (Exception: Major symmetry of fourth order tensors). Use Mandel9 notation to represent unsymmetric tensors.
         - Components of stiffness matrix in Mandel notation differ from those in Voigt notation. See examples of VoigtConverter below.
 
-    .. rubric:: References
-
-
-    .. [Cowin1992] Cowin, S.C. and Mehrabadi, M.M., 1992.
-        The structure of the linear anisotropic elastic symmetries.
-        Journal of the Mechanics and Physics of Solids, 40(7),
-        pp.1459-1471.
 
     Returns
     -------
