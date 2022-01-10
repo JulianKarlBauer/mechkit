@@ -16,7 +16,7 @@ def get_default_factor():
 
 def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
     r"""Get orthonormal basis of Mandel6 representation introduced by
-    :cite:p:`Mandel1965`, [Fedorov1968]_, [Mehrabadi1990]_  and
+    :cite:p:`Mandel1965`, :cite:p:`Fedorov1968`, [Mehrabadi1990]_  and
     discussed by [Cowin1992]_.
 
     Base dyads:
@@ -146,9 +146,6 @@ def get_mandel_base_sym(dtype="float64", one=1.0, factor=None):
         - Components of stiffness matrix in Mandel notation differ from those in Voigt notation. See examples of VoigtConverter below.
 
     .. rubric:: References
-
-    .. [Fedorov1968] Fedorov, F.I., 1968.
-        Theory of elastic waves in crystals.
 
     .. [Mehrabadi1990] Mehrabadi, M.M. and Cowin, S.C., 1990.
         Eigentensors of linear anisotropic elastic materials.
