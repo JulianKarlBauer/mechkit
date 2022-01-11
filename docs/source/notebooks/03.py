@@ -38,7 +38,7 @@ expl_converter = mechkit.notation.ExplicitConverter()
 
 tensors = np.random.rand(
     3, 3, 3, 3, 5, 2
-)  # We have an array of tensors of dimension (5,2)
+)  # We have 5 times 2 tensors of fourth order
 
 mandel6s = expl_converter.convert(
     inp=tensors, source="tensor", target="mandel6", quantity="stiffness"
