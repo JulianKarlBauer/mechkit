@@ -1,6 +1,6 @@
 pybtex
 sphinxcontrib-bibtex
 numpydoc
+ipykernel
 nbsphinx
 sympy
-python3
