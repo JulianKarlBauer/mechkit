@@ -5,11 +5,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JulianKarlBauer/mechkit/HEAD)
 
-<!-- <p align="center">
-  <a href="https://github.com/JulianKarlBauer/?">
-  <img alt="PlanarFibers" src="logo/logo.png" width="20%">
+<p align="center">
+  <a href="https://github.com/JulianKarlBauer/mechkit">
+  <img alt="mechkit" src="logo/logo.png" width="50%">
   </a>
-</p> -->
+</p>
 
 # mechkit
 
