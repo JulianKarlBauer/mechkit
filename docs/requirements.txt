@@ -3,3 +3,4 @@ sphinxcontrib-bibtex
 numpydoc
 nbsphinx
 sympy
+python3
