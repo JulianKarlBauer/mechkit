@@ -36,8 +36,8 @@ print(converter.to_mandel9(mandel6))
 
 expl_converter = mechkit.notation.ExplicitConverter()
 
-tensors = np.random.rand(
-    3, 3, 3, 3, 5, 2
+tensors = np.ones(
+    (3, 3, 3, 3, 5, 2)
 )  # We have 5 times 2 tensors of fourth order
 
 mandel6s = expl_converter.convert(
@@ -48,3 +48,4 @@ for i in range(5):
     for j in range(2):
         print(f"Tensor at position {i}, {j} in Mandel6 notation")
         print(mandel6s[..., i, j])
+        print()
