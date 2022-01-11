@@ -6,7 +6,7 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JulianKarlBauer/mechkit/HEAD)
 
 <p align="center">
-  <a href="https://github.com/JulianKarlBauer/mechkit">
+  <a href="https://github.com/JulianKarlBauer/mechkit/blob/67f1b61afbcac739a0bf61801a81d9a9028abb56/logo/logo.png">
   <img alt="mechkit" src="logo/logo.png" width="30%">
   </a>
 </p>
