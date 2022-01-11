@@ -8,6 +8,7 @@ import numpy as np
 from mechkit.utils import Ex
 import networkx as nx
 import functools
+import sympy as sp
 
 
 def get_default_factor():
@@ -360,17 +361,16 @@ class Converter(object):
 
     """
 
-    def __init__(self, dtype="float64"):
+    def __init__(self, dtype="float64", one=1.0, factor=None):
 
         self.dtype = dtype
-        self.factor = np.sqrt(2.0) / 2.0
 
         self.DIM = 3
         self.DIM_MANDEL6 = 6
         self.DIM_MANDEL9 = 9
         self.SLICE6 = np.s_[0:6]
-        self.BASE6 = get_mandel_base_sym()
-        self.BASE9 = get_mandel_base_skw()
+        self.BASE6 = get_mandel_base_sym(dtype=dtype, one=one, factor=factor)
+        self.BASE9 = get_mandel_base_skw(dtype=dtype, one=one, factor=factor)
 
     def to_mandel6(self, inp, verbose=False):
 
@@ -468,11 +468,14 @@ class Converter(object):
         return inp
 
     def _tensor2_to_mandel(self, inp, base):
-        out = np.einsum("aij, ij ->a", base, inp)
+        # out = np.einsum("aij, ij ->a", base, inp)
+        out = np.tensordot(base, inp, axes=2)
         return out
 
     def _tensor4_to_mandel(self, inp, base):
-        out = np.einsum("aij, ijkl, bkl ->ab", base, inp, base)
+        # out = np.einsum("aij, ijkl, bkl ->ab", base, inp, base)
+        tmp = np.tensordot(base, inp, axes=2)
+        out = np.tensordot(tmp, np.einsum("bkl->klb", base), axes=2)
         return out
 
     def _tensor2_to_mandel6(self, inp):
@@ -488,11 +491,14 @@ class Converter(object):
         return self._tensor4_to_mandel(inp=inp, base=self.BASE9)
 
     def _mandel_2_to_tensor(self, inp, base):
-        out = np.einsum("ajk, a->jk", base, inp)
+        # out = np.einsum("ajk, a->jk", base, inp)
+        out = np.tensordot(inp, base, axes=1)
         return out
 
     def _mandel_4_to_tensor(self, inp, base):
-        out = np.einsum("ajk, ab, bmn->jkmn", base, inp, base)
+        # out = np.einsum("ajk, ab, bmn->jkmn", base, inp, base)
+        tmp = np.tensordot(np.einsum("ajk->jka", base), inp, axes=1)
+        out = np.tensordot(tmp, base, axes=1)
         return out
 
     def _mandel6_2_to_tensor(self, inp):
@@ -522,6 +528,13 @@ class Converter(object):
 
     def _mandel9_4_to_mandel6(self, inp):
         return inp[self.SLICE6, self.SLICE6]
+
+
+class ConverterSymbolic(Converter):
+    def __init__(self):
+        super(type(self), self).__init__(
+            dtype=sp.Symbol, one=sp.S(1), factor=sp.sqrt(2) / sp.S(2)
+        )
 
 
 class VoigtConverter(Converter):
