@@ -87,19 +87,3 @@ class StiffnessAnalyser(object):
         if normalize:
             K = K / self.K_RI
         return K
-
-
-if __name__ == "__main__":
-
-    C = np.array(
-        [
-            [18755, 6444, 4666, 0, 0, 3754],
-            [6444, 9565, 4933, 0, 0, 840],
-            [4666, 4933, 8665, 0, 0, -133],
-            [0, 0, 0, 1844, 35, 0],
-            [0, 0, 0, 35, 1915, 0],
-            [3754, 840, -133, 0, 0, 3858],
-        ]
-    )
-    v = mechkit.visualization.StiffnessAnalyser(C)
-    v.E_in_direction([1, 0, 0])
