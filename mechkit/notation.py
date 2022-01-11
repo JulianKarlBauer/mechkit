@@ -8,7 +8,10 @@ import numpy as np
 from mechkit.utils import Ex
 import networkx as nx
 import functools
-import sympy as sp
+import sys
+
+if sys.version_info > (3, 6):
+    import sympy as sp
 
 
 def get_default_factor():
@@ -530,11 +533,13 @@ class Converter(object):
         return inp[self.SLICE6, self.SLICE6]
 
 
-class ConverterSymbolic(Converter):
-    def __init__(self):
-        super(type(self), self).__init__(
-            dtype=sp.Symbol, one=sp.S(1), factor=sp.sqrt(2) / sp.S(2)
-        )
+if sys.version_info > (3, 6):
+
+    class ConverterSymbolic(Converter):
+        def __init__(self):
+            super(type(self), self).__init__(
+                dtype=sp.Symbol, one=sp.S(1), factor=sp.sqrt(2) / sp.S(2)
+            )
 
 
 class VoigtConverter(Converter):
