@@ -20,8 +20,8 @@ dependencies:
   - bleach=4.0.0=pyhd3eb1b0_0
   - brotlipy=0.7.0=py37h27cfd23_1003
   - bzip2=1.0.8=h7b6447c_0
-  - ca-certificates=2021.10.8=ha878542_0
-  - certifi=2021.10.8=py37h89c1867_1
+  - ca-certificates=2021.10.26=h06a4308_2
+  - certifi=2021.10.8=py37h06a4308_0
   - cffi=1.14.6=py37h400218f_0
   - chardet=4.0.0=py37h06a4308_1003
   - charset-normalizer=2.0.4=pyhd3eb1b0_0
@@ -43,6 +43,8 @@ dependencies:
   - future=0.18.2=py37_1
   - glib=2.69.1=h5202010_0
   - glob2=0.7=pyhd3eb1b0_0
+  - gmp=6.2.1=h2531618_2
+  - gmpy2=2.0.8=py37h10f8cd9_2
   - icu=58.2=he6710b0_3
   - idna=3.3=pyhd3eb1b0_0
   - imagesize=1.3.0=pyhd3eb1b0_0
@@ -85,6 +87,9 @@ dependencies:
   - mkl_fft=1.3.1=py37hd3c417c_0
   - mkl_random=1.2.2=py37h51133e4_0
   - more-itertools=8.12.0=pyhd3eb1b0_0
+  - mpc=1.1.0=h10f8cd9_1
+  - mpfr=4.0.2=hb69a4c5_1
+  - mpmath=1.2.1=py37h06a4308_0
   - mypy_extensions=0.4.3=py37h06a4308_1
   - nbclient=0.5.9=pyhd8ed1ab_0
   - nbconvert=6.0.7=py37_0
@@ -150,6 +155,7 @@ dependencies:
   - sphinxcontrib-qthelp=1.0.3=pyhd3eb1b0_0
   - sphinxcontrib-serializinghtml=1.1.5=pyhd3eb1b0_0
   - sqlite=3.37.0=hc218d9a_0
+  - sympy=1.9=py37h06a4308_0
   - testpath=0.5.0=pyhd8ed1ab_0
   - tk=8.6.11=h1ccaba5_0
   - toml=0.10.2=pyhd3eb1b0_0
