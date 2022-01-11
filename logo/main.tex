@@ -3,7 +3,12 @@
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usepackage{amsmath}
-\usepackage{kpfonts}
+
+% \usepackage{fontspec}
+% \setmainfont{QTHelvet-Black}
+
+\usepackage{mathptmx}
+% helvet tgheros kpfonts courier tgcursor charter bookmanbookman palatino mathptmx tgpagella
 
 \begin{document}
 \LARGE
@@ -12,7 +17,7 @@
 \tikzstyle{myrectangle}=[rectangle,draw, minimum height=\tmpdist,minimum width=\tmpdist]
 \newcommand{\tmpspacing}{\tmpdist*4/3}
 
-\newcommand{\whiterectangle}{\node[myrectangle, fill=white] (r) at (0,0) {};}
+\newcommand{\whiterectangle}{}
 \newcommand{\blackrectangle}{\node[myrectangle, fill=black] (r) at (0,0) {};}
 
 \begin{equation}
@@ -37,7 +42,8 @@
         \whiterectangle
     \end{scope}
     \begin{scope}[shift={($(5*\tmpspacing,0)$)}]
-        \blackrectangle
+        % \blackrectangle
+        \whiterectangle
     \end{scope}
     %%%%%%%%%%%%%%
     \begin{scope}[shift={($(0*\tmpspacing,-1*\tmpspacing)$)}]
@@ -56,7 +62,8 @@
         \whiterectangle
     \end{scope}
     \begin{scope}[shift={($(5*\tmpspacing,-1*\tmpspacing)$)}]
-        \blackrectangle
+        % \blackrectangle
+        \whiterectangle
     \end{scope}
     %%%%%%%%%%%%%%
     \begin{scope}[shift={($(0*\tmpspacing,-2*\tmpspacing)$)}]
@@ -98,7 +105,8 @@
     \end{scope}
     %%%%%%%%%%%%%%
     \begin{scope}[shift={($(0*\tmpspacing,-4*\tmpspacing)$)}]
-        \blackrectangle
+        % \blackrectangle
+        \whiterectangle
     \end{scope}
     \begin{scope}[shift={($(1*\tmpspacing,-4*\tmpspacing)$)}]
         \whiterectangle
@@ -117,7 +125,8 @@
     \end{scope}
     %%%%%%%%%%%%%%
     \begin{scope}[shift={($(0*\tmpspacing,-5*\tmpspacing)$)}]
-        \blackrectangle
+        % \blackrectangle
+        \whiterectangle
     \end{scope}
     \begin{scope}[shift={($(1*\tmpspacing,-5*\tmpspacing)$)}]
         \whiterectangle
@@ -139,7 +148,8 @@
     %
 \end{tikzpicture}
 }
-\right]
+\right] \nonumber
+\text{\Huge \textbf{mechkit}}
 \end{equation}
 
 \end{document}
