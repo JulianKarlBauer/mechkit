@@ -25,6 +25,7 @@ setuptools.setup(
         "networkx; python_version > '2.7'",
         "decorator == 4.3.0; python_version <= '2.7'",
         "networkx == 2.2; python_version <= '2.7'",
+        "sympy",
     ],
     classifiers=[
         "Programming Language :: Python",
