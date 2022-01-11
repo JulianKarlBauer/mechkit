@@ -4,3 +4,4 @@ numpydoc
 ipykernel
 nbsphinx
 sympy
+mechkit
