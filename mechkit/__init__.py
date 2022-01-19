@@ -7,6 +7,7 @@ if sys.version_info < (3, 0):
     import material
     import fabric_tensors
     import visualization
+    import operators
 else:
     from . import notation
     from . import tensors
@@ -14,6 +15,7 @@ else:
     from . import material
     from . import fabric_tensors
     from . import visualization
+    from . import operators
 
 # import pkg_resources
 #
