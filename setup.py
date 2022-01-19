@@ -11,7 +11,7 @@ else:
 
 setuptools.setup(
     name="mechkit",
-    version="0.3.4",
+    version="0.3.5",
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
     description="Basic continuum mechanics toolkit",
