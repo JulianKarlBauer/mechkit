@@ -356,10 +356,10 @@ class Test_UmatConverter:
 @pytest.fixture(name="tensor_min_sym")
 def create_random_tensors_with_minor_symmetries(shape_vectorized=(1,)):
     shapes_mandel6 = {
-        "stress": (6,) + shape_vectorized,
-        "strain": (6,) + shape_vectorized,
-        "stiffness": (6, 6) + shape_vectorized,
-        "compliance": (6, 6) + shape_vectorized,
+        "stress": shape_vectorized + (6,),
+        "strain": shape_vectorized + (6,),
+        "stiffness": shape_vectorized + (6, 6),
+        "compliance": shape_vectorized + (6, 6),
     }
 
     tensors = {key: np.random.rand(*shape) for key, shape in shapes_mandel6.items()}
@@ -369,10 +369,10 @@ def create_random_tensors_with_minor_symmetries(shape_vectorized=(1,)):
 @pytest.fixture(name="tensor_no_sym")
 def create_random_tensors_without_symmetry(shape_vectorized=(1,)):
     shapes = {
-        "stress": (3, 3) + shape_vectorized,
-        "strain": (3, 3) + shape_vectorized,
-        "stiffness": (3, 3, 3, 3) + shape_vectorized,
-        "compliance": (3, 3, 3, 3) + shape_vectorized,
+        "stress": shape_vectorized + (3, 3),
+        "strain": shape_vectorized + (3, 3),
+        "stiffness": shape_vectorized + (3, 3, 3, 3),
+        "compliance": shape_vectorized + (3, 3, 3, 3),
     }
 
     tensors = {key: np.random.rand(*shape) for key, shape in shapes.items()}
