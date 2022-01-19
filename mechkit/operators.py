@@ -27,12 +27,12 @@ def sym(tensor, sym_axes=None):
     return 1.0 / len(axes) * sum(tensor.transpose(axis) for axis in axes)
 
 
-def dev_of_tensor_2_order(self, tensor):
+def dev_of_tensor_2_order(tensor):
     I2 = np.eye(3, dtype="float64")
     return tensor - 1.0 / 3.0 * I2 * np.einsum("...ii->...", tensor)
 
 
-def dev_tensor_4_simple(self, tensor):
+def dev_tensor_4_simple(tensor):
     assert tensor.shape == (3, 3, 3, 3,), (
         "Requires tensor 4.order in " "tensor notation"
     )
