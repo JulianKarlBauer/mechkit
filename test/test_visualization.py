@@ -38,11 +38,10 @@ class Test_StiffnessAnalyser:
         analyzer = mechkit.visualization.StiffnessAnalyser(stiffness=mat.stiffness)
 
         shape = (2, 4)
-        if sys.version_info > (3, 0):
-            directions = np.random.rand(*shape, 3)
-        else:
-            # "*shape" is not valid Python2.x
-            directions = np.random.rand(2, 4, 3)
+        tmp_1, tmp_2 = shape
+
+        # Unpacking by "*shape" is not valid Python2.x
+        directions = np.random.rand(tmp_1, tmp_2, 3)
 
         youngs_moduli = analyzer.E_in_direction(direction=directions)
         print(youngs_moduli)
