@@ -13,9 +13,8 @@
 
 # mechkit
 
-Basic continuum mechanics toolkit.
-
-For more details please refer to [the docs][url_read_the_docs_latext].
+Continuum mechanics toolkit.  
+For more details please refer to [the docs][url_read_the_docs_latext].  
 
 Please see [license][url_license],
 [acknowledgment](#acknowledgment)
