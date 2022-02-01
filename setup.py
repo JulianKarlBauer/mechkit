@@ -2,19 +2,21 @@ import setuptools
 from os import path
 import sys
 
+description = "Continuum mechanics toolkit"
+
 if sys.version_info > (3, 0):
     this_directory = path.abspath(path.dirname(__file__))
     with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
         long_description = f.read()
 else:
-    long_description = "Basic continuum mechanics toolkit"
+    long_description = description
 
 setuptools.setup(
     name="mechkit",
     version="0.3.8",
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
-    description="Basic continuum mechanics toolkit",
+    description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/JulianKarlBauer/mechkit",
