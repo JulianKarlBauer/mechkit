@@ -30,28 +30,29 @@ class Test_StiffnessAnalyser:
         # has to be equal to E_t
         assert np.allclose(analyzer.E_in_direction(direction=[0, 0, 1]), E_t)
 
-    if sys.version_info > (3, 0):
-        # "*shape" is not valid Python2.x
+    def test_E_and_K_generalized_of_isotropic_vectorized(self):
+        E_modul = 2e3
+        K_modul = 1e3
 
-        def test_E_and_K_generalized_of_isotropic_vectorized(self):
-            E_modul = 2e3
-            K_modul = 1e3
+        mat = mechkit.material.Isotropic(E=E_modul, K=K_modul)
+        analyzer = mechkit.visualization.StiffnessAnalyser(stiffness=mat.stiffness)
 
-            mat = mechkit.material.Isotropic(E=E_modul, K=K_modul)
-            analyzer = mechkit.visualization.StiffnessAnalyser(stiffness=mat.stiffness)
-
-            shape = (2, 4)
+        shape = (2, 4)
+        if sys.version_info > (3, 0):
             directions = np.random.rand(*shape, 3)
+        else:
+            # "*shape" is not valid Python2.x
+            directions = np.random.rand(2, 4, 3)
 
-            youngs_moduli = analyzer.E_in_direction(direction=directions)
-            print(youngs_moduli)
-            assert youngs_moduli.shape == shape
-            assert np.allclose(youngs_moduli, np.ones(shape) * E_modul)
+        youngs_moduli = analyzer.E_in_direction(direction=directions)
+        print(youngs_moduli)
+        assert youngs_moduli.shape == shape
+        assert np.allclose(youngs_moduli, np.ones(shape) * E_modul)
 
-            gen_bulk_modulus = analyzer.K_in_direction(direction=directions)
-            print(gen_bulk_modulus)
-            assert gen_bulk_modulus.shape == shape
-            assert np.allclose(gen_bulk_modulus, np.ones(shape) * K_modul)
+        gen_bulk_modulus = analyzer.K_in_direction(direction=directions)
+        print(gen_bulk_modulus)
+        assert gen_bulk_modulus.shape == shape
+        assert np.allclose(gen_bulk_modulus, np.ones(shape) * K_modul)
 
 
 if __name__ == "__main__":
