@@ -6,7 +6,9 @@ import mechkit
 
 
 class StiffnessAnalyser(object):
-    """Analyse linear elastic stiffness
+    """Analyse linear elastic stiffness.
+    Vectorized calculation of Youngs- and generalized compression modulus
+    following :cite:p:`Boehlke2001`
 
     Examples
     --------
@@ -59,13 +61,26 @@ class StiffnessAnalyser(object):
     def _compliance(self):
         return self.con.to_tensor(np.linalg.inv(self.con.to_mandel6(self.stiffness)))
 
+    def _assert_direction_three_dimensional(self, direction):
+        """
+        Assert last dimension is three-dimensional vector dimension
+        """
+        assert np.array(direction).shape[-1] == 3
+
+    def _normalize_direction(self, direction):
+        return direction / np.linalg.norm(direction, axis=-1)[..., np.newaxis]
+
     def E_in_direction(self, direction, normalize=False):
         """
         Calculate Youngs modulus in specified direction
         """
-        d = direction / np.linalg.norm(direction)
+
+        self._assert_direction_three_dimensional(direction=direction)
+        # Normalize direction vector(s)
+        d = self._normalize_direction(direction=direction)
+
         S = self._compliance
-        E = 1.0 / np.einsum("i, j, ijkl, k, l -> ", d, d, S, d, d)
+        E = 1.0 / np.einsum("...i, ...j, ijkl, ...k, ...l -> ...", d, d, S, d, d)
 
         if normalize:
             E = E / self.E_RI
@@ -79,10 +94,12 @@ class StiffnessAnalyser(object):
         to uniaxial tension in the specified direction.
         """
 
-        d = direction / np.linalg.norm(direction)
+        self._assert_direction_three_dimensional(direction=direction)
+        # Normalize direction vector(s)
+        d = self._normalize_direction(direction=direction)
+
         S = self._compliance
-        I2 = mechkit.tensors.Basic().I2
-        K = 1.0 / (3.0 * np.einsum("ij, ijkl, k, l -> ", I2, S, d, d))
+        K = 1.0 / (3.0 * np.einsum("ij, ijkl, ...k, ...l -> ...", self.I2, S, d, d))
 
         if normalize:
             K = K / self.K_RI

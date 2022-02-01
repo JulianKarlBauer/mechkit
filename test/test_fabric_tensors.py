@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Run tests:
-    python3 -m pytest
-"""
 
 import numpy as np
 from pprint import pprint
