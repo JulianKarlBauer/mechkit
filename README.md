@@ -13,7 +13,9 @@
 
 # mechkit
 
-Continuum mechanics toolkit.  
+Mechkit bundles utilities and methods which frequently arise in continuum mechanics.
+Therefore, mechkit acts as a toolkit for other projects.
+See the automatically generated list of projects mechkit is used within, on the right.
 For more details please refer to [the docs][url_read_the_docs_latext].  
 
 Please see [license][url_license],
@@ -39,7 +41,7 @@ Note: [Develop vs. install](https://stackoverflow.com/a/19048754/8935243)
 ### Examples
 
 Rendered example notebooks are in [the docs][url_read_the_docs_latext].
-The example notebooks and corresponding scripts can be found [here](docs/source/notebooks).
+These notebooks and corresponding scripts can be found [here](docs/source/notebooks).
 
 ### Acknowledgment
 
