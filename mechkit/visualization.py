@@ -97,8 +97,7 @@ class StiffnessAnalyser(object):
         d = self._normalize_direction(direction=direction)
 
         S = self._compliance
-        I2 = mechkit.tensors.Basic().I2
-        K = 1.0 / (3.0 * np.einsum("ij, ijkl, ...k, ...l -> ...", I2, S, d, d))
+        K = 1.0 / (3.0 * np.einsum("ij, ijkl, ...k, ...l -> ...", self.I2, S, d, d))
 
         if normalize:
             K = K / self.K_RI
