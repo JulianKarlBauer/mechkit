@@ -6,7 +6,9 @@ import mechkit
 
 
 class StiffnessAnalyser(object):
-    """Analyse linear elastic stiffness
+    """Analyse linear elastic stiffness.
+    Vectorized calculation of Youngs- and generalized compression modulus
+    following :cite:p:`Boehlke2001`
 
     Examples
     --------
