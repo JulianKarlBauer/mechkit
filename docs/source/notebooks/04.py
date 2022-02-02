@@ -1,4 +1,4 @@
-# # Deviator Operators: Application to Fiber Orientation Tensors
+# # Operators: Deviators and Application to Fiber Orientation Tensors
 
 import mechkit
 import numpy as np
