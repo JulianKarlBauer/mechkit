@@ -8,7 +8,7 @@ tags:
   - tensor calculus
   - notation
 authors:
-  - name: Julian Karl Bauer^[corresponding author]
+  - name: Julian Karl Bauer^[co-first author]
     orcid: 0000-0002-4931-5869
     affiliation: "1" # (Multiple affiliations must be quoted)
 #  - name: Author Without ORCID^[co-first author] # note this makes a footnote saying 'co-first author'
