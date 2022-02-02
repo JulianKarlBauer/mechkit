@@ -723,7 +723,7 @@ class ExplicitConverter(object):
 
     and in addition for quantity type "stiffness":
 
-        - abaMaterialAniso
+        - abaqusMaterialAnisotropic
 
     **UMAT notation**
 
@@ -783,7 +783,7 @@ class ExplicitConverter(object):
 
     todo: add stiffness and compliance
 
-    todo: add stiffness abaMaterialAniso
+    todo: add stiffness abaqusMaterialAnisotropic
 
 
     """
@@ -903,11 +903,11 @@ class ExplicitConverter(object):
                 ("vumat", "voigt", dict(func=self._vumat_to_voigt_stiffness)),
                 (
                     "voigt",
-                    "abaMaterialAniso",
+                    "abaqusMaterialAnisotropic",
                     dict(func=self._voigt_to_abaqusMaterialElasticAnisotropic),
                 ),
                 (
-                    "abaMaterialAniso",
+                    "abaqusMaterialAnisotropic",
                     "voigt",
                     dict(func=self._abaqusMaterialElasticAnisotropic_to_voigt),
                 ),
@@ -1214,5 +1214,5 @@ class Components(np.ndarray):
     def to_vumat(self):
         return self.wrapped(self.converter.convert)(target="vumat")
 
-    def to_abaMaterialAniso(self):
-        return self.wrapped(self.converter.convert)(target="abaMaterialAniso")
+    def to_abaqusMaterialAnisotropic(self):
+        return self.wrapped(self.converter.convert)(target="abaqusMaterialAnisotropic")
