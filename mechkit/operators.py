@@ -129,12 +129,12 @@ class Sym_Fourth_Order_Special(object):
 ##########################################################################
 
 
-def dev_of_tensor_2_order(tensor):
+def dev_tensor_2nd_order(tensor):
     I2 = np.eye(3, dtype="float64")
     return tensor - 1.0 / 3.0 * I2 * np.einsum("...ii->...", tensor)
 
 
-def dev_tensor_4_simple(tensor):
+def dev_tensor_4th_order_simple(tensor):
     """
     Simple formulation taking the deviatoric part of a fourth order tensor
     """
@@ -157,11 +157,15 @@ def dev_tensor_4_simple(tensor):
 
 
 def dev(tensor, order=4):
-    """Get deviatoric part of tensors"""
+    """
+    Get deviatoric part of tensors: Wrapper for
+    `dev_tensor_2nd_order` and
+    `dev_tensor_4th_order_simple`
+    """
 
     functions = {
-        2: dev_of_tensor_2_order,
-        4: dev_tensor_4_simple,
+        2: dev_tensor_2nd_order,
+        4: dev_tensor_4th_order_simple,
     }
 
     return functions[order](tensor)
@@ -170,8 +174,7 @@ def dev(tensor, order=4):
 class Alternative_Deviator_Formulations:
     def dev_t4_kanatani1984(self, tensor):
         """
-        Ken-Ichi, K., 1984. Distribution of directional data and fabric tensors.
-        International Journal of Engineering Science, 22(2), pp.149-164.
+        Formulation in :cite:p:`Kanatani1984` limited to tensors with trace of value one
         """
         assert tensor.shape == (
             3,
@@ -196,8 +199,7 @@ class Alternative_Deviator_Formulations:
 
     def dev_t4_spencer1970(self, tensor):
         """
-        Spencer, A. J. M. (1970). A note on the decomposition of tensors into traceless
-        symmetric tensors. International Journal of Engineering Science, 8(6), 475-481.
+        Formulation in :cite:p:`Spencer1970`
         """
         assert tensor.shape == (3, 3, 3, 3,), (
             "Requires tensor 4.order in " "tensor notation"
@@ -230,17 +232,14 @@ class Alternative_Deviator_Formulations:
 
     def dev_t4_boehlke2001(self, tensor):
         """
-        Böhlke, T. (2001). Crystallographic texture evolution and elastic anisotropy:
-        Simulation, modeling, and applications. Shaker. Appendix C, (C.1, C.2, C.3, C.4)
+        Formulation in :cite:p:`Boehlke2001_diss`.
+        Appendix C, (C.1, C.2, C.3, C.4)
         """
         sym_inner = Sym_Fourth_Order_Special(label="inner")
 
-        assert tensor.shape == (
-            3,
-            3,
-            3,
-            3,
-        ), "Requires tensor 4.order tensor notation"
+        assert tensor.shape == (3, 3, 3, 3), (
+            "Requires tensor 4.order in " "tensor notation"
+        )
         assert sym_inner.check(tensor), "Requires Hooke's tensor"
 
         def _bracket_arrow(A):
