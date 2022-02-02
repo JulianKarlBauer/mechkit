@@ -29,6 +29,11 @@ def sym(tensor, sym_axes=None):
     return 1.0 / len(axes) * sum(tensor.transpose(axis) for axis in axes)
 
 
+def is_sym(tensor, sym_axes=None):
+    """Test whether `tensor` has the index symmetry specified by `sym_axes`"""
+    return np.allclose(tensor, sym(tensor, sym_axes=sym_axes))
+
+
 class Sym_Fourth_Order_Special(object):
     """
     Based on the `label` argument of the class initiation,
