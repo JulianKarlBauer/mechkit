@@ -36,16 +36,14 @@ print(converter.to_mandel9(mandel6))
 
 expl_converter = mechkit.notation.ExplicitConverter()
 
-tensors = np.ones(
-    (3, 3, 3, 3, 5, 2)
-)  # We have 5 times 2 tensors of fourth order
+tensors = np.ones((2, 5, 3, 3, 3, 3))  # We have 5 times 2 tensors of fourth order
 
 mandel6s = expl_converter.convert(
     inp=tensors, source="tensor", target="mandel6", quantity="stiffness"
 )
 
-for i in range(5):
-    for j in range(2):
+for i in range(2):
+    for j in range(5):
         print(f"Tensor at position {i}, {j} in Mandel6 notation")
-        print(mandel6s[..., i, j])
+        print(mandel6s[i, j, ...])
         print()

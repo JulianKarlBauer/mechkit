@@ -3,7 +3,6 @@
 
 import numpy as np
 import mechkit
-import sys
 
 
 class Test_StiffnessAnalyser:

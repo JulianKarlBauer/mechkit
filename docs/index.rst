@@ -18,6 +18,7 @@ mechkit
     /source/material_index
     /source/tensors
     /source/utils
+    /source/operators
     /source/visualization
 
 ----------------------------------------------
