@@ -44,7 +44,7 @@ class Sym_Fourth_Order_Special(object):
 
     def __init__(self, label=None):
 
-        self.set_permutation_lists()
+        self._set_permutation_lists()
 
         # Select the symmetrization operation
         if label is None:
@@ -66,7 +66,7 @@ class Sym_Fourth_Order_Special(object):
     def check(self, tensor, *args, **kwargs):
         return np.allclose(tensor, self.function(tensor=tensor, *args, **kwargs))
 
-    def set_permutation_lists(self):
+    def _set_permutation_lists(self):
         base_permutations = {
             "identity": (0, 1, 2, 3),
             "left": (1, 0, 2, 3),
