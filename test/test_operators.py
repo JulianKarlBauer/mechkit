@@ -144,3 +144,47 @@ def test_sym_axes_label_right(tensor4):
     print(sym_label)
 
     assert np.allclose(sym_axes, sym_label)
+
+
+####################################################################
+
+
+@pytest.fixture(name="tensors")
+def create_random_tensors_with_minor_symmetries():
+    # np.random.seed(25021991)
+
+    tensors = {
+        "hooke": mechkit.operators.Sym_Fourth_Order_Special(label="inner")(
+            np.random.rand(3, 3, 3, 3)
+        ),
+        "complete": mechkit.operators.Sym_Fourth_Order_Special(label="complete")(
+            np.random.rand(3, 3, 3, 3)
+        ),
+    }
+    return tensors
+
+
+alternatives = mechkit.operators.Alternative_Deviator_Formulations()
+
+
+class Test_Deviators:
+    def test_deviator_part_of_4_tensor_is_deviator(self, tensors):
+        for key in ["hooke", "complete"]:
+            deviator = alternatives.dev_t4_spencer1970(tensors[key])
+            # Is symmetric
+            sym = mechkit.operators.sym
+            assert np.allclose(deviator, sym(deviator))
+            # Is traceless (as it is already symmetric, one trace tested is sufficient)
+            assert np.allclose(np.einsum("ijkk->ij", deviator), np.zeros((3, 3)))
+
+    def test_deviator_part_of_4_tensor_implementations_spencer_boehlke(self, tensors):
+        for key in ["hooke", "complete"]:
+            D_spencer = alternatives.dev_t4_spencer1970(tensors[key])
+            D_boehlke = alternatives.dev_t4_boehlke2001(tensors[key])
+            assert np.allclose(D_spencer, D_boehlke)
+
+    def test_deviator_part_of_4_tensor_implementations_spencer_simple(self, tensors):
+        for key in ["hooke", "complete"]:
+            D_spencer = alternatives.dev_t4_spencer1970(tensors[key])
+            D_simple = alternatives.dev_t4_simple(tensors[key])
+            assert np.allclose(D_spencer, D_simple)

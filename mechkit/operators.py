@@ -135,8 +135,12 @@ def dev_of_tensor_2_order(tensor):
 
 
 def dev_tensor_4_simple(tensor):
+    """
+    Simple formulation taking the deviatoric part of a fourth order tensor
+    """
+
     assert tensor.shape == (3, 3, 3, 3,), (
-        "Requires tensor 4.order in " "tensor notation"
+        "Tensor of fourth order" " has to be in tensor notation"
     )
 
     tensor_4 = sym(tensor)
@@ -153,8 +157,7 @@ def dev_tensor_4_simple(tensor):
 
 
 def dev(tensor, order=4):
-    """Get deviatoric part of tensor"""
-    # todo: make sure it is tensor
+    """Get deviatoric part of tensors"""
 
     functions = {
         2: dev_of_tensor_2_order,
@@ -162,3 +165,121 @@ def dev(tensor, order=4):
     }
 
     return functions[order](tensor)
+
+
+class Alternative_Deviator_Formulations:
+    def dev_t4_kanatani1984(self, tensor):
+        """
+        Ken-Ichi, K., 1984. Distribution of directional data and fabric tensors.
+        International Journal of Engineering Science, 22(2), pp.149-164.
+        """
+        assert tensor.shape == (
+            3,
+            3,
+            3,
+            3,
+        ), "Requires tensor 4.order tensor notation"
+
+        assert is_sym(tensor), "Only valid for completely symmetric tensor"
+        assert np.isclose(
+            np.einsum("iijj->", tensor), 1.0
+        ), "Only valid for completely symmetric tensor with complete trace is one"
+
+        I2 = np.eye(3, dtype="float64")
+        dev = (
+            tensor
+            - (6.0 / 7.0)
+            * sym(np.einsum("ij, kl->ijkl", I2, np.einsum("ijll->ij", tensor)))
+            + (3.0 / 35.0) * sym(np.einsum("ij, kl->ijkl", I2, I2))
+        )
+        return dev
+
+    def dev_t4_spencer1970(self, tensor):
+        """
+        Spencer, A. J. M. (1970). A note on the decomposition of tensors into traceless
+        symmetric tensors. International Journal of Engineering Science, 8(6), 475-481.
+        """
+        assert tensor.shape == (3, 3, 3, 3,), (
+            "Requires tensor 4.order in " "tensor notation"
+        )
+
+        tensor_sym = sym(tensor)
+
+        I2 = np.eye(3, dtype="float64")
+        a2 = np.einsum("ppij->ij", tensor_sym)
+        dev = (
+            tensor_sym
+            - (1.0 / 7.0)
+            * (
+                np.einsum("kl, ij->ijkl", a2, I2)
+                + np.einsum("jl, ik->ijkl", a2, I2)
+                + np.einsum("jk, il->ijkl", a2, I2)
+                + np.einsum("il, jk->ijkl", a2, I2)
+                + np.einsum("ik, jl->ijkl", a2, I2)
+                + np.einsum("ij, kl->ijkl", a2, I2)
+            )
+            + (1.0 / 35.0)
+            * (np.einsum("qq->", a2))
+            * (
+                np.einsum("ij, kl->ijkl", I2, I2)
+                + np.einsum("ik, jl->ijkl", I2, I2)
+                + np.einsum("il, jk->ijkl", I2, I2)
+            )
+        )
+        return dev
+
+    def dev_t4_simple(self, tensor):
+        assert tensor.shape == (3, 3, 3, 3,), (
+            "Requires tensor 4.order in " "tensor notation"
+        )
+
+        tensor_4 = sym(tensor)
+        tensor_2 = np.einsum("ppij->ij", tensor_4)
+        trace = np.einsum("ii->", tensor_2)
+
+        I2 = np.eye(3, dtype="float64")
+
+        return (
+            tensor_4
+            - 6.0 / 7.0 * sym(np.multiply.outer(tensor_2, I2))
+            + 3.0 / 35.0 * sym(np.multiply.outer(I2, I2)) * trace
+        )
+
+    def dev_t4_boehlke2001(self, tensor):
+        """
+        Böhlke, T. (2001). Crystallographic texture evolution and elastic anisotropy:
+        Simulation, modeling, and applications. Shaker. Appendix C, (C.1, C.2, C.3, C.4)
+        """
+        sym_inner = Sym_Fourth_Order_Special(label="inner")
+
+        assert tensor.shape == (
+            3,
+            3,
+            3,
+            3,
+        ), "Requires tensor 4.order tensor notation"
+        assert sym_inner.check(tensor), "Requires Hooke's tensor"
+
+        def _bracket_arrow(A):
+            return A + np.einsum("ijkl->ikjl", A) + np.einsum("ijkl->ilkj", A)
+
+        def _bracket_curly(A, B):
+            return (
+                np.einsum("ij, kl->ijkl", A, B)
+                + np.einsum("ik, jl->ijkl", A, B)
+                + np.einsum("il, kj->ijkl", A, B)
+                + np.einsum("kl, ij->ijkl", A, B)
+                + np.einsum("jl, ik->ijkl", A, B)
+                + np.einsum("kj, il->ijkl", A, B)
+            )
+
+        H_hat = np.einsum("iikl->kl", tensor) + 2.0 * np.einsum("ikil->kl", tensor)
+        I2 = np.eye(3, dtype="float64")
+
+        return (
+            (1.0 / 3.0) * _bracket_arrow(tensor)
+            - (1.0 / 21.0) * _bracket_curly(A=H_hat, B=I2)
+            + (1.0 / 105.0)
+            * np.einsum("ii->", H_hat)
+            * _bracket_arrow(np.einsum("ij, kl->ijkl", I2, I2))
+        )
