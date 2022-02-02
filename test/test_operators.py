@@ -151,8 +151,6 @@ def test_sym_axes_label_right(tensor4):
 
 @pytest.fixture(name="tensors")
 def create_random_tensors_with_minor_symmetries():
-    # np.random.seed(25021991)
-
     tensors = {
         "hooke": mechkit.operators.Sym_Fourth_Order_Special(label="inner")(
             np.random.rand(3, 3, 3, 3)
