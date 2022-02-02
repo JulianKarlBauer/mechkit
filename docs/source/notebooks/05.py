@@ -16,7 +16,7 @@ def print_in_mandel9(tensor):
     print(converter.to_mandel9(tensor))
 
 
-# ## Split random tensor of fourth order tensor into completely symmetric and skew parts
+# ## Split random tensor of fourth order into completely symmetric and skew parts
 tensor = np.random.rand(3, 3, 3, 3)
 sym_part = mechkit.operators.sym(
     tensor, sym_axes=None
