@@ -13,7 +13,7 @@ else:
 
 setuptools.setup(
     name="mechkit",
-    version="0.3.8",
+    version="0.3.9",
     author="Julian Karl Bauer",
     author_email="JulianKarlBauer@gmx.de",
     description=description,
