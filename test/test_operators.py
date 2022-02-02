@@ -186,5 +186,5 @@ class Test_Deviators:
     def test_deviator_part_of_4_tensor_implementations_spencer_simple(self, tensors):
         for key in ["hooke", "complete"]:
             D_spencer = alternatives.dev_t4_spencer1970(tensors[key])
-            D_simple = alternatives.dev_t4_simple(tensors[key])
+            D_simple = mechkit.operators.dev_tensor_4_simple(tensors[key])
             assert np.allclose(D_spencer, D_simple)

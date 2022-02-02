@@ -228,23 +228,6 @@ class Alternative_Deviator_Formulations:
         )
         return dev
 
-    def dev_t4_simple(self, tensor):
-        assert tensor.shape == (3, 3, 3, 3,), (
-            "Requires tensor 4.order in " "tensor notation"
-        )
-
-        tensor_4 = sym(tensor)
-        tensor_2 = np.einsum("ppij->ij", tensor_4)
-        trace = np.einsum("ii->", tensor_2)
-
-        I2 = np.eye(3, dtype="float64")
-
-        return (
-            tensor_4
-            - 6.0 / 7.0 * sym(np.multiply.outer(tensor_2, I2))
-            + 3.0 / 35.0 * sym(np.multiply.outer(I2, I2)) * trace
-        )
-
     def dev_t4_boehlke2001(self, tensor):
         """
         Böhlke, T. (2001). Crystallographic texture evolution and elastic anisotropy:
