@@ -85,7 +85,7 @@ simplest theory, linear elasticity.
 Such a material can be described identically by two scalar material parameters.
 However, in the disciplines mentioned above, at least six different material parameters are commonly used
 and motivated by different applications and measurement methods.
-This results in 15 possible combinations of scalar descriptions of an
+This results in fifteen possible combinations of scalar descriptions of an
 isotropic material, which can be combined to a fourth-order tensor.
 For the resulting tensor, again different notations exist following
 Voigt, Kelvin-Mandel as well as interfaces of open and commercial finite element codes.
