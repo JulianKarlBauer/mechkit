@@ -8,32 +8,61 @@ from mechkit import notation
 ##########################################################################
 
 
-def sym(tensor, sym_axes=None):
+class Abstract_Operator:
+    def __call__(self, *args, **kwargs):
+        return self.function(*args, **kwargs)
+
+    def check(self, tensor, *args, **kwargs):
+        """Check whether `tensor` has the symmetry specified by Sym operator"""
+
+        return np.allclose(tensor, self.function(tensor=tensor, *args, **kwargs))
+
+
+class Sym(Abstract_Operator):
     """
-    Symmetrize selected axes of tensor.
-    If no sym_axes are specified, all axes are symmetrized
+    Based on the `axes` argument of the class initiation,
+    the returned instance act as a symmetrization function,
+    which symmetrices a given tensor with respect to the
+    specified axes.
+    If `axes` is `None`, all axes of the tensor are symmetrized
     """
-    base_axis = np.array(range(len(tensor.shape)))
 
-    sym_axes = base_axis if sym_axes is None else sym_axes
+    def __init__(self, axes=None):
+        if axes is None:
+            self.function = self._sym_all_axes
+        else:
+            self.function = self._sym_selected_axes
+            self.axes = axes
 
-    perms = itertools.permutations(sym_axes)
+    def _sym_all_axes(self, tensor):
+        permutations = list(itertools.permutations(self._get_base_axes(tensor=tensor)))
 
-    axes = list()
-    for perm in perms:
-        axis = base_axis.copy()
-        axis[sym_axes] = perm
-        axes.append(axis)
+        return self._symmetrize(tensor=tensor, permutations=permutations)
 
-    return 1.0 / len(axes) * sum(tensor.transpose(axis) for axis in axes)
+    def _sym_selected_axes(self, tensor):
+        tmp_permutations = itertools.permutations(self.axes)
+        base_axes = self._get_base_axes(tensor=tensor)
+
+        permutations = []
+        for perm in tmp_permutations:
+            axis = base_axes.copy()
+            axis[self.axes] = perm
+            permutations.append(axis)
+
+        return self._symmetrize(tensor=tensor, permutations=permutations)
+
+    def _get_base_axes(self, tensor):
+        return np.array(range(len(tensor.shape)))
+
+    def _symmetrize(self, tensor, permutations):
+        return (
+            1.0
+            / len(permutations)
+            * sum(tensor.transpose(perm) for perm in permutations)
+        )
 
 
-def is_sym(tensor, sym_axes=None):
-    """Test whether `tensor` has the index symmetry specified by `sym_axes`"""
-    return np.allclose(tensor, sym(tensor, sym_axes=sym_axes))
-
-
-class Sym_Fourth_Order_Special(object):
+class Sym_Fourth_Order_Special(Abstract_Operator):
     """
     Based on the `label` argument of the class initiation,
     the returned instance act as a symmetrization function,
@@ -58,12 +87,6 @@ class Sym_Fourth_Order_Special(object):
 
         else:
             raise utils.Ex("Please specify a valid symmetry label")
-
-    def __call__(self, *args, **kwargs):
-        return self.function(*args, **kwargs)
-
-    def check(self, tensor, *args, **kwargs):
-        return np.allclose(tensor, self.function(tensor=tensor, *args, **kwargs))
 
     def _set_permutation_lists(self):
         base_permutations = {
@@ -142,6 +165,8 @@ def dev_tensor_4th_order_simple(tensor):
         "Tensor of fourth order" " has to be in tensor notation"
     )
 
+    sym = Sym()
+
     tensor_4 = sym(tensor)
     tensor_2 = np.einsum("ppij->ij", tensor_4)
     trace = np.einsum("ii->", tensor_2)
@@ -182,10 +207,12 @@ class Alternative_Deviator_Formulations:
             3,
         ), "Requires tensor 4.order tensor notation"
 
-        assert is_sym(tensor), "Only valid for completely symmetric tensor"
+        assert Sym().check(tensor), "Only valid for completely symmetric tensor"
         assert np.isclose(
             np.einsum("iijj->", tensor), 1.0
         ), "Only valid for completely symmetric tensor with complete trace is one"
+
+        sym = Sym()
 
         I2 = np.eye(3, dtype="float64")
         dev = (
@@ -204,7 +231,7 @@ class Alternative_Deviator_Formulations:
             "Requires tensor 4.order in " "tensor notation"
         )
 
-        tensor_sym = sym(tensor)
+        tensor_sym = Sym()(tensor)
 
         I2 = np.eye(3, dtype="float64")
         a2 = np.einsum("ppij->ij", tensor_sym)
