@@ -69,7 +69,7 @@ the reliability of the implementations.
 The main goal of the project `mechkit` is the reuse of research code,
 to increase the reliability of the research results and
 accelerate and simplify further research.
-Mechkit is inspired by [@fiberoripy] and the projects of the author of [@meshio].
+Mechkit is inspired by [@fiberoripy] and the projects of the author of [@meshio]
 and is used, besides numerous closed-source projects, in
 [@mechmean].
 
