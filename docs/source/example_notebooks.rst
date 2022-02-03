@@ -10,5 +10,6 @@ Example Notebooks
    notebooks/03
    notebooks/04
    notebooks/05
+   notebooks/06
 
 
