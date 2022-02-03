@@ -9,7 +9,7 @@ tags:
   - fiber orientation tensors
   - notation
 authors:
-  - name: Julian Karl Bauer^[co-first author]
+  - name: Julian Karl Bauer^[corresponding author]
     orcid: 0000-0002-4931-5869
     affiliation: "1" # (Multiple affiliations must be quoted)
 #  - name: Author Without ORCID^[co-first author] # note this makes a footnote saying 'co-first author'
@@ -36,7 +36,6 @@ that simplify common tasks, especially in the area of tensor algebra and notatio
 
 Deformations and stresses in solids in our three dimensional world are
 usually described in the context of engineering applications by second order tensors.
-
 As linear mappings between the observed deformations and possibly causal stresses,
 fourth level tensors have a special task in the field of linear elasticity.
 Tensors of second- and fourth-order tensors are the primary field of application
@@ -70,7 +69,6 @@ the reliability of the implementations.
 The main goal of the project `mechkit` is the reuse of research code,
 to increase the reliability of the research results and
 accelerate and simplify further research.
-
 Mechkit is inspired by [@fiberoripy] and the projects of the author of [@meshio].
 and is used, besides numerous closed-source projects, in
 [@mechmean].
@@ -81,7 +79,6 @@ In the overlapping area of theoretical continuum mechanics, experimental
 material modeling
 and the numerical solution methods for boundary value problems
 a multitude of different notations exists.
-
 As an example, consider the description of the mechanical properties of a
 homogeneous and isotropic, i.e. direction-independent, material within the framework of the
 simplest theory, linear elasticity.
@@ -95,7 +92,6 @@ Voigt, Kelvin-Mandel as well as interfaces of open and commercial finite element
 
 Mechkit" allows an easy exchange between the mentioned notations with user-friendly
 interfaces and thus helps to avoid errors.
-
 Since the necessary number of translation functions between different notations
 increases drastically with increasing number of notations,
 translation between all notation might not be practical.
@@ -103,13 +99,13 @@ For the case of notations of second- and fourth-order tensors,
 the shortest path between source and target notation is determined
 in the graph of supported notations, see \autoref{fig:stiffness_graph}.
 
-![Currently supported notations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](stiffness_graph.png){ width=20% }
+![Currently supported notations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](stiffness_graph.png){ width=60% }
 
 
 # Acknowledgements
 
 We acknowledge support from
-
+<?insert here after contacted?>
 during the genesis of this project.
 We acknowledge contributions from Lisa Latussek.
 
