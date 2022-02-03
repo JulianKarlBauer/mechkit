@@ -5,7 +5,8 @@ tags:
   - mechanics
   - continuum-mechanics
   - mechanics-of-materials
-  - tensor calculus
+  - linear elasticity
+  - fiber orientation tensors
   - notation
 authors:
   - name: Julian Karl Bauer^[co-first author]
@@ -40,8 +41,12 @@ As linear mappings between the observed deformations and possibly causal stresse
 fourth level tensors have a special task in the field of linear elasticity.
 Tensors of second- and fourth-order tensors are the primary field of application
 for the methods in `mechkit` and are motivated by research in the areas of
-linear elasticity and the description of microstructures of fiber reinforced
-composite materials [@Bauer2021].
+linear elasticity
+[@Bertram2015], [@Mandel1965], [@Fedorov1968], [@Mehrabadi1990],
+[@Cowin1992], [@Rychlewski2000], [@Spencer1970], [@Boehlke2001], [@Brannon2018]
+and the description of microstructures of fiber reinforced
+composite materials
+[@Bauer2021], [@Kanatani1984], [@Advani1987].
 
 The implementations aim at simplicity in use as well as understandable source code
 and do not put primary emphasis on performance.
