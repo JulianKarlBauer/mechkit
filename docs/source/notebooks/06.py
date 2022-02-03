@@ -3,8 +3,6 @@
 import mechkit
 import networkx as nx
 import matplotlib.pyplot as plt
-import os
-
 
 plot_options = dict(
     node_color="yellow",
@@ -26,7 +24,3 @@ for entity_type, graph in converter.graphs_dict.items():
     plt.gca().set_title(entity_type)
     plt.tight_layout()
 
-    # path_picture = os.path.join(entity_type + ".png")
-    # plt.savefig(path_picture, dpi=300)
-
-    # plt.close(fig)
