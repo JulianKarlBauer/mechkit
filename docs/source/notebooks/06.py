@@ -1,4 +1,4 @@
-# # Draw Supported Notations of Explicit Converter
+# # Notation: Draw Supported Notations of Explicit Converter
 
 import mechkit
 import networkx as nx
