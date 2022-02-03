@@ -18,9 +18,8 @@ def print_in_mandel9(tensor):
 
 # ## Split random tensor of fourth order into completely symmetric and skew parts
 tensor = np.random.rand(3, 3, 3, 3)
-sym_part = mechkit.operators.sym(
-    tensor, sym_axes=None
-)  # by default all axes are symmetrized
+sym_operator = mechkit.operators.Sym(axes=None)  # by default all axes are symmetrized
+sym_part = sym_operator(tensor)
 skew_part = tensor - sym_part
 
 print("tensor=")
