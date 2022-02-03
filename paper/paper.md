@@ -41,7 +41,7 @@ fourth level tensors have a special task in the field of linear elasticity.
 Tensors of second- and fourth-order tensors are the primary field of application
 for the methods in `mechkit` and are motivated by research in the areas of
 linear elasticity
-[@Bertram2015], [@Mandel1965], [@Fedorov1968], [@Mehrabadi1990],
+[@Bertram2015], [@Mandel1965], [@Fedorov1968], [@Mehrabadi1990], [@Thomson1856],
 [@Cowin1992], [@Rychlewski2000], [@Spencer1970], [@Boehlke2001], [@Brannon2018]
 and the description of microstructures of fiber reinforced
 composite materials
