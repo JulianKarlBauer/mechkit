@@ -28,132 +28,77 @@ bibliography: paper.bib
 
 # Summary
 
-Das Python package `mechkit` ist eine Werkzeugkiste für Forscher
-im Bereich Continuums Mechanik und Materialmodellierung.
-`Mechkit` beinhaltet Methoden und Operatoren,
-die häufig auftretende Aufgaben, insbesondere im Bereich Tensoralgebra und Notation,
-vereinfachen.
+The Python package `mechkit` is a toolkit for researchers
+in the field of continuum mechanics and material modeling.
+`Mechkit` contains methods and operators
+that simplify common tasks, especially in the area of tensor algebra and notation.
 
-Deformationen und Spannungen in Festkörpern unserer dreidimensionalen Welt werden
-im Rahmen ingeniersmäßiger Anwendungen üblicherweise durch Tensoren zweiter Stufe beschrieben.
+Deformations and stresses in solids in our three dimensional world are
+usually described in the context of engineering applications by second order tensors.
 
-Als lineare Abbildungen zwischen den beobachteten Deformationen und ggf. ursächlichen Spannungen,
-wird Tensoren vierter Stufe eine besondere Aufgabe im Bereich der linearen Elastizität zuteil.
-Eine zentrale Implementierung der
-Tensoren zweiter und vierter Stufe sind das primäre Anwendungsfeld für die Methoden in `mechkit`
-und sind motiviert durch Forschung in den Bereichen
-linearer Elastizität und der Beschreibung von Mikrostrukturen faserverstärkter
-Compositwerkstoffe.
+As linear mappings between the observed deformations and possibly causal stresses,
+fourth level tensors have a special task in the field of linear elasticity.
+Tensors of second- and fourth-order tensors are the primary field of application
+for the methods in `mechkit` and are motivated by research in the areas of
+linear elasticity and the description of microstructures of fiber reinforced
+composite materials [@Bauer2021].
 
-
-Die Implementierungen zielen auf Einfachheit in der Anwendung sowie verständlichen Quellcode ab
-und legen keinen primären Wert auf Performance.
-Desweiteren folgen die Implementierungen möglichst direkt der Notation und Formulierung
-der Formeln in den wissenschaftlichen Quellen.
-Eine redundante Implementierung identischer Operationen basierend auf verschiedenen
-Quellen wird angestrebt.
-
+The implementations aim at simplicity in use as well as understandable source code
+and do not put primary emphasis on performance.
+Furthermore the implementations follow, as directly as possible,
+the notation and formulation of the formulas in the scientific sources.
+A redundant implementation of identical operations based on different
+sources is strived for.
 
 
 # Statement of need
 
-Die im Bereich der linearen Elastizität und Materialmodellierung auftretenden Methoden und Operatoren sind
-vergleichsweise einfach und kompakt.
-Aufgrund dieser Einfachheit werden sie üblicherweise bereits im Studium oder zu Beginn
-einer weiterführenden wissenschaftlchen Ausbildung von jedem Wissenschaftler separat
-implementiert und finden keinen Eingang in allgemeinere Bibliotheken z.B. aus dem Bereich der Physik.
-Abgesehen von didaktischen Vorteilen, verursacht dieses Vorgehen Probleme
-beim Austausch von Forschungscode und
-der Zuverlässigkeit der Implementierungen.
+The methods and operators occurring in the field of linear elasticity and material modeling are
+comparatively simple and compact.
+Due to this simplicity, they are usually implemented independently by each scientist
+during the studies or at the beginning of a further scientific education
+do not find their way into more general libraries which are common, e.g., in the field of physics.
+Apart from didactic advantages, this procedure causes problems for
+the exchange of research code and
+the reliability of the implementations.
 
-Das Hauptziel des Projektes `mechkit` ist die Wiederverwendung von Forschungscode,
-um die Zuverlässigkeit der Forschungsergebnisse zu erhöhen und
-die weitere Forschung zu beschleunigen und zu vereinfachen.
+The main goal of the project `mechkit` is the reuse of research code,
+to increase the reliability of the research results and
+accelerate and simplify further research.
 
-Im Überlappungsbereich der theoretischen Continuums Mechanik, der experimenteleln
-Materialmodellierung
-und der numerischen Lösungsmethoden für Randwertprobleme
-besteht eine Vielzahl unterschiedlicher Notationen.
-
-### Beispiel: Notationen Isotropes Material
-
-Als Beispiel sei die Beschreibung der mechanischen Eigenschaften eines
-homognene und isotropen, d.h. richtungsunabhängigen, Materials im Rahmen der
-einfachsten Theorie, der linearen Elastizität, skizziert.
-Ein solches Material kann durch zwei skalare Materialparameter identisch beschrieben werden.
-In den oben genannten Disziplinen sind jedoch mindestens sechs verschiedene Materialparameter üblich
-und durch verschiedene Anwendungen und Messverfahren motiviert.
-Dadurch ergeben sich 15 mögliche Kombinationen von skalaren Beschreibungen eines
-isotropen Materials, welche zu einem Tensor vierter Stufe kombiniert werden können.
-Für den resultierenden Tensor existieren wiederum verschiedene Notationen nach
-Voigt, Kelvin-Mandel und offene und kommerzielle Finite-Elemente-Codes.
-
-`Mechkit` ermöglicht eine einfache Überführung zwischen den genanten Notationen
-mit anwendungsfreundlichen Schnittstellen und hilft dadurch Fehler zu vermeiden.
-
-`Mechkit` is inspiriert von [@fiberoripy] sowie den Projekten des Autors von [@meshio]
-und findet neben zahlreichen closed-source Projekten, Verwendung in
+Mechkit is inspired by [@fiberoripy] and the projects of the author of [@meshio].
+and is used, besides numerous closed-source projects, in
 [@mechmean].
 
+## Motivation by example: Isotropic material and notations
 
-<!-- `Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
-enables wrapping low-level languages (e.g., C) for speed without losing
-flexibility or ease-of-use in the user-interface. The API for `Gala` was
-designed to provide a class-based and user-friendly interface to fast (C or
-Cython-optimized) implementations of common operations such as gravitational
-potential and force evaluation, orbit integration, dynamical transformations,
-and chaos indicators for nonlinear dynamics. `Gala` also relies heavily on and
-interfaces well with the implementations of physical units and astronomical
-coordinate systems in the `Astropy` package [@astropy] (`astropy.units` and
-`astropy.coordinates`).
+In the overlapping area of theoretical continuum mechanics, experimental
+material modeling
+and the numerical solution methods for boundary value problems
+a multitude of different notations exists.
 
-`Gala` was designed to be used by both astronomical researchers and by
-students in courses on gravitational dynamics or astronomy. It has already been
-used in a number of scientific publications [@Pearson:2017] and has also been
-used in graduate courses on Galactic dynamics to, e.g., provide interactive
-visualizations of textbook material [@Binney:2008]. The combination of speed,
-design, and support for Astropy functionality in `Gala` will enable exciting
-scientific explorations of forthcoming data releases from the *Gaia* mission
-[@gaia] by students and experts alike. -->
+As an example, consider the description of the mechanical properties of a
+homogeneous and isotropic, i.e. direction-independent, material within the framework of the
+simplest theory, linear elasticity.
+Such a material can be described identically by two scalar material parameters.
+However, in the disciplines mentioned above, at least six different material parameters are commonly used
+and motivated by different applications and measurement methods.
+This results in 15 possible combinations of scalar descriptions of an
+isotropic material, which can be combined to a fourth-order tensor.
+For the resulting tensor, again different notations exist following
+Voigt, Kelvin-Mandel as well as interfaces of open and commercial finite element codes.
 
-# Structure
+Mechkit" allows an easy exchange between the mentioned notations with user-friendly
+interfaces and thus helps to avoid errors.
 
-<!-- # Mathematics
+Since the necessary number of translation functions between different notations
+increases drastically with increasing number of notations,
+translation between all notation might not be practical.
+For the case of notations of second- and fourth-order tensors,
+the shortest path between source and target notation is determined
+in the graph of supported notations, see \autoref{fig:stiffness_graph}.
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
-
-Double dollars make self-standing equations:
-
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
-
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
-\end{equation}
-and refer to \autoref{eq:fourier} from text. -->
-
-<!-- # Citations
-
-Citations to entries in paper.bib should be in
-[rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
-
-If you want to cite a software repository URL (e.g. something on GitHub without a preferred
-citation) then you can do it with the example BibTeX entry below for @fidgit.
-
-For a quick reference, the following citation commands can be used:
-- `@author:2001`  ->  "Author et al. (2001)"
-- `[@author:2001]` -> "(Author et al., 2001)"
-- `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)"
-
-# Figures
-
-Figures can be included like this:
-![Caption for example figure.\label{fig:example}](figure.png){ width=20% }
-and referenced from text using \autoref{fig:example}. -->
+![Currently supported notations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](stiffness_graph.png){ width=20% }
 
 
 # Acknowledgements
