@@ -4,7 +4,6 @@ import numpy as np
 import itertools
 from mechkit import utils
 from mechkit import notation
-import functools
 
 ##########################################################################
 
@@ -38,7 +37,7 @@ class Sym_Fourth_Order_Special(object):
     """
     Based on the `label` argument of the class initiation,
     the returned instance act as a symmetrization function,
-    which symmetrices a given tensor with respect of the
+    which symmetrices a given tensor with respect to the
     selected symmetry, following :cite:p:`Rychlewski2000`.
     """
 
