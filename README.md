@@ -1,4 +1,4 @@
-[![PyPI version](https://badge.fury.io/py/mechkit.svg)](https://pypi.org/project/mechkit/)
+[![PyPI version](https://badge.fury.io/py/mechkit.svg)][url_pypi_mechkit]
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3898703.svg)][url_latest_doi]
 [![Documentation status](https://readthedocs.org/projects/mechkit/badge/?version=latest)][url_read_the_docs_latext]
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -23,11 +23,15 @@ Please see [license][url_license],
 and cite the latest [Zenodo-DOI][url_latest_doi].
 
 
-### Installation
+### Installation [![PyPI version](https://badge.fury.io/py/mechkit.svg)][url_pypi_mechkit]
 
-[![PyPI version](https://badge.fury.io/py/mechkit.svg)](https://pypi.org/project/mechkit/)
+Install with `pip` following instructions on [Python Package Index][url_pypi_mechkit], i.e.,
 
-or install without `pip`
+```bash 
+pip install mechkit
+```
+
+**or** install from local files
 
 - [Clone][url_how_to_clone] this repository to your machine
 - Open a terminal and navigate to your local clone
@@ -60,7 +64,7 @@ The support by the [German Research Foundation (DFG)][dfg_website] is gratefully
 [url_env_conda]: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
 [url_read_the_docs_latext]: http://mechkit.readthedocs.io/?badge=latest
-
+[url_pypi_mechkit]: https://pypi.org/project/mechkit/
 
 
 
