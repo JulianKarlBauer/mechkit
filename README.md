@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/JulianKarlBauer/mechkit/blob/67f1b61afbcac739a0bf61801a81d9a9028abb56/logo/logo.png">
-  <img alt="mechkit" src="logo/logo.png" width="60%">
+  <img alt="mechkit" src="logo/logo.png" width="50%">
   </a>
 </p>
 
