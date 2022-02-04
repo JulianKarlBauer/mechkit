@@ -13,8 +13,8 @@ all: $(NOTEBOOKFILES)
 
 # Define a rule which is applied if a notebook file is required
 %.ipynb: %.py
-	p2j -o $<
-	# jupytext --to notebook $<
+	# p2j -o $<
+	jupytext --to notebook $<
 	jupyter nbconvert --execute --to notebook --inplace $@
 
 

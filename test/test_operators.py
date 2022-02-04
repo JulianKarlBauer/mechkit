@@ -6,6 +6,7 @@ import pprint
 import mechkit
 from mechkit.operators import Sym_Fourth_Order_Special
 import pytest
+import itertools
 
 con = mechkit.notation.Converter()
 
@@ -69,6 +70,18 @@ def has_sym_inner(A):
                     assert np.isclose(A[iii, jjj, kkk, lll], A[kkk, lll, iii, jjj])
 
 
+def has_sym_complete(A):
+    for iii in range(3):
+        for jjj in range(3):
+            for kkk in range(3):
+                for lll in range(3):
+                    print(iii, jjj, kkk, lll)
+                    assert np.isclose(A[iii, jjj, kkk, lll], A[jjj, iii, kkk, lll])
+                    assert np.isclose(A[iii, jjj, kkk, lll], A[iii, jjj, lll, kkk])
+                    assert np.isclose(A[iii, jjj, kkk, lll], A[kkk, lll, iii, jjj])
+                    assert np.isclose(A[iii, jjj, kkk, lll], A[lll, kkk, jjj, iii])
+
+
 class Test_Sym_Fourth_Order_Special:
     def test_check_sym_by_loop_left(self, tensor4):
         t_sym = Sym_Fourth_Order_Special(label="left")(tensor4)
@@ -101,6 +114,37 @@ class Test_Sym_Fourth_Order_Special:
         has_sym_inner(t_sym)
 
 
+def test_check_sym_by_loop_complete(tensor4):
+    t_sym = mechkit.operators.Sym()(tensor4)
+    pprint.pprint(con.to_mandel9(t_sym))
+    has_sym_complete(t_sym)
+
+
+def test_check_sym_by_loop_alternative_implementation(tensor4):
+    t_sym = mechkit.operators.Sym()(tensor4)
+
+    def sym(tensor, sym_axes=None):
+        """
+        Symmetrize selected axes of tensor.
+        If no sym_axes are specified, all axes are symmetrized
+        """
+        base_axis = np.array(range(len(tensor.shape)))
+
+        sym_axes = base_axis if sym_axes is None else sym_axes
+
+        perms = itertools.permutations(sym_axes)
+
+        axes = list()
+        for perm in perms:
+            axis = base_axis.copy()
+            axis[sym_axes] = perm
+            axes.append(axis)
+
+        return 1.0 / len(axes) * sum(tensor.transpose(axis) for axis in axes)
+
+    np.allclose(sym(tensor4), t_sym)
+
+
 def test_compare_sym_inner_inner_mandel(tensor4):
     t_sym_inner = Sym_Fourth_Order_Special(label="inner")(tensor4)
     t_sym_inner_mandel = Sym_Fourth_Order_Special(label="inner_mandel")(tensor4)
@@ -126,7 +170,7 @@ def test_sym_minor_mandel(tensor4):
 
 def test_sym_axes_label_left(tensor4):
     """Two implementation should do the same job"""
-    sym_axes = mechkit.operators.sym(tensor4, sym_axes=[0, 1])
+    sym_axes = mechkit.operators.Sym(axes=[0, 1])(tensor4)
     sym_label = Sym_Fourth_Order_Special(label="left")(tensor4)
 
     print(sym_axes)
@@ -137,7 +181,7 @@ def test_sym_axes_label_left(tensor4):
 
 def test_sym_axes_label_right(tensor4):
     """Two implementation should do the same job"""
-    sym_axes = mechkit.operators.sym(tensor4, sym_axes=[2, 3])
+    sym_axes = mechkit.operators.Sym(axes=[2, 3])(tensor4)
     sym_label = Sym_Fourth_Order_Special(label="right")(tensor4)
 
     print(sym_axes)
@@ -170,7 +214,7 @@ class Test_Deviators:
         for key in ["hooke", "complete"]:
             deviator = alternatives.dev_t4_spencer1970(tensors[key])
             # Is symmetric
-            sym = mechkit.operators.sym
+            sym = mechkit.operators.Sym()
             assert np.allclose(deviator, sym(deviator))
             # Is traceless (as it is already symmetric, one trace tested is sufficient)
             assert np.allclose(np.einsum("ijkk->ij", deviator), np.zeros((3, 3)))
