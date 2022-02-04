@@ -782,6 +782,28 @@ class ExplicitConverter(object):
            \end{bmatrix}.
         \end{align*}
 
+
+    Examples
+    --------
+
+    >>> import mechkit
+    >>> import numpy as np
+    >>> expl_converter = mechkit.notation.ExplicitConverter()
+
+    >>> ones_4_mandel = expl_converter.convert(
+        inp=np.ones((3, 3, 3, 3)),
+        source="tensor",
+        target="mandel6",
+        quantity="stiffness",
+        )
+    [[1.   1.   1.   1.41 1.41 1.41]
+     [1.   1.   1.   1.41 1.41 1.41]
+     [1.   1.   1.   1.41 1.41 1.41]
+     [1.41 1.41 1.41 2.   2.   2.  ]
+     [1.41 1.41 1.41 2.   2.   2.  ]
+     [1.41 1.41 1.41 2.   2.   2.  ]]
+
+
     todo: add stiffness and compliance
 
     todo: add stiffness abaqusMaterialAnisotropic
