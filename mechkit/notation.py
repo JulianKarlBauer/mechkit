@@ -565,6 +565,7 @@ class VoigtConverter(Converter):
         treated as representations in Mandel6 notation, when passed
         to methods not including "voigt" in the method name.
 
+
     Component order is defined as
 
     .. math::
