@@ -60,8 +60,3 @@ The support by the [German Research Foundation (DFG)][dfg_website] is gratefully
 [url_env_conda]: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
 [url_read_the_docs_latext]: http://mechkit.readthedocs.io/?badge=latest
-
-
-
-
-
