@@ -150,7 +150,7 @@ todo_include_todos = True
 # a list of builtin themes.
 html_theme = "sphinx_rtd_theme"  # 'alabaster'
 
-html_logo = "source/logo.png"
+html_logo = "source/images/logo/logo.png"
 html_theme_options = {
     'logo_only': True,
     'display_version': False,
