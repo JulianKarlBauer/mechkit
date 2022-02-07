@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/JulianKarlBauer/mechkit/blob/67f1b61afbcac739a0bf61801a81d9a9028abb56/logo/logo.png">
-  <img alt="mechkit" src="logo/logo.png" width="30%">
+  <img alt="mechkit" src="docs/source/images/logo/logo.png" width="50%">
   </a>
 </p>
 
@@ -15,7 +15,7 @@
 
 Mechkit bundles utilities and methods which frequently arise in continuum mechanics.
 Therefore, mechkit acts as a toolkit for other projects.
-See the automatically generated list of projects mechkit is used within, on the right.
+
 For more details please refer to [the docs][url_read_the_docs_latext].  
 
 Please see [license][url_license],
@@ -27,7 +27,7 @@ and cite the latest [Zenodo-DOI][url_latest_doi].
 
 Install with `pip` following instructions on [Python Package Index][url_pypi_mechkit], i.e.,
 
-```bash 
+```bash
 pip install mechkit
 ```
 
