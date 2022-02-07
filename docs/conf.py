@@ -58,8 +58,8 @@ extensions = [
     "sphinxcontrib.bibtex",
 ]
 
-bibtex_bibfiles = ['source/biblio.bib']
-bibtex_default_style = 'plain'
+bibtex_bibfiles = ["source/biblio.bib"]
+bibtex_default_style = "plain"
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -152,8 +152,8 @@ html_theme = "sphinx_rtd_theme"  # 'alabaster'
 
 html_logo = "source/images/logo/logo.png"
 html_theme_options = {
-    'logo_only': True,
-    'display_version': False,
+    "logo_only": True,
+    "display_version": False,
 }
 
 # Theme options are theme-specific and customize the look and feel of a theme
