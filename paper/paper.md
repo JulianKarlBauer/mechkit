@@ -39,7 +39,7 @@ In the context of engineering applications within three spatial dimensions, defo
 usually described by second-order tensors.
 As linear mappings between observed deformations and possibly causal stresses,
 fourth-order tensors have a special task in the field of linear elasticity.
-To this end, the methods in `mechkit` are primarily focussed on second and fourth order tensors. Main motivations can thus be found in the research in
+To this end, the methods in `mechkit` are primarily focussed on second- and fourth-order tensors. Main motivations can thus be found in the research in
 linear elasticity
 [@Bertram2015], [@Mandel1965], [@Fedorov1968], [@Mehrabadi1990], [@Thomson1856],
 [@Cowin1992], [@Rychlewski2000], [@Spencer1970], [@Boehlke2001], [@Brannon2018]
