@@ -47,7 +47,7 @@ and the description of microstructures of fiber reinforced
 composite materials
 [@Bauer2021], [@Kanatani1984], [@Advani1987].
 
-The implementations in `mechkit` aim at usability and seek to provide understandable source code
+The implementations in `mechkit` aim at usability, seek to provide understandable source code
 and do not put major emphasis on performance.
 Furthermore, the implementations follow, as directly as possible,
 the notation and formulation in the respective scientific sources.
@@ -69,13 +69,7 @@ the reliability of the implementations.
 The main goal of the project `mechkit` is the reuse of research code,
 to increase the reliability of the research results and
 accelerate and simplify further research.
-<<<<<<< HEAD
 `Mechkit` is inspired by [@fiberoripy] and the projects of the author of [@meshio].
-=======
-Mechkit is inspired by [@fiberoripy] and the projects of the author of [@meshio]
->>>>>>> 8cbb37baff279207d0de895657e95324a94c149a
-and is used, besides numerous closed-source projects, in
-[@mechmean].
 
 ## Motivation by example: Isotropic material and notations
 
