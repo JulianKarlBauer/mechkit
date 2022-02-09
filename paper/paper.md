@@ -89,7 +89,7 @@ Such a material can be described identically by two scalar material parameters.
 However, in the disciplines mentioned above, at least six different material parameters are commonly used
 and motivated by different applications and measurement methods.
 This results in fifteen possible combinations of scalar descriptions of an
-isotropic material, which can be combined to a fourth order elasticity tensor.
+isotropic material, which can be combined to a fourth-order elasticity tensor.
 For this tensor, again, different notations exist. They either follow the
 Voigt or Kelvin-Mandel notation or take account of the interfaces between open and commercial finite element codes.
 
