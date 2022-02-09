@@ -98,7 +98,7 @@ interfaces and thus helps to avoid errors.
 Since the necessary number of translation functions between different notations
 increases drastically with increasing number of notations,
 translation between all notations might not be practical.
-For the case of notations of second and fourth order tensors,
+For the case of notations of second- and fourth-order tensors,
 the shortest path between source and target notation is determined by
 the graph of supported notations, see \autoref{fig:stiffness_graph}.
 
