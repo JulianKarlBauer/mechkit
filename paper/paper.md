@@ -36,7 +36,7 @@ in the field of continuum mechanics and material modeling.
 that simplify common tasks - especially in the area of tensor algebra and tensor notation.
 
 In the context of engineering applications accounting for three spatial dimensions, deformations and stresses in solids are
-usually described by second order tensors.
+usually described by second-order tensors.
 As linear mappings between observed deformations and possibly causal stresses,
 fourth-order tensors have a special task in the field of linear elasticity.
 To this end, the methods in `mechkit` are primarily focussed on second and fourth order tensors. Main motivations can thus be found in the research in
