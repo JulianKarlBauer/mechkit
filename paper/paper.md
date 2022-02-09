@@ -102,7 +102,7 @@ For the case of notations of second- and fourth-order tensors,
 the shortest path between source and target notation is determined by
 the graph of supported notations, see \autoref{fig:stiffness_graph}.
 
-![Currently supported notations of fourth order stiffness tensors.\label{fig:stiffness_graph}](stiffness_graph.png){ width=60% }
+![Currently supported notations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](stiffness_graph.png){ width=60% }
 
 
 # Acknowledgements
