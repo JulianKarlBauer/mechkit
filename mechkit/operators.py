@@ -190,6 +190,20 @@ def dev(tensor, order=4):
     `dev_tensor_2nd_order` and
     `dev_tensor_4th_order_simple`
     """
+    if order == 2:
+        assert tensor.shape == (
+            3,
+            3,
+        )
+    elif order == 4:
+        assert tensor.shape == (
+            3,
+            3,
+            3,
+            3,
+        )
+    else:
+        raise utils.MechkitException('Implemented tensor orders are 2 and 4')
 
     functions = {
         2: dev_tensor_2nd_order,
