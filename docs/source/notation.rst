@@ -9,12 +9,12 @@ notation
 
     .. :show-inheritance:
 
-.. autoclass:: mechkit.notation.VoigtConverter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
-    :exclude-members: mandel6_to_voigt, voigt_to_mandel6
+.. .. autoclass:: mechkit.notation.VoigtConverter
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
+..     :noindex:
+..     :exclude-members: mandel6_to_voigt, voigt_to_mandel6
 
 
 .. autoclass:: mechkit.notation.ExplicitConverter
