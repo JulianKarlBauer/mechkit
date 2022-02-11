@@ -726,6 +726,36 @@ class ExplicitConverter(object):
 
         - abaqusMaterialAnisotropic
 
+
+    **Voigt notation**
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{\sigma}^{\text{Voigt}}
+            =
+            \begin{bmatrix}
+                \sigma_{\text{11}}  \\
+                \sigma_{\text{22}}  \\
+                \sigma_{\text{33}}  \\
+                \sigma_{\text{23}}  \\
+                \sigma_{\text{13}}  \\
+                \sigma_{\text{12}}  \\
+            \end{bmatrix}
+            &\quad
+           \boldsymbol{\varepsilon}^{\text{Voigt}}
+           =
+           \begin{bmatrix}
+                \varepsilon_{\text{11}}  \\
+                \varepsilon_{\text{22}}  \\
+                \varepsilon_{\text{33}}  \\
+                2\varepsilon_{\text{23}}  \\
+                2\varepsilon_{\text{13}}  \\
+                2\varepsilon_{\text{12}}  \\
+           \end{bmatrix}.
+        \end{align*}
+
+    todo: add representations of stiffness- and compliance- matrix in Voigt notation
+
     **UMAT notation**
 
     .. math::
