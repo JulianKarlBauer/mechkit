@@ -753,7 +753,7 @@ class ExplicitConverter(object):
            \end{bmatrix}.
         \end{align*}
 
-    todo: add stiffness and compliance
+    todo: add representations of stiffness- and compliance- matrix in UMAT notation
 
     **VUMAT notation**
 
@@ -783,6 +783,9 @@ class ExplicitConverter(object):
         \end{align*}
 
 
+    todo: add representations of stiffness- and compliance- matrix in VUMAT notation
+
+
     Examples
     --------
 
@@ -803,8 +806,6 @@ class ExplicitConverter(object):
      [1.41 1.41 1.41 2.   2.   2.  ]
      [1.41 1.41 1.41 2.   2.   2.  ]]
 
-
-    todo: add stiffness and compliance
 
     todo: add stiffness abaqusMaterialAnisotropic
 
