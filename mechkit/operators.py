@@ -13,7 +13,11 @@ class Abstract_Operator:
         return self.function(*args, **kwargs)
 
     def check(self, tensor, *args, **kwargs):
-        """Check whether `tensor` has the symmetry specified by Sym operator"""
+        """
+        Check whether `tensor` is not changed by operator.
+        If the derived operator represents a symmtry, this method can be used to
+        check, whether `tensor` is symmetric with respect to this operator.
+        """
 
         return np.allclose(tensor, self.function(tensor=tensor, *args, **kwargs))
 
