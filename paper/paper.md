@@ -54,7 +54,6 @@ the notation and formulation in the respective scientific sources.
 A redundant implementation of identical operations based on different
 sources is strived for.
 
-
 # Statement of need
 
 The methods and operators occurring in the field of linear elasticity and material modeling are
@@ -96,8 +95,7 @@ For the case of notations of second- and fourth-order tensors,
 the shortest path between source and target notation is determined by
 the graph of supported notations, see \autoref{fig:stiffness_graph}.
 
-![Currently supported notations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](stiffness_graph.png){ width=60% }
-
+![Currently supported notations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](./figures/stiffness_graph.pdf){ width=60% }
 
 # Acknowledgements
 
