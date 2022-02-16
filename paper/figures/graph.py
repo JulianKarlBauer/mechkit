@@ -17,7 +17,7 @@ plot_options = dict(
     node_label_fontdict=dict(size=30),
 )
 
-titlefont_options = dict(fontsize=18,)
+titlefont_options = dict(fontsize=32,)
 
 pos = {
     "mandel6": (0.33, 0.5),
@@ -43,4 +43,4 @@ plt.tight_layout()
 plt.savefig(
     "stiffness_graph.pdf", dpi=200, bbox_inches="tight", pad_inches=0.05,
 )
-
+plt.close()
