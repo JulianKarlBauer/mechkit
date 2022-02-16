@@ -90,10 +90,12 @@ interfaces, thereby preventing errors.
 The necessary number of translation functions between different notations
 increases drastically **exponentially?** with an increasing number of notations.
 Consequentially, for even a small number of different notations, the implementation of all corresponding translation methods is not feasible.
-Therefore, `mechkit` does necessarily directly translates one notation into another.
+Therefore, `mechkit` does not necessarily directly translate one notation into another.
 Instead, in the case of the translation of second- and fourth-order tensors,
 `mechkit` determines the shortest path between source and target notation as illustrated in
 the graph of supported notations, see \autoref{fig:stiffness_graph}.
+This procedure greatly facilitates the addition of further notations to `mechkit`.
+Essentially, only a translation function from and to a new notation has to be added to the existing code, to make translations from and to this new notation universally available in `mechkit`.
 
 ![Currently supported notations and translations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](./figures/stiffness_graph.pdf){ width=60% }
 
