@@ -13,7 +13,7 @@
 
 # mechkit
 
-Mechkit bundles utilities and methods which frequently arise in continuum mechanics.
+mechkit bundles utilities and methods which frequently arise in continuum mechanics.
 Therefore, mechkit acts as a toolkit for other projects.
 
 For more details please refer to [the docs][url_read_the_docs_latext].  
