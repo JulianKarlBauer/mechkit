@@ -5,7 +5,7 @@ Notations and converters, converting from one notation to another
 """
 
 import numpy as np
-from mechkit.utils import Ex
+from mechkit.utils import MechkitException
 import networkx as nx
 import functools
 import sys
@@ -422,7 +422,7 @@ class Converter(object):
         try:
             type_ = types[inp.shape]
         except KeyError:
-            raise Ex(
+            raise MechkitException(
                 "Tensor shape not supported." "\n Supported shapes: {}".format(types)
             )
         return type_

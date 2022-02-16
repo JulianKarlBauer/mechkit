@@ -80,7 +80,7 @@ class Sym_Fourth_Order_Special(Abstract_Operator):
 
         # Select the symmetrization operation
         if label is None:
-            raise utils.Ex("Please specify a symmetry label")
+            raise utils.MechkitException("Please specify a symmetry label")
 
         elif label == "inner_mandel":
             self.function = self._inner_mandel
@@ -90,7 +90,7 @@ class Sym_Fourth_Order_Special(Abstract_Operator):
             self.function = self._by_permutations
 
         else:
-            raise utils.Ex("Please specify a valid symmetry label")
+            raise utils.MechkitException("Please specify a valid symmetry label")
 
     def _set_permutation_lists(self):
         base_permutations = {
@@ -190,6 +190,20 @@ def dev(tensor, order=4):
     `dev_tensor_2nd_order` and
     `dev_tensor_4th_order_simple`
     """
+    if order == 2:
+        assert tensor.shape == (
+            3,
+            3,
+        )
+    elif order == 4:
+        assert tensor.shape == (
+            3,
+            3,
+            3,
+            3,
+        )
+    else:
+        raise utils.MechkitException('Implemented tensor orders are 2 and 4')
 
     functions = {
         2: dev_tensor_2nd_order,

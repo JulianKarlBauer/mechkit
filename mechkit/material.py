@@ -8,7 +8,7 @@ import numbers
 import numpy as np
 import mechkit
 import warnings
-from mechkit.utils import Ex
+from mechkit.utils import MechkitException
 
 
 class AbstractMaterial(object):
@@ -29,7 +29,7 @@ class AbstractMaterial(object):
                     if name not in useful:
                         useful[name] = val
                     else:
-                        raise Ex(
+                        raise MechkitException(
                             (
                                 "Redundant input for primary parameter {name}\n"
                                 "Failed to use \n{key}={val}\nbecause {name} "
@@ -44,7 +44,7 @@ class AbstractMaterial(object):
                             )
                         )
         if len(kwargs) != len(useful):
-            raise Ex(
+            raise MechkitException(
                 (
                     "Not all keyword arguments are identified as material "
                     "parameters.\n"
@@ -56,7 +56,7 @@ class AbstractMaterial(object):
 
     def _check_nbr_useful_kwargs(self, **kwargs):
         if len(self._useful_kwargs) != self._nbr_useful_kwargs:
-            raise Ex(
+            raise MechkitException(
                 (
                     "Number of input parameters has to be {nbr}.\n"
                     "Note: {mat} is defined by {nbr} parameters.\n"
@@ -502,7 +502,7 @@ class Isotropic(AbstractMaterial):
 
     def _check_positive_definiteness(self):
         if not ((self.K >= 0.0) and (self.G >= 0.0)):
-            raise Ex(
+            raise MechkitException(
                 "Negative K or G.\n"
                 "K and G of positiv definit isotropic material "
                 "have to be positive. \nK={} G={}".format(self.K, self.G)
@@ -857,14 +857,14 @@ class TransversalIsotropic(AbstractMaterial):
             self.stiffness = self._rotate_stiffness_into_principal_axis()
 
     def _raise_required(self, key):
-        raise Ex(
+        raise MechkitException(
             ("Parameter {key} is required.").format(
                 key=key,
             )
         )
 
     def _raise_required_either_or(self, keys):
-        raise Ex(
+        raise MechkitException(
             ("Either {key0} or {key1} is required.\n").format(
                 key0=keys[0], key1=keys[1]
             )
@@ -894,7 +894,7 @@ class TransversalIsotropic(AbstractMaterial):
 
     def _check_positive_definiteness(self):
         if not (0.0 < min(np.linalg.eigh(self.stiffness_mandel6)[0])):
-            raise Ex("Stiffness Mandel6 is not positive definite")
+            raise MechkitException("Stiffness Mandel6 is not positive definite")
 
     def _nu_lt(self, nu_tl):
         return nu_tl * self.E_l / self.E_t
