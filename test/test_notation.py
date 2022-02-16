@@ -9,7 +9,9 @@ import mechkit
 # Helpers
 
 
-def assertException(func, message, args=[], kwargs={}, exception=mechkit.utils.Ex):
+def assertException(
+    func, message, args=[], kwargs={}, exception=mechkit.utils.MechkitException
+):
     with pytest.raises(exception) as excinfo:
         func(*args, **kwargs)
     assert str(excinfo.value).startswith(message)
@@ -29,7 +31,7 @@ class Test_Converter:
             "Tensor shape not supported",
             args=[],
             kwargs={"inp": np.ones((3, 2))},
-            exception=mechkit.utils.Ex,
+            exception=mechkit.utils.MechkitException,
         )
 
     def test_compare_P1_P2_mandel6_tensor(self):

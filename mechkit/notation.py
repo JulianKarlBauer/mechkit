@@ -5,7 +5,7 @@ Notations and converters, converting from one notation to another
 """
 
 import numpy as np
-from mechkit.utils import Ex
+from mechkit.utils import MechkitException
 import networkx as nx
 import functools
 import sys
@@ -422,7 +422,7 @@ class Converter(object):
         try:
             type_ = types[inp.shape]
         except KeyError:
-            raise Ex(
+            raise MechkitException(
                 "Tensor shape not supported." "\n Supported shapes: {}".format(types)
             )
         return type_
@@ -564,6 +564,7 @@ class VoigtConverter(Converter):
         dimensions than those in Mandel6 notation and therefore are
         treated as representations in Mandel6 notation, when passed
         to methods not including "voigt" in the method name.
+
 
     Component order is defined as
 
@@ -725,6 +726,36 @@ class ExplicitConverter(object):
 
         - abaqusMaterialAnisotropic
 
+
+    **Voigt notation**
+
+    .. math::
+        \begin{align*}
+            \boldsymbol{\sigma}^{\text{Voigt}}
+            =
+            \begin{bmatrix}
+                \sigma_{\text{11}}  \\
+                \sigma_{\text{22}}  \\
+                \sigma_{\text{33}}  \\
+                \sigma_{\text{23}}  \\
+                \sigma_{\text{13}}  \\
+                \sigma_{\text{12}}  \\
+            \end{bmatrix}
+            &\quad
+           \boldsymbol{\varepsilon}^{\text{Voigt}}
+           =
+           \begin{bmatrix}
+                \varepsilon_{\text{11}}  \\
+                \varepsilon_{\text{22}}  \\
+                \varepsilon_{\text{33}}  \\
+                2\varepsilon_{\text{23}}  \\
+                2\varepsilon_{\text{13}}  \\
+                2\varepsilon_{\text{12}}  \\
+           \end{bmatrix}.
+        \end{align*}
+
+    todo: add representations of stiffness- and compliance- matrix in Voigt notation
+
     **UMAT notation**
 
     .. math::
@@ -752,7 +783,7 @@ class ExplicitConverter(object):
            \end{bmatrix}.
         \end{align*}
 
-    todo: add stiffness and compliance
+    todo: add representations of stiffness- and compliance- matrix in UMAT notation
 
     **VUMAT notation**
 
@@ -781,7 +812,30 @@ class ExplicitConverter(object):
            \end{bmatrix}.
         \end{align*}
 
-    todo: add stiffness and compliance
+
+    todo: add representations of stiffness- and compliance- matrix in VUMAT notation
+
+
+    Examples
+    --------
+
+    >>> import mechkit
+    >>> import numpy as np
+    >>> expl_converter = mechkit.notation.ExplicitConverter()
+
+    >>> ones_4_mandel = expl_converter.convert(
+        inp=np.ones((3, 3, 3, 3)),
+        source="tensor",
+        target="mandel6",
+        quantity="stiffness",
+        )
+    [[1.   1.   1.   1.41 1.41 1.41]
+     [1.   1.   1.   1.41 1.41 1.41]
+     [1.   1.   1.   1.41 1.41 1.41]
+     [1.41 1.41 1.41 2.   2.   2.  ]
+     [1.41 1.41 1.41 2.   2.   2.  ]
+     [1.41 1.41 1.41 2.   2.   2.  ]]
+
 
     todo: add stiffness abaqusMaterialAnisotropic
 

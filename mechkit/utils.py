@@ -5,7 +5,7 @@ Utilities
 """
 
 
-class Ex(Exception):
+class MechkitException(Exception):
     """Exception wrapping all exceptions of this package"""
 
     pass
