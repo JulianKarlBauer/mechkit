@@ -52,7 +52,7 @@ and do not put major emphasis on performance.
 Furthermore, the implementations follow, as directly as possible,
 the notation and formulation in the respective scientific sources.
 A redundant implementation of identical operations based on different
-sources is strived for. **For validation or just for fun?**
+sources is aimed at, for validation reasons.
 
 # Statement of need
 
