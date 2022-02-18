@@ -32,8 +32,8 @@ bibliography: paper.bib
 
 The Python package `mechkit` is a toolkit for researchers
 in the field of continuum mechanics and material modeling.
-`mechkit` **Why capitalized?** contains methods and operators
-that facilitate common tasks within tensor algebra and tensor notation.
+`mechkit` contains methods and operators
+that simplify common tasks - especially in the area of tensor algebra and tensor notation.
 
 In the context of engineering applications in three spatial dimensions, deformations and stresses in solids are
 usually described by second-order tensors.
