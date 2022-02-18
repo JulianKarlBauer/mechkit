@@ -88,7 +88,7 @@ The translation between different notations is often tedious and prone to errors
 `mechkit` allows an easy exchange between different notations with user-friendly
 interfaces, thereby preventing errors.
 The necessary number of translation functions between different notations
-increases drastically **exponentially?** with an increasing number of notations.
+increases drastically with an increasing number of notations.
 Consequentially, for even a small number of different notations, the implementation of all corresponding translation methods is not feasible.
 Therefore, `mechkit` does not necessarily directly translate one notation into another.
 Instead, in the case of the translation of second- and fourth-order tensors,
