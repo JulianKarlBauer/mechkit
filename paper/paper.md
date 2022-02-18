@@ -59,14 +59,14 @@ sources is aimed at, for validation reasons.
 The methods and operators for the description of linear elasticity and material modeling are mathematically simple and can be expressed in a compact manner.
 Due to this relative simplicity, they are usually implemented independently by each scientist for use in their studies.
 Consequentially, unlike in other research field such as physics and computer science, there is no library for the common methods and operators of linear elasticity and modeling to this day.
-Apart from didactic advantages **I don't get what you want to say here. Suggestion in line 65.**, this procedure causes problems for
+Apart from didactic advantages, this procedure causes problems for
 the exchange of research code and
 the reliability of the implementations.
 This presents a major obastacle with regard to the exchange and reliability of research code as well as the interpretation and comparison of results.
 
 The main goal of the project `mechkit` is reusable research code that increases the reliability of the research results and
 accelerate as well as simplifies further research.
-`mechkit` is inspired by [@fiberoripy] and the projects of the author of [@meshio], **e.g.**.
+`mechkit` is inspired by [@fiberoripy] and the projects of the author of [@meshio].
 
 ## Motivation by example: Isotropic material and notations
 
