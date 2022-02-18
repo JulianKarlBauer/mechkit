@@ -12,7 +12,7 @@ authors:
   - name: Julian Karl Bauer^[corresponding author]
     orcid: 0000-0002-4931-5869
     affiliation: "1" # (Multiple affiliations must be quoted)
-  - name: Philipp Lothar Kinon^[co-first author] # note this makes a footnote saying 'co-first author', feel free to hand over this item to another author
+  - name: Philipp Lothar Kinon
     orcid: 0000-0002-4128-5124
     affiliation: "1"
   - name: Jonas Hund
