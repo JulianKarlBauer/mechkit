@@ -97,7 +97,7 @@ the graph of currently supported notations, see \autoref{fig:stiffness_graph}.
 This procedure greatly facilitates the addition of further notations to `mechkit`.
 Essentially, only a translation function from and to a new notation has to be added to the existing code, to make translations from and to this new notation universally available in `mechkit`.
 
-![Currently supported notations and translations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](./figures/stiffness_graph.pdf){ width=85% }
+![Currently supported notations and translations of fourth-order stiffness tensors.\label{fig:stiffness_graph}](./figures/stiffness_graph.pdf){ width=80% }
 
 # Acknowledgements
 
