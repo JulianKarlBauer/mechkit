@@ -58,9 +58,11 @@ sources is aimed at, for validation reasons.
 # Statement of need
 
 The methods and operators for the description of linear elasticity and material modeling are mathematically simple and can be expressed in a compact manner.
-Due to this relative simplicity, they are usually implemented independently by each scientist for use in their studies.
-Consequentially, unlike in other research fields such as physics and computer science, there is no library for the common methods and operators of linear elasticity and modeling to this day.
-This presents a major obstacle with regard to the exchange and reliability of research code as well as the interpretation and comparison of results.
+Due to this relative simplicity, these methods and operators are usually implemented independently by each scientist.
+As a consequence, unlike other research areas such as physics and computer science,
+there is no common library for the methods and operators to this day.
+This presents a major obstacle with regard to the exchange and reliability of research code and
+leads to negative consequences for the interpretation and comparison of results.
 
 The main goal of `mechkit` is reusable research code that increases the reliability of results and
 accelerate as well as simplifies further research.
