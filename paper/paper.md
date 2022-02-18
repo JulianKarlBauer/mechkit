@@ -37,7 +37,7 @@ for common tasks concerning tensor algebra and tensor notation.
 
 In the context of engineering applications in three spatial dimensions, deformations and stresses in solids are
 usually described by second-order tensors.
-Introduced as linear mappings between the second order tensors of observed deformations and causal stresses,
+As linear mappings between observed deformations and possibly causal stresses,
 fourth-order tensors have a special role in the field of linear elasticity.
 To this end, the methods in `mechkit` are focussed on second- and fourth-order tensors. Main motivations can thus be found in the research concerning
 linear elasticity
