@@ -15,13 +15,14 @@ authors:
   - name: Philipp Lothar Kinon^[co-first author] # note this makes a footnote saying 'co-first author', feel free to hand over this item to another author
     orcid: 0000-0002-4128-5124
     affiliation: "1"
-#  - name: Author with no affiliation^[corresponding author]
-#    affiliation: 3
+  - name: Jonas Hund
+    orcid: 0000-0003-2140-4285
+    affiliation: 2
 affiliations:
  - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Germany
    index: 1
-# - name: Institution Name
-#   index: 2
+ - name: Department of Structural Engineering, Norwegian University of Science and Technology (NTNU), Norway
+   index: 2
 # - name: Independent Researcher
 #   index: 3
 date: 02 February 2022
