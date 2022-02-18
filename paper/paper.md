@@ -37,9 +37,9 @@ for common tasks concerning tensor algebra and tensor notation.
 
 In the context of engineering applications in three spatial dimensions, deformations and stresses in solids are
 usually described by second-order tensors.
-As linear mappings between observed deformations and possibly causal stresses,
+Introduced as linear mappings between the second order tensors of observed deformations and causal stresses,
 fourth-order tensors have a special role in the field of linear elasticity.
-To this end, the methods in `mechkit` are primarily focussed on second- and fourth-order tensors. Main motivations can thus be found in the research concerning
+To this end, the methods in `mechkit` are focussed on second- and fourth-order tensors. Main motivations can thus be found in the research concerning
 linear elasticity
 [@Bertram2015], [@Mandel1965], [@Fedorov1968], [@Mehrabadi1990], [@Thomson1856],
 [@Cowin1992], [@Rychlewski2000], [@Spencer1970], [@Boehlke2001], [@Brannon2018]
@@ -58,13 +58,10 @@ sources is aimed at, for validation reasons.
 
 The methods and operators for the description of linear elasticity and material modeling are mathematically simple and can be expressed in a compact manner.
 Due to this relative simplicity, they are usually implemented independently by each scientist for use in their studies.
-Consequentially, unlike in other research field such as physics and computer science, there is no library for the common methods and operators of linear elasticity and modeling to this day.
-Apart from didactic advantages, this procedure causes problems for
-the exchange of research code and
-the reliability of the implementations.
-This presents a major obastacle with regard to the exchange and reliability of research code as well as the interpretation and comparison of results.
+Consequentially, unlike in other research fields such as physics and computer science, there is no library for the common methods and operators of linear elasticity and modeling to this day.
+This presents a major obstacle with regard to the exchange and reliability of research code as well as the interpretation and comparison of results.
 
-The main goal of the project `mechkit` is reusable research code that increases the reliability of the research results and
+The main goal of `mechkit` is reusable research code that increases the reliability of results and
 accelerate as well as simplifies further research.
 `mechkit` is inspired by [@fiberoripy] and the projects of the author of [@meshio].
 
@@ -92,8 +89,8 @@ increases drastically with an increasing number of notations.
 Consequentially, for even a small number of different notations, the implementation of all corresponding translation methods is not feasible.
 Therefore, `mechkit` does not necessarily directly translate one notation into another.
 Instead, in the case of the translation of second- and fourth-order tensors,
-`mechkit` determines the shortest path between source and target notation as illustrated in
-the graph of supported notations, see \autoref{fig:stiffness_graph}.
+`mechkit` determines the shortest path between source and target in the set of implemented notations as illustrated in
+the graph of currently supported notations, see \autoref{fig:stiffness_graph}.
 This procedure greatly facilitates the addition of further notations to `mechkit`.
 Essentially, only a translation function from and to a new notation has to be added to the existing code, to make translations from and to this new notation universally available in `mechkit`.
 
