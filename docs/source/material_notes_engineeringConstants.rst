@@ -20,8 +20,6 @@ with :math:`i, j \in [1, 2, 3]`.
 
 **Visualization:**
 
-.. image:: images/material_engineering_constants.jpg
-
 .. image:: images/material_engineering_constants_shear.svg
 
 .. image:: images/material_engineering_constants_poissons.svg
