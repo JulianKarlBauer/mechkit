@@ -20,7 +20,7 @@ plot_options = dict(
 titlefont_options = dict(
     fontsize=32,
 )
-
+alias_abaquas_material_anisotropic = "abaqMatAniso"
 pos = {
     "mandel6": (0.33, 0.5),
     "mandel9": (0.15, 0.25),
@@ -28,19 +28,33 @@ pos = {
     "voigt": (0.67, 0.5),
     "umat": (0.85, 0.25),
     "vumat": (0.85, 0.75),
-    "abaqusMaterialAnisotropic": (1.0, 0.5),
+    alias_abaquas_material_anisotropic: (1.0, 0.5),
 }
 converter = mechkit.notation.ExplicitConverter()
 
-entity_type = "stiffness"
-graph = converter.graphs_dict[entity_type]
-entitiy_label = "Stiffness"
+# edges = [(edge[0], edge[1]) for edge in converter.edges_dict["stiffness"]]
+edges = [
+    ("tensor", "mandel6"),
+    ("tensor", "mandel9"),
+    ("mandel9", "tensor"),
+    ("mandel9", "mandel6"),
+    ("mandel6", "tensor"),
+    ("mandel6", "mandel9"),
+    ("mandel6", "voigt"),
+    ("voigt", "mandel6"),
+    ("voigt", "umat"),
+    ("voigt", "vumat"),
+    ("umat", "voigt"),
+    ("vumat", "voigt"),
+    ("voigt", alias_abaquas_material_anisotropic),
+    (alias_abaquas_material_anisotropic, "voigt"),
+]
+
 
 fig = plt.figure(figsize=(15, 15))
-g = netgraph.Graph(graph, node_layout=pos, **plot_options)
-if entity_type == "stiffness":
-    g.node_label_artists["abaqusMaterialAnisotropic"].set_size(13),
-plt.gca().set_title(label=entitiy_label, fontdict=titlefont_options)
+g = netgraph.Graph(edges, node_layout=pos, **plot_options)
+g.node_label_artists[alias_abaquas_material_anisotropic].set_size(24),
+plt.gca().set_title(label="Stiffness", fontdict=titlefont_options)
 plt.tight_layout()
 plt.savefig(
     "stiffness_graph.pdf",
