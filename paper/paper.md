@@ -12,22 +12,28 @@ authors:
   - name: Julian Karl Bauer^[corresponding author]
     orcid: 0000-0002-4931-5869
     affiliation: "1" # (Multiple affiliations must be quoted)
+  - name: Thomas Böhlke
+    orcid: 0000-0001-6884-0530
+    affiliation: 2
   - name: Philipp Lothar Kinon
     orcid: 0000-0002-4128-5124
     affiliation: "1"
   - name: Jonas Hund
     orcid: 0000-0003-2140-4285
-    affiliation: 2
+    affiliation: 3
 affiliations:
  - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Germany
    index: 1
- - name: Department of Structural Engineering, Norwegian University of Science and Technology (NTNU), Norway
+ - name: Chair for Continuum Mechanics, Institute of Engineering Mechanics, Karlsruhe Institute of Technology (KIT), Germany,
    index: 2
+ - name: Department of Structural Engineering, Norwegian University of Science and Technology (NTNU), Norway
+   index: 3
 # - name: Independent Researcher
 #   index: 3
 date: 02 February 2022
 bibliography: paper.bib
 ---
+
 
 # Summary
 
