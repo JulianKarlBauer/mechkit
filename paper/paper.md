@@ -66,7 +66,7 @@ leads to negative consequences for the interpretation and comparison of results.
 
 The main goal of `mechkit` is reusable research code that increases the reliability of results and
 accelerate as well as simplifies further research.
-`mechkit` is inspired by [@fiberoripy] and the projects of the author of [@meshio].
+`mechkit` is inspired by [@fiberoripy], [@meshio], [@pygalmesh] and [@quadpy].
 
 ## Motivation by example: Isotropic material and notations
 
