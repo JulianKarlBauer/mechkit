@@ -20,7 +20,7 @@ plot_options = dict(
 titlefont_options = dict(
     fontsize=32,
 )
-alias_abaquas_material_anisotropic = "abaqMatAniso" # "abaqusMatAniso"
+alias_abaquas_material_anisotropic = "abaqusMatAniso" # "abaqusMatAniso"
 pos = {
     "mandel6": (0.33, 0.5),
     "mandel9": (0.15, 0.25),
@@ -53,7 +53,7 @@ edges = [
 
 fig = plt.figure(figsize=(15, 15))
 g = netgraph.Graph(edges, node_layout=pos, **plot_options)
-g.node_label_artists[alias_abaquas_material_anisotropic].set_size(24),
+g.node_label_artists[alias_abaquas_material_anisotropic].set_size(22),
 plt.gca().set_title(label="Stiffness", fontdict=titlefont_options)
 plt.tight_layout()
 plt.savefig(
