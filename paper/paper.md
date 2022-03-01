@@ -71,8 +71,8 @@ there is no common library for the methods and operators to this day.
 This presents a major obstacle with regard to the exchange and reliability of research code and
 leads to negative consequences for the interpretation and comparison of results.
 
-The main goal of `mechkit` is reusable research code that increases the reliability of results and
-accelerate as well as simplifies further research.
+The main goal of `mechkit` is to provide reusable research code that increases the reliability of results.
+It accelerates and simplifies further research.
 `mechkit` is inspired by [@fiberoripy], [@meshio], [@pygalmesh] and [@quadpy].
 
 ## Motivation by example: Isotropic material and notations
