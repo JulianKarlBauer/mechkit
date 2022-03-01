@@ -20,7 +20,7 @@ plot_options = dict(
 titlefont_options = dict(
     fontsize=32,
 )
-alias_abaquas_material_anisotropic = "abaqMatAniso"
+alias_abaquas_material_anisotropic = "abaqMatAniso" # "abaqusMatAniso"
 pos = {
     "mandel6": (0.33, 0.5),
     "mandel9": (0.15, 0.25),
