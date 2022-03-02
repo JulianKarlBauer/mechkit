@@ -18,6 +18,9 @@ authors:
   - name: Jonas Hund
     orcid: 0000-0003-2140-4285
     affiliation: 2
+  - name: Lisa Latussek
+    orcid: 0000-0002-1093-737X
+    affiliation: 1
   - name: Thomas Böhlke
     orcid: 0000-0001-6884-0530
     affiliation: 3
