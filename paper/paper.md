@@ -43,14 +43,16 @@ bibliography: paper.bib
 The Python package `mechkit` is a toolkit for researchers
 in the field of continuum mechanics and material modeling.
 `mechkit` contains methods and operators
-for common tasks concerning tensor algebra and tensor notation,
+for elementary tasks concerning tensor algebra and tensor notation,
 e.g., linear mapping, base transformations and active as well as passive transformations of tensors.
 
-In the context of engineering applications in three spatial dimensions, deformations and stresses in solids are
+In the context of engineering applications in three spatial dimensions, strains and stresses in solids are
 usually described by second-order tensors.
-As linear mappings between observed deformations and possibly causal stresses,
-fourth-order tensors have a special role in the field of linear elasticity.
-To this end, the methods in `mechkit` are focussed on second- and fourth-order tensors. Main motivations can thus be found in the research concerning
+<!-- As linear mappings between observed deformations and possibly causal stresses,
+fourth-order tensors have a special role in the field of linear elasticity. -->
+In linear elastictiy, mappings between stresses and strains are important.
+To this end, the methods in `mechkit` are focussed on second- and fourth-order tensors.
+Main motivations can thus be found in the research concerning
 linear elasticity
 [@Bertram2015], [@Mandel1965], [@Fedorov1968], [@Mehrabadi1990], [@Thomson1856],
 [@Cowin1992], [@Rychlewski2000], [@Spencer1970], [@Boehlke2001], [@Brannon2018]
@@ -67,15 +69,15 @@ sources is aimed at, for validation reasons.
 
 # Statement of need
 
-The methods and operators for the description of linear elasticity and material modeling are mathematically simple and can be expressed in a compact manner.
-Due to this relative simplicity, these methods and operators are usually implemented independently by each scientist.
-As a consequence, unlike other research areas such as physics and computer science,
-there is no common library for the methods and operators to this day.
-This presents a major obstacle with regard to the exchange and reliability of research code and
+The operators for material modeling and linear elasticity
+can be expressed in a compact manner.
+However, their representation is not unique and the relation between different representations is nontrivial.
+To the best knowledge of the authors, there is no common library for the operators to this day.
+This presents an obstacle with regard to the exchange and the reliability of research code and
 leads to negative consequences for the interpretation and comparison of results.
 
 The main goal of `mechkit` is to provide reusable research code that increases the reliability of results.
-It accelerates and simplifies further research.
+It is intended to accelerate and simplify further research.
 `mechkit` is inspired by [@fiberoripy], [@meshio], [@pygalmesh] and [@quadpy].
 
 ## Motivation by example: Isotropic material and notations
@@ -86,13 +88,18 @@ and numerical solution methods for boundary value problems,
 a multitude of different notations exist.
 As an example, one may consider the description of the mechanical properties of a
 homogeneous and isotropic, i.e. direction-independent, material within the framework of linear elasticity.
-Such a material can be described identically by two scalar material parameters.
+Such a material can be described completely by two independent scalar parameters.
 However, in the disciplines mentioned above, at least six different material parameters are commonly used,
-motivated by different applications and measurement methods.
+motivated by different applications,
+measurement techniques
+and tensor decompositions.
 This results in fifteen possible combinations of scalar descriptions of an
 isotropic material, which can be combined to the corresponding fourth-order elasticity tensor.
-For this tensor, again, different notations exist. They either follow the
-Voigt or Kelvin-Mandel notation or take account of the interfaces between open and commercial finite element codes.
+For this tensor, again, different representations exist, referring to different basis systems
+and notations.
+The notations either follow the
+Voigt or Kelvin-Mandel notation or take account of interfaces
+of finite element codes.
 
 The translation between different notations is often tedious and prone to errors.
 `mechkit` allows an easy exchange between different notations with user-friendly
