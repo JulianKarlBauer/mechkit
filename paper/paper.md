@@ -126,7 +126,6 @@ Essentially, only a translation function from and to a new notation has to be ad
 We acknowledge support from
 <?insert here after contacted?>
 during the genesis of this project.
-We acknowledge contributions from Lisa Latussek.
 
 The research documented in this manuscript has been funded by the German Research Foundation (DFG) within the International Research Training Group “Integrated engineering of continuous-discontinuous long fiber-reinforced polymer structures” (GRK 2078/2). The support by the German Research Foundation (DFG) is gratefully acknowledged.
 
