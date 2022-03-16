@@ -21,16 +21,21 @@ authors:
   - name: Lisa Latussek
     orcid: 0000-0002-1093-737X
     affiliation: 1
+  - name: Nils Meyer
+    orcid: 0000-0001-6291-6741
+    affiliation: 3
   - name: Thomas Böhlke
     orcid: 0000-0001-6884-0530
-    affiliation: 3
+    affiliation: 4
 affiliations:
  - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Germany
    index: 1
  - name: Department of Structural Engineering, Norwegian University of Science and Technology (NTNU), Norway
    index: 2
- - name: Chair for Continuum Mechanics, Institute of Engineering Mechanics, Karlsruhe Institute of Technology (KIT), Germany,
+ - name: Institute of Vehicles System Technology, Karlsruhe Institute of Technology (KIT), Germany
    index: 3
+ - name: Chair for Continuum Mechanics, Institute of Engineering Mechanics, Karlsruhe Institute of Technology (KIT), Germany
+   index: 4
 # - name: Independent Researcher
 #   index: 3
 date: 02 February 2022
