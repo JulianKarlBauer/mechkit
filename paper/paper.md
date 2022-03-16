@@ -68,16 +68,16 @@ composite materials
 The implementations in `mechkit` aim at usability, seek to provide understandable source code,
 and do not put major emphasis on performance.
 Furthermore, the implementations follow, as directly as possible,
-the notation and formulation in the respective scientific sources.
+the notation and formulation in the respective primary scientific sources.
 A redundant implementation of identical operations based on different
 sources is aimed at, for validation reasons.
 
 # Statement of need
 
-The operators for material modeling and linear elasticity
+The mathematical operators for material modeling and linear elasticity
 can be expressed in a compact manner.
 However, their representation is not unique and the relation between different representations is nontrivial.
-To the best knowledge of the authors, there is no common library for the operators to this day.
+To the best knowledge of the authors, there is no common library for the mathematical operators to this day.
 This presents an obstacle with regard to the exchange and the reliability of research code and
 leads to negative consequences for the interpretation and comparison of results.
 
@@ -111,7 +111,7 @@ The translation between different notations is often tedious and prone to errors
 interfaces, thereby preventing errors.
 The necessary number of translation functions between different notations
 increases drastically with an increasing number of notations.
-Consequentially, for even a small number of different notations, the implementation of all corresponding translation methods is not feasible.
+Consequentially, even for a small number of different notations, the implementation of all corresponding translation methods is not feasible.
 Therefore, `mechkit` does not necessarily directly translate one notation into another.
 Instead, in the case of the translation of second- and fourth-order tensors,
 `mechkit` determines the shortest path between source and target in the set of implemented notations as illustrated in
