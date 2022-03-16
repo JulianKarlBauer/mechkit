@@ -21,16 +21,21 @@ authors:
   - name: Lisa Latussek
     orcid: 0000-0002-1093-737X
     affiliation: 1
+  - name: Nils Meyer
+    orcid: 0000-0001-6291-6741
+    affiliation: 3
   - name: Thomas Böhlke
     orcid: 0000-0001-6884-0530
-    affiliation: 3
+    affiliation: 4
 affiliations:
  - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Germany
    index: 1
  - name: Department of Structural Engineering, Norwegian University of Science and Technology (NTNU), Norway
    index: 2
- - name: Chair for Continuum Mechanics, Institute of Engineering Mechanics, Karlsruhe Institute of Technology (KIT), Germany,
+ - name: Institute of Vehicles System Technology, Karlsruhe Institute of Technology (KIT), Germany
    index: 3
+ - name: Chair for Continuum Mechanics, Institute of Engineering Mechanics, Karlsruhe Institute of Technology (KIT), Germany
+   index: 4
 # - name: Independent Researcher
 #   index: 3
 date: 02 February 2022
@@ -63,16 +68,16 @@ composite materials
 The implementations in `mechkit` aim at usability, seek to provide understandable source code,
 and do not put major emphasis on performance.
 Furthermore, the implementations follow, as directly as possible,
-the notation and formulation in the respective scientific sources.
+the notation and formulation in the respective primary scientific sources.
 A redundant implementation of identical operations based on different
 sources is aimed at, for validation reasons.
 
 # Statement of need
 
-The operators for material modeling and linear elasticity
+The mathematical operators for material modeling and linear elasticity
 can be expressed in a compact manner.
 However, their representation is not unique and the relation between different representations is nontrivial.
-To the best knowledge of the authors, there is no common library for the operators to this day.
+To the best knowledge of the authors, there is no common library for the mathematical operators to this day.
 This presents an obstacle with regard to the exchange and the reliability of research code and
 leads to negative consequences for the interpretation and comparison of results.
 
@@ -106,7 +111,7 @@ The translation between different notations is often tedious and prone to errors
 interfaces, thereby preventing errors.
 The necessary number of translation functions between different notations
 increases drastically with an increasing number of notations.
-Consequentially, for even a small number of different notations, the implementation of all corresponding translation methods is not feasible.
+Consequentially, even for a small number of different notations, the implementation of all corresponding translation methods is not feasible.
 Therefore, `mechkit` does not necessarily directly translate one notation into another.
 Instead, in the case of the translation of second- and fourth-order tensors,
 `mechkit` determines the shortest path between source and target in the set of implemented notations as illustrated in
@@ -121,7 +126,6 @@ Essentially, only a translation function from and to a new notation has to be ad
 We acknowledge support from
 <?insert here after contacted?>
 during the genesis of this project.
-We acknowledge contributions from Lisa Latussek.
 
 The research documented in this manuscript has been funded by the German Research Foundation (DFG) within the International Research Training Group “Integrated engineering of continuous-discontinuous long fiber-reinforced polymer structures” (GRK 2078/2). The support by the German Research Foundation (DFG) is gratefully acknowledged.
 
