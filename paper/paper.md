@@ -32,7 +32,7 @@ affiliations:
    index: 1
  - name: Department of Structural Engineering, Norwegian University of Science and Technology (NTNU), Norway
    index: 2
- - name: Institute of Vehicles System Technology, Karlsruhe Institute of Technology (KIT), Germany
+ - name: Institute of Vehicle System Technology, Karlsruhe Institute of Technology (KIT), Germany
    index: 3
  - name: Chair for Continuum Mechanics, Institute of Engineering Mechanics, Karlsruhe Institute of Technology (KIT), Germany
    index: 4
