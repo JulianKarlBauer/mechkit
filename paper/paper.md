@@ -53,8 +53,6 @@ e.g., linear mapping, base transformations and active as well as passive transfo
 
 In the context of engineering applications in three spatial dimensions, strains and stresses in solids are
 usually described by second-order tensors.
-<!-- As linear mappings between observed deformations and possibly causal stresses,
-fourth-order tensors have a special role in the field of linear elasticity. -->
 In linear elastictiy, mappings between stresses and strains are important.
 To this end, the methods in `mechkit` are focussed on second- and fourth-order tensors.
 Main motivations can thus be found in the research concerning
