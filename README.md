@@ -13,15 +13,19 @@
 
 # mechkit
 
-mechkit bundles utilities and methods which frequently arise in continuum mechanics.
-Therefore, mechkit acts as a toolkit for other projects.
-
-For more details please refer to [the docs][url_read_the_docs_latext].  
+The Python package `mechkit` is a toolkit for researchers
+in the field of continuum mechanics and material modeling.
+`mechkit` contains methods and operators
+for elementary tasks concerning tensor algebra and tensor notation,
+focusing on second- and fourth-order tensors.
 
 Please see [license][url_license],
 [acknowledgment](#acknowledgment)
 and cite the latest [Zenodo-DOI][url_latest_doi].
 
+## Documentation
+
+Documentation is given in [the docs][url_read_the_docs_latext].  
 
 ## Installation [![PyPI version](https://badge.fury.io/py/mechkit.svg)][url_pypi_mechkit]
 
