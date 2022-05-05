@@ -27,6 +27,11 @@ and cite the latest [Zenodo-DOI][url_latest_doi].
 
 Documentation is given in [the docs][url_read_the_docs_latext].  
 
+## Examples
+
+Rendered example notebooks are in [the docs][url_read_the_docs_latest_notebooks].
+These notebooks and corresponding scripts can be found [here][url_docs_source_notebooks].
+
 ## Installation [![PyPI version](https://badge.fury.io/py/mechkit.svg)][url_pypi_mechkit]
 
 Install with `pip` following instructions on [Python Package Index][url_pypi_mechkit], i.e.,
@@ -45,11 +50,6 @@ pip install mechkit
 	```
 
 Note: [Develop vs. install](https://stackoverflow.com/a/19048754/8935243)
-
-## Examples
-
-Rendered example notebooks are in [the docs][url_read_the_docs_latext].
-These notebooks and corresponding scripts can be found [here](docs/source/notebooks).
 
 ## Acknowledgment
 
@@ -71,6 +71,8 @@ is gratefully acknowledged.
 [url_env_conda]: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
 [url_read_the_docs_latext]: http://mechkit.readthedocs.io/?badge=latest
+[url_read_the_docs_latest_notebooks]: https://mechkit.readthedocs.io/en/latest/source/example_notebooks.html
+[url_docs_source_notebooks]: https://github.com/JulianKarlBauer/mechkit/tree/master/docs/source/notebooks
 [url_pypi_mechkit]: https://pypi.org/project/mechkit/
 
 
