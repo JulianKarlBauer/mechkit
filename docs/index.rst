@@ -1,5 +1,16 @@
+=======
 mechkit
 =======
+
+.. toctree::
+    :maxdepth: 4
+
+   /source/statement_of_need
+
+----------------------------------------------
+
+Examples
+--------
 
 .. toctree::
     :maxdepth: 1
@@ -7,6 +18,9 @@ mechkit
     /source/example_notebooks
 
 ----------------------------------------------
+
+API
+---
 
 .. automodule:: mechkit
 
@@ -21,7 +35,12 @@ mechkit
     /source/operators
     /source/visualization
 
+
 ----------------------------------------------
+
+
+References
+----------
 
 .. toctree::
     :maxdepth: 1

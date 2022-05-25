@@ -27,6 +27,11 @@ and cite the latest [Zenodo-DOI][url_latest_doi].
 
 Documentation is given in [the docs][url_read_the_docs_latext].  
 
+## Examples
+
+Rendered example notebooks are in [the docs][url_read_the_docs_latest_notebooks].
+These notebooks and corresponding scripts can be found [here][url_docs_source_notebooks].
+
 ## Installation [![PyPI version](https://badge.fury.io/py/mechkit.svg)][url_pypi_mechkit]
 
 Install with `pip` following instructions on [Python Package Index][url_pypi_mechkit], i.e.,
@@ -46,19 +51,17 @@ pip install mechkit
 
 Note: [Develop vs. install](https://stackoverflow.com/a/19048754/8935243)
 
-## Examples
-
-Rendered example notebooks are in [the docs][url_read_the_docs_latext].
-These notebooks and corresponding scripts can be found [here](docs/source/notebooks).
-
 ## Acknowledgment
 
-The research documented in this repository has been funded by the German Research Foundation (DFG) within the
-International Research Training Group [“Integrated engineering of continuous-discontinuous long fiber reinforced polymer structures“ (GRK 2078)][grk_website].
-The support by the [German Research Foundation (DFG)][dfg_website] is gratefully acknowledged.
+The research documented in this repository has been funded by the 
+[German Research Foundation (DFG, Deutsche Forschungsgemeinschaft)][dfg_website] - project number [255730231][dfg_project].
+The support by the German Research Foundation within the International Research Training Group 
+[“Integrated engineering of continuous-discontinuous long fiber reinforced polymer structures“ (GRK 2078)][grk_website]
+is gratefully acknowledged.
 
 [grk_website]: https://www.grk2078.kit.edu/
 [dfg_website]: https://www.dfg.de/
+[dfg_project]: https://gepris.dfg.de/gepris/projekt/255730231
 
 [url_license]: LICENSE
 [url_latest_doi]: https://doi.org/10.5281/zenodo.3898703
@@ -68,6 +71,8 @@ The support by the [German Research Foundation (DFG)][dfg_website] is gratefully
 [url_env_conda]: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
 [url_read_the_docs_latext]: http://mechkit.readthedocs.io/?badge=latest
+[url_read_the_docs_latest_notebooks]: https://mechkit.readthedocs.io/en/latest/source/example_notebooks.html
+[url_docs_source_notebooks]: https://github.com/JulianKarlBauer/mechkit/tree/master/docs/source/notebooks
 [url_pypi_mechkit]: https://pypi.org/project/mechkit/
 
 

@@ -203,7 +203,7 @@ dependencies:
   - zlib=1.2.11=h7f8727e_4
   - zstd=1.4.9=haebb681_0
   - pip:
-    - betterbib==4.2.0
+    - betterbib==4.2.2
     - black==21.12b0
     - cattrs==1.10.0
     - commonmark==0.9.1
