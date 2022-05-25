@@ -4,6 +4,8 @@
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JulianKarlBauer/mechkit/HEAD)
+[![status](https://joss.theoj.org/papers/5bc306fb511a596eb25e2032a39b4baa/status.svg)](https://joss.theoj.org/papers/5bc306fb511a596eb25e2032a39b4baa)
+
 
 <p align="center">
   <a href="https://github.com/JulianKarlBauer/mechkit/blob/67f1b61afbcac739a0bf61801a81d9a9028abb56/logo/logo.png">
