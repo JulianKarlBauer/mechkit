@@ -35,6 +35,8 @@ Statement of need
 -----------------
 
 .. toctree::
+    :maxdepth: 4
+
    /source/statement_of_need
 
 
