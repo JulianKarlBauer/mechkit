@@ -2,6 +2,13 @@
 mechkit
 =======
 
+.. toctree::
+    :maxdepth: 4
+
+   /source/statement_of_need
+
+----------------------------------------------
+
 Examples
 --------
 
@@ -27,17 +34,6 @@ API
     /source/utils
     /source/operators
     /source/visualization
-
-----------------------------------------------
-
-
-Statement of need
------------------
-
-.. toctree::
-    :maxdepth: 4
-
-   /source/statement_of_need
 
 
 ----------------------------------------------
