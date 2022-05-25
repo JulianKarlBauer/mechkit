@@ -385,7 +385,7 @@ def explicit_converter():
 
 class Test_ExplicitConverter:
     def test_loop_minor_sym(self, con, tensor_min_sym):
-        excluded_notations = ["abaqusMaterialAnisotropic"]
+        excluded_notations = ["abaqusMatAniso"]
         start_notation = "mandel6"
         for key_quantity, graph in con.graphs_dict.items():
             nodes = graph.nodes
@@ -447,12 +447,12 @@ class Test_ExplicitConverter:
         new = con.convert(
             inp=origin,
             source="voigt",
-            target="abaqusMaterialAnisotropic",
+            target="abaqusMatAniso",
             quantity="stiffness",
         )
         back = con.convert(
             inp=new,
-            source="abaqusMaterialAnisotropic",
+            source="abaqusMatAniso",
             target="voigt",
             quantity="stiffness",
         )

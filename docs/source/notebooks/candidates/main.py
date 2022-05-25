@@ -56,7 +56,7 @@ stiff_tensor_bunch.to_voigt()[0]
 
 ############
 # Add way back
-# s = stiff_mandel6_bunch.to_abaqusMaterialAnisotropic()
+# s = stiff_mandel6_bunch.to_abaqusMatAniso()
 # s.to_mandel6()
 
 

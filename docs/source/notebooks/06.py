@@ -23,4 +23,3 @@ for entity_type, graph in converter.graphs_dict.items():
     nx.draw_networkx(graph, **plot_options)
     plt.gca().set_title(entity_type)
     plt.tight_layout()
-
