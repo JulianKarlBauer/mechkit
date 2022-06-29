@@ -5,7 +5,8 @@
 - Uninstall `python setup.py develop --uninstall`
 
 # Run tests against local files
-`python -m pytest`  
+- Install mechkit and pytest (see steps above)
+- Run tests with `python -m pytest`  
 
 # Run specific tests
 [source](https://stackoverflow.com/a/62804929/8935243)
