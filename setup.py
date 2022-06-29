@@ -29,7 +29,6 @@ setuptools.setup(
         "networkx == 2.2; python_version <= '2.7'",
         "sympy; python_version > '3.6'",
     ],
-    tests_require=['pytest'],
     classifiers=[
         "Programming Language :: Python",
         "License :: OSI Approved :: MIT License",
