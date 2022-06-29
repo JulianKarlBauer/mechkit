@@ -1,5 +1,6 @@
 # Run tests against installation (recommended)
-- Install in development mode `python setup.py develop`
+- Install mechkit in development mode `python setup.py develop`
+- Install pytest `pip install pytest`
 - Run tests `pytest`
 - Uninstall `python setup.py develop --uninstall`
 
