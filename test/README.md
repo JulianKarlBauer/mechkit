@@ -8,8 +8,7 @@
 - Install mechkit and pytest (see steps above)
 - Run tests with `python -m pytest`  
 
-# Run specific tests
-[source](https://stackoverflow.com/a/62804929/8935243)
+# Run [specific](https://stackoverflow.com/a/62804929/8935243) tests
 
 Example from within ipython
 ```python
