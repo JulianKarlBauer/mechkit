@@ -7,17 +7,17 @@ In this guide you will get an overview of the contribution workflow.
 ## New Contributor Guide
 
 To get an overview of the project, read the [README](README.md).
-Github offers the following some resources to help you get started with open source contributions:
+Github offers the following resources to help you get started with open source contributions:
 
 - [Set up Git](https://docs.github.com/en/get-started/quickstart/set-up-git)
-- [GitHub flow](https://docs.github.com/en/get-started/quickstart/github-flow)
-- [Collaborating with pull requests](https://docs.github.com/en/github/collaborating-with-pull-requests)
+- [Fork a repo](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+- [Contributing to projects](https://docs.github.com/en/get-started/quickstart/contributing-to-projects)
 
 
 ## Bugs / Issues
 
 We don't like bugs, and are therefore grateful for any possibility to fix them.
-Please report any problems by opening an issue.
+Please report any problems by [opening an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue).
 Screenshots as well as minimal working examples are highly appreciated, as they ease the understanding of the problem.
 
 ## Workflow: Fork -> Modify -> Test -> Pull Request
