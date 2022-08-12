@@ -1,10 +1,8 @@
 # Contributing Guide of Mechkit
 
 Thank you for investing your time in contributing to this project!
-
 Please follow the [Code of Conduct](./CODE_OF_CONDUCT.md) to keep the community approachable and respectable.
-
-In this guide you will get an overview of the contribution workflow from opening an issue, creating a PR, reviewing, and merging the PR.
+In this guide you will get an overview of the contribution workflow.
 
 ## New Contributor Guide
 
