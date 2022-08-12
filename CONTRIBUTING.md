@@ -23,7 +23,12 @@ Screenshots as well as minimal working examples are highly appreciated, as they 
 ## Workflow: Fork -> Modify -> Test -> Pull Request
 
 The main goal of the project is the reuse of research code to increase the reliability of research results and to accelerate and simplify further research.
-This objective implies the need for continuous extension and improvement. As a consequence, code contributions of any kind are welcome.
+This objective implies the need for continuous extension and improvement.
+As a consequence, code contributions of any kind are welcome.
 
-Please fork the repository, extend the code, and submit a merge request to incorporate your changes into the project after review.
+Please
+- **fork** the repository,
+- **modify** and extend the code in your personal fork,
+- run **tests**,
+- open a **pull request** to incorporate your changes into original the project after review.
 
