@@ -79,6 +79,9 @@ To the best knowledge of the authors, there is no common library for the mathema
 This presents an obstacle with regard to the exchange and the reliability of research code and
 leads to negative consequences for the interpretation and comparison of results.
 
+Several multi-purpose tensor packages in Python, e.g., [@tensorly], [@tenpy], exist but mainly address the manipulation of multi-dimensional matrices which are not related to physical bases.
+In contrast, `mechkit` focuses on linear elasticity and provides a limited scope of notations for second- and fourth-order tensors.
+
 The main goal of `mechkit` is to provide reusable research code that increases the reliability of results.
 It is intended to accelerate and simplify further research.
 `mechkit` is inspired by [@fiberoripy], [@meshio], [@pygalmesh] and [@quadpy].
