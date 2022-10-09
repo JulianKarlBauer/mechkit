@@ -28,13 +28,13 @@ authors:
     orcid: 0000-0001-6884-0530
     affiliation: 4
 affiliations:
- - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Germany
+ - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Karlsruhe, Germany
    index: 1
- - name: Department of Structural Engineering, Norwegian University of Science and Technology (NTNU), Norway
+ - name: Department of Structural Engineering, Norwegian University of Science and Technology (NTNU), Trondheim, Norway
    index: 2
- - name: Institute of Vehicle System Technology, Karlsruhe Institute of Technology (KIT), Germany
+ - name: Institute of Vehicle System Technology, Karlsruhe Institute of Technology (KIT), Karlsruhe, Germany
    index: 3
- - name: Chair for Continuum Mechanics, Institute of Engineering Mechanics, Karlsruhe Institute of Technology (KIT), Germany
+ - name: Chair for Continuum Mechanics, Institute of Engineering Mechanics, Karlsruhe Institute of Technology (KIT), Karlsruhe, Germany
    index: 4
 # - name: Independent Researcher
 #   index: 3
