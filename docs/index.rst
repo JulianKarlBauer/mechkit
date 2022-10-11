@@ -25,7 +25,7 @@ API
 .. automodule:: mechkit
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 4
 
     /source/fabric_tensors
     /source/notation
