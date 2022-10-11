@@ -1,5 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/mechkit.svg)][url_pypi_mechkit]
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3898703.svg)][url_latest_doi]
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3898702.svg)][url_latest_doi]
 [![Documentation status](https://readthedocs.org/projects/mechkit/badge/?version=latest)][url_read_the_docs_latext]
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -66,7 +66,7 @@ is gratefully acknowledged.
 [dfg_project]: https://gepris.dfg.de/gepris/projekt/255730231
 
 [url_license]: LICENSE
-[url_latest_doi]: https://doi.org/10.5281/zenodo.3898703
+[url_latest_doi]: https://doi.org/10.5281/zenodo.3898702
 [url_how_to_clone]: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
 
 [url_env_python]: https://docs.python.org/3/tutorial/venv.html
