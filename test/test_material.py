@@ -75,7 +75,8 @@ def test_variants_arguments_steel():
             assert np.allclose(getattr(mat, key), val)
 
 
-def test_reference():
+@pytest.fixture()
+def reference_coefficients():
     return {
         "C11_voigt": 15.755,  # e11 Pa
         "C44_voigt": 5.3184,  # e11 Pa
@@ -86,8 +87,8 @@ def test_reference():
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
-def test_reference_values():
-    inp = test_reference()
+def test_reference_values(reference_coefficients):
+    inp = reference_coefficients
     for comb in itertools.combinations(inp.keys(), 2):
         print("######################\n", comb)
         mat = mechkit.material.Isotropic(**{k: inp[k] for k in comb})
