@@ -990,7 +990,7 @@ class ExplicitConverter(object):
 
         graph = self.graphs_dict[quantity]
 
-        path = nx.shortest_path(G=graph, source=source, target=target)
+        path = nx.shortest_path(graph, source=source, target=target)
 
         steps = list(nx.utils.pairwise(path))
 
